@@ -51,10 +51,58 @@ svg text.grande { font-size: 22px; letter-spacing: .25em; }
 
 @media (prefers-reduced-motion: reduce) { .alvo.aceso { animation: none; } }
 
-/* ---------- legenda ---------- */
+/* ---------- narrador: silhueta sobreposta à página ---------- */
+.narrador {
+  position: fixed;               /* fica por cima da página, preso ao canto do ecrã */
+  left: 0;
+  bottom: 0;
+  height: 42vh;
+  max-height: 340px;
+  z-index: 10;
+  opacity: 0;
+  transform: translateX(-60%);
+  transition: opacity .6s ease, transform .6s ease;
+  pointer-events: none;          /* os botões por baixo continuam a funcionar */
+}
+.narrador.visivel { opacity: .93; transform: none; }
+.narrador.visivel.discreto { opacity: .35; }
+
+.narrador svg, .narrador img { height: 100%; width: auto; display: block; }
+.n-corpo  { fill: #241a12; }
+.n-pregas { fill: none; stroke: rgba(255,255,255,.12); stroke-width: 3; stroke-linecap: round; }
+.n-ondas path { fill: none; stroke: var(--ocre); stroke-width: 3; stroke-linecap: round; opacity: 0; }
+
+/* a falar: ligeiro balanço e ondas de som */
+.narrador.a-falar svg { animation: balanco 2.4s ease-in-out infinite; transform-origin: 30% 100%; }
+.narrador.a-falar .n-ondas path { animation: onda 1.2s ease-out infinite; }
+.narrador.a-falar .n-ondas path:nth-child(2) { animation-delay: .2s; }
+.narrador.a-falar .n-ondas path:nth-child(3) { animation-delay: .4s; }
+@keyframes balanco { 50% { transform: rotate(1.5deg); } }
+@keyframes onda { 0% { opacity: 0; } 40% { opacity: 1; } 100% { opacity: 0; } }
+
+.n-nome {
+  position: absolute;
+  left: 18%;
+  bottom: 6%;
+  margin: 0;
+  padding: 1px 8px;
+  font: 600 .7rem system-ui, sans-serif;
+  letter-spacing: .15em;
+  color: var(--pedra);
+  border: 1px solid rgba(239,230,214,.5);
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .narrador { transition: opacity .3s; transform: none; }
+  .narrador.a-falar svg, .narrador.a-falar .n-ondas path { animation: none; opacity: 1; }
+}
+
+/* ---------- legenda (balão de fala) ---------- */
 #legenda {
+  position: relative;
   min-height: 4.5em;
-  margin: 14px 0;
+  margin: 22px 0 14px;
   padding: 12px 14px;
   background: #fffaf2;
   border-left: 4px solid var(--ocre);
@@ -62,6 +110,22 @@ svg text.grande { font-size: 22px; letter-spacing: .25em; }
   font-size: 1.15rem;
   line-height: 1.4;
 }
+/* bico do balão, a apontar para o narrador (só enquanto ele está visível) */
+#legenda.balao::before {
+  content: "";
+  position: absolute;
+  top: 16px;
+  left: -14px;
+  border-style: solid;
+  border-width: 10px 14px 10px 0;
+  border-color: transparent var(--ocre) transparent transparent;
+}
+
+/* enquanto o narrador está no ecrã, a legenda e os botões afastam-se para não ficarem tapados */
+#legenda, .controlos { transition: margin-left .6s ease; }
+body.com-narrador #legenda,
+body.com-narrador .controlos { margin-left: min(34vw, 150px); }
+body.com-narrador .controlos { justify-content: flex-start; }
 #legenda .quem { display: block; font-family: system-ui, sans-serif; font-size: .75rem; color: var(--ocre); text-transform: uppercase; letter-spacing: .08em; }
 
 /* ---------- controlos ---------- */

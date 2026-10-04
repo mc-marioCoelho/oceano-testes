@@ -79,6 +79,33 @@
     <p class="nota">Voz sintética do próprio telemóvel, só para testar o ritmo. A versão final terá vozes gravadas.</p>
   </main>
 
+
+  <!-- Camada sobreposta à página: silhueta 2D do narrador (provisória).
+       Entra quando fala, sai quando acaba. Pode ser trocada por narrador.png (ver README). -->
+  <div id="narrador" class="narrador" aria-hidden="true">
+    <svg id="narrador-svg" viewBox="0 0 220 400">
+      <g class="n-corpo">
+        <!-- cabeça de perfil (voltada para o mosaico), cabelo curto e barba -->
+        <path d="M78 52 C74 28 90 12 108 13 C124 14 134 28 132 44 L138 56 L132 60 L134 66 L130 70 C130 80 122 88 110 88 C96 88 84 78 80 66 Z"/>
+        <!-- pescoço -->
+        <rect x="92" y="78" width="22" height="28" rx="6"/>
+        <!-- corpo com toga -->
+        <path d="M60 112 C70 100 90 96 104 96 C122 96 140 102 150 116 L162 230 C165 290 160 340 150 400 L52 400 C44 340 42 280 46 230 Z"/>
+        <!-- braço levantado, a apresentar o mosaico -->
+        <path d="M138 110 C160 116 172 130 180 144 L198 126 L204 132 L188 156 C178 168 164 162 150 150 Z"/>
+      </g>
+      <!-- pregas da toga (traço claro) -->
+      <path class="n-pregas" d="M62 120 C90 150 120 190 150 230 M58 170 C90 200 115 240 140 300 M60 250 C80 290 95 340 100 398"/>
+      <!-- ondas de som junto à boca: só aparecem quando fala -->
+      <g class="n-ondas">
+        <path d="M146 60 q8 6 0 12"/>
+        <path d="M154 54 q14 12 0 24"/>
+        <path d="M162 48 q20 18 0 36"/>
+      </g>
+    </svg>
+    <p class="n-nome">C·VIBIVS</p>
+  </div>
+
   <script src="app.js"></script>
 </body>
 </html>

@@ -23,3 +23,9 @@ Guarda nesta pasta uma fotografia **quadrada** do painel central (o medalhão co
 3. Com «🔇 Só legendas»: dá tempo para ler?
 4. O realce chama a atenção para o sítio certo?
 5. A duração total (cerca de 35 s): sabe a pouco ou a muito?
+
+## O narrador em silhueta (camada sobreposta)
+- Quando começa a falar, **entra pelo canto inferior esquerdo** uma silhueta 2D de um romano de toga, de perfil, a apresentar o mosaico.
+- Enquanto fala, balança ligeiramente e aparecem **ondas de som** junto ao rosto. A legenda passa a **balão de fala** que aponta para ele.
+- Em pausa fica visível mas calado. **No fim despede-se e desaparece.**
+- A silhueta é **provisória**, desenhada em código. Para usar a tua ilustração, grava nesta pasta um **`narrador.png`** com fundo transparente (figura em pé, voltada para a direita); a página usa-a automaticamente.
