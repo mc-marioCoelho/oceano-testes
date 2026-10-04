@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teste 01 · Os Ventos (voz + legendas)</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <p class="etiqueta">Teste 01 · ouvir primeiro, ler se quiser</p>
+    <h1>OS·VENTOS</h1>
+  </header>
+
+  <main>
+    <!-- Esquema do painel central do mosaico.
+         Visto a partir da inscrição (a entrada da sala): Zéfiro à esquerda, Bóreas à direita.
+         Para usar uma fotografia em vez do esquema, ver o README desta pasta. -->
+    <figure id="painel">
+      <svg viewBox="0 0 400 460" role="img" aria-label="Esquema do painel central do Mosaico do Oceano">
+        <!-- fotografia opcional (painel-central.jpg); se não existir, fica escondida -->
+        <image id="foto" href="painel-central.jpg" x="0" y="0" width="400" height="400"
+               preserveAspectRatio="xMidYMid slice" onerror="this.remove()"/>
+
+        <!-- quadro (painel C) -->
+        <rect class="quadro" x="10" y="10" width="380" height="380"/>
+
+        <!-- cantos: os quatro ventos -->
+        <g id="h-zefiro" class="alvo">
+          <path class="canto" d="M10 10 H200 A190 190 0 0 0 10 200 Z"/>
+          <text x="46" y="42">Zéfiro</text>
+        </g>
+        <g id="h-boreas" class="alvo">
+          <path class="canto" d="M390 10 H200 A190 190 0 0 1 390 200 Z"/>
+          <text x="354" y="42">Bóreas</text>
+        </g>
+        <g id="h-perdidos" class="alvo perdido">
+          <path class="canto" d="M10 390 H200 A190 190 0 0 1 10 200 Z"/>
+          <path class="canto" d="M390 390 H200 A190 190 0 0 0 390 200 Z"/>
+          <text x="46" y="372">Noto?</text>
+          <text x="354" y="372">Euro?</text>
+        </g>
+
+        <!-- medalhão com Oceano -->
+        <circle class="disco" cx="200" cy="200" r="190"/>
+        <g id="h-oceano" class="alvo">
+          <circle class="medalhao" cx="200" cy="200" r="125"/>
+          <text x="200" y="207" class="grande">OCEANO</text>
+        </g>
+
+        <!-- inscrição, à entrada (fora do quadro, em baixo) -->
+        <g id="h-inscricao" class="alvo">
+          <rect class="tabula" x="60" y="410" width="280" height="40" rx="4"/>
+          <text x="200" y="435">C·CALPVRNIVS … G·VIBIVS …</text>
+        </g>
+      </svg>
+    </figure>
+
+    <!-- legenda (nível 2: ler pouco) -->
+    <p id="legenda" aria-live="polite">Toca em «Ouvir» para começar.</p>
+
+    <div class="controlos">
+      <button id="btn-ouvir" class="principal">▶ Ouvir</button>
+      <button id="btn-som" aria-pressed="true">🔊 Som ligado</button>
+      <button id="btn-recomecar">↺ Recomeçar</button>
+    </div>
+
+    <!-- nível 3: aprofundar (opcional) -->
+    <details>
+      <summary>Saber mais</summary>
+      <p>Só os dois ventos de cima chegaram até nós. O jovem imberbe à esquerda é lido como
+        Zéfiro (Lancha, 2008; Viegas, 2019), embora Mourão (2008) o identifique como Euro.
+        Bóreas, à direita, tem a tez mais escura e uma barbicha. Os modelos destes ventos
+        vêm do Norte de África. O Mosaico do Oceano é o único da Hispânia em que Oceano
+        aparece com os quatro Ventos (Neira, 2016).</p>
+    </details>
+
+    <p class="nota">Voz sintética do próprio telemóvel, só para testar o ritmo. A versão final terá vozes gravadas.</p>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

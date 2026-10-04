@@ -1,0 +1,83 @@
+/* Teste 01 — voz + legendas + realce dos ventos */
+:root {
+  --pedra: #efe6d6;
+  --tinta: #2b2118;
+  --ocre: #b5651d;
+  --azul: #1f6fa8;        /* vidro azul das asas dos ventos */
+  --realce: #ffd166;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  background: var(--pedra);
+  color: var(--tinta);
+  padding: 16px;
+}
+
+header { text-align: center; }
+.etiqueta { font-family: system-ui, sans-serif; font-size: .8rem; letter-spacing: .05em; color: #7a6a58; margin: 0; }
+h1 { letter-spacing: .2em; margin: .2em 0 .6em; font-weight: normal; }
+
+main { max-width: 520px; margin: 0 auto; }
+
+/* ---------- esquema do mosaico ---------- */
+#painel { margin: 0; }
+#painel svg { width: 100%; height: auto; display: block; }
+
+.quadro   { fill: #f7f1e6; stroke: var(--tinta); stroke-width: 2; }
+.disco    { fill: none; stroke: var(--tinta); stroke-width: 1.5; stroke-dasharray: 3 3; }
+.medalhao { fill: #f3e3cf; stroke: var(--ocre); stroke-width: 3; }
+.canto    { fill: #e9dcc6; stroke: var(--tinta); stroke-width: 1; }
+.perdido .canto { fill: #f7f1e6; stroke-dasharray: 5 4; }
+.tabula   { fill: #f7f1e6; stroke: var(--tinta); stroke-width: 1.5; }
+
+svg text { font-family: Georgia, serif; font-size: 13px; text-anchor: middle; fill: var(--tinta); pointer-events: none; }
+svg text.grande { font-size: 22px; letter-spacing: .25em; }
+
+/* com fotografia: o esquema fica transparente e só os realces aparecem */
+#painel.com-foto .quadro, #painel.com-foto .canto, #painel.com-foto .medalhao,
+#painel.com-foto .tabula { fill-opacity: 0; }
+
+/* realce: o elemento «acende» quando o narrador o nomeia */
+.alvo { transition: opacity .6s, filter .6s; }
+.alvo.aceso .canto, .alvo.aceso .medalhao, .alvo.aceso .tabula {
+  fill: var(--realce); fill-opacity: .75; stroke: var(--azul); stroke-width: 3;
+}
+.alvo.aceso { animation: respira 1.6s ease-in-out infinite; }
+@keyframes respira { 50% { opacity: .65; } }
+
+@media (prefers-reduced-motion: reduce) { .alvo.aceso { animation: none; } }
+
+/* ---------- legenda ---------- */
+#legenda {
+  min-height: 4.5em;
+  margin: 14px 0;
+  padding: 12px 14px;
+  background: #fffaf2;
+  border-left: 4px solid var(--ocre);
+  border-radius: 6px;
+  font-size: 1.15rem;
+  line-height: 1.4;
+}
+#legenda .quem { display: block; font-family: system-ui, sans-serif; font-size: .75rem; color: var(--ocre); text-transform: uppercase; letter-spacing: .08em; }
+
+/* ---------- controlos ---------- */
+.controlos { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+button {
+  font: 600 1rem system-ui, sans-serif;
+  padding: 12px 16px;            /* alvo de toque confortável */
+  border-radius: 999px;
+  border: 2px solid var(--tinta);
+  background: #fffaf2;
+  color: var(--tinta);
+  cursor: pointer;
+}
+button.principal { background: var(--tinta); color: var(--pedra); }
+button:focus-visible { outline: 3px solid var(--azul); outline-offset: 2px; }
+
+details { margin-top: 18px; background: #fffaf2; border-radius: 6px; padding: 10px 14px; }
+summary { cursor: pointer; font-family: system-ui, sans-serif; font-weight: 600; }
+.nota { font-family: system-ui, sans-serif; font-size: .8rem; color: #7a6a58; text-align: center; }
