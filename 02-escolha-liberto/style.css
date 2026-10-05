@@ -1,0 +1,70 @@
+/* Teste 02 — escolher o liberto-guia a partir da inscrição */
+:root {
+  --pedra: #efe6d6;
+  --tinta: #2b2118;
+  --ocre: #b5651d;
+  --ouro: #e0a43a;
+  --azul: #1f6fa8;
+  --silhueta: #241a12;
+}
+* { box-sizing: border-box; }
+body { margin: 0; padding: 16px; font-family: Georgia, "Times New Roman", serif; background: var(--pedra); color: var(--tinta); }
+header { text-align: center; }
+.etiqueta { font: .8rem system-ui, sans-serif; letter-spacing: .05em; color: #7a6a58; margin: 0; }
+h1 { letter-spacing: .15em; margin: .2em 0 .6em; font-weight: normal; font-size: 1.4rem; }
+main { max-width: 520px; margin: 0 auto; }
+
+#cena { margin: 0; }
+#cena svg { width: 100%; height: auto; display: block; }
+
+/* ---------- tábula e inscrição ---------- */
+.tabula { fill: #e9dcc6; stroke: var(--tinta); stroke-width: 2; }
+.tabula-campo { fill: #f7f1e6; stroke: var(--tinta); stroke-width: 1; }
+.inscricao text { font: 14px Georgia, serif; text-anchor: middle; fill: var(--tinta); letter-spacing: .5px; }
+.lac { fill: #9a8a76; }
+.lac.restaurada { fill: var(--azul); font-style: italic; animation: aparecer 1s ease; }
+.nome { transition: fill .5s; }
+.nome.aceso { fill: var(--ocre); filter: url(#brilho); font-weight: bold; }
+@keyframes aparecer { from { opacity: 0; } to { opacity: 1; } }
+
+/* ---------- scanner da câmara (simulação) ---------- */
+#scanner { fill: var(--azul); opacity: 0; }
+#scanner.a-ler { animation: varrer 1.4s ease-in-out 1; }
+@keyframes varrer { 0% { opacity: .9; transform: translateY(0); } 100% { opacity: 0; transform: translateY(110px); } }
+
+/* ---------- libertos ---------- */
+.liberto { fill: var(--silhueta); cursor: pointer; opacity: 0; transition: opacity .7s ease; pointer-events: none; }
+.liberto .atributo { fill: #6b4b32; stroke: #6b4b32; }
+.liberto.visivel { opacity: .92; pointer-events: auto; }
+.liberto.visivel:hover, .liberto:focus { opacity: 1; outline: none; }
+.liberto.a-falar { animation: balanco 2.4s ease-in-out infinite; }
+.liberto.afastado { opacity: .15; pointer-events: none; }
+.liberto.escolhido { opacity: 1; }
+@keyframes balanco { 50% { opacity: .75; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .liberto.a-falar, #scanner.a-ler, .lac.restaurada { animation: none; }
+}
+
+/* ---------- legenda / balão ---------- */
+#legenda {
+  min-height: 4.5em; margin: 14px 0; padding: 12px 14px;
+  background: #fffaf2; border-left: 4px solid var(--ocre); border-radius: 6px;
+  font-size: 1.1rem; line-height: 1.4;
+}
+#legenda .quem { display: block; font: .75rem system-ui, sans-serif; color: var(--ocre); text-transform: uppercase; letter-spacing: .08em; }
+
+/* ---------- botões ---------- */
+.controlos { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+button {
+  font: 600 1rem system-ui, sans-serif; padding: 12px 16px; border-radius: 999px;
+  border: 2px solid var(--tinta); background: #fffaf2; color: var(--tinta); cursor: pointer;
+}
+button.principal { background: var(--tinta); color: var(--pedra); }
+button.pequeno { font-size: .8rem; padding: 6px 12px; }
+button:focus-visible { outline: 3px solid var(--azul); outline-offset: 2px; }
+
+details { margin-top: 18px; background: #fffaf2; border-radius: 6px; padding: 10px 14px; }
+summary { cursor: pointer; font: 600 1rem system-ui, sans-serif; }
+#contagens { font-family: system-ui, sans-serif; }
+.nota { font: .8rem system-ui, sans-serif; color: #7a6a58; text-align: center; }

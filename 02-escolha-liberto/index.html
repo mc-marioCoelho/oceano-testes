@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teste 02 · Escolhe o teu guia</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <p class="etiqueta">Teste 02 · a inscrição como porta de entrada (RA simulada)</p>
+    <h1>ESCOLHE·O·TEU·GVIA</h1>
+  </header>
+
+  <main>
+    <figure id="cena">
+      <svg viewBox="0 0 400 320" role="img" aria-label="A tábula ansata com a inscrição e os quatro libertos">
+        <defs>
+          <filter id="brilho" x="-20%" y="-50%" width="140%" height="200%">
+            <feGaussianBlur stdDeviation="2" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+
+          <!-- Silhueta-base (provisória), de frente para o centro -->
+          <symbol id="silhueta" viewBox="0 0 220 400">
+            <path d="M78 52 C74 28 90 12 108 13 C124 14 134 28 132 44 L138 56 L132 60 L134 66 L130 70 C130 80 122 88 110 88 C96 88 84 78 80 66 Z"/>
+            <rect x="92" y="78" width="22" height="28" rx="6"/>
+            <path d="M60 112 C70 100 90 96 104 96 C122 96 140 102 150 116 L162 230 C165 290 160 340 150 400 L52 400 C44 340 42 280 46 230 Z"/>
+          </symbol>
+          <!-- Atributos de cada um -->
+          <symbol id="rolo" viewBox="0 0 60 60"><rect x="8" y="22" width="44" height="16" rx="8"/><circle cx="10" cy="30" r="9"/><circle cx="50" cy="30" r="9"/></symbol>
+          <symbol id="leme" viewBox="0 0 60 60"><rect x="27" y="2" width="6" height="40" rx="3"/><path d="M18 38 H42 L36 58 H24 Z"/></symbol>
+          <symbol id="anfora" viewBox="0 0 60 60"><path d="M24 2 H36 V8 C46 12 48 30 40 42 L30 58 L20 42 C12 30 14 12 24 8 Z"/><path d="M24 10 C14 10 14 22 20 24 M36 10 C46 10 46 22 40 24" fill="none" stroke-width="3"/></symbol>
+        </defs>
+
+        <!-- Os quatro libertos (escondidos até a inscrição ser «reconhecida») -->
+        <g id="libertos">
+          <g class="liberto" data-l="calpurnio" transform="translate(18,18)"  tabindex="0" role="button" aria-label="Gaio Calpúrnio">
+            <use href="#silhueta" width="80" height="145"/>
+            <use href="#rolo" x="44" y="58" width="26" height="26" class="atributo"/>
+          </g>
+          <g class="liberto" data-l="vibio"     transform="translate(110,10)" tabindex="0" role="button" aria-label="Gaio Víbio Quintiliano">
+            <use href="#silhueta" width="84" height="153"/>
+            <use href="#leme" x="52" y="50" width="30" height="30" class="atributo"/>
+          </g>
+          <g class="liberto espelho" data-l="atio"   transform="translate(290,14) scale(-1,1)" tabindex="0" role="button" aria-label="Lúcio Átio">
+            <use href="#silhueta" width="82" height="149"/>
+            <use href="#anfora" x="48" y="60" width="26" height="30" class="atributo"/>
+          </g>
+          <g class="liberto espelho" data-l="verrio" transform="translate(386,12) scale(-1,1)" tabindex="0" role="button" aria-label="Marco Vérrio Gémino">
+            <use href="#silhueta" width="84" height="151"/>
+            <use href="#anfora" x="50" y="58" width="28" height="32" class="atributo"/>
+          </g>
+        </g>
+
+        <!-- Tábula ansata -->
+        <path class="tabula" d="M40 178 H360 L392 200 V262 L360 284 H40 L8 262 V200 Z"/>
+        <rect class="tabula-campo" x="44" y="184" width="312" height="94"/>
+
+        <!-- Inscrição (IRCP 35). [ … ] = lacuna; data-r = leitura proposta -->
+        <g class="inscricao">
+          <text x="200" y="212" textLength="300" lengthAdjust="spacingAndGlyphs">
+            <tspan class="nome" data-l="calpurnio">C·CALPVRNIVS <tspan class="lac" data-r="[?]">[ … ]</tspan>NVS</tspan> · ET · <tspan class="nome" data-l="vibio">G·VIBIVS·QVINTI-</tspan>
+          </text>
+          <text x="200" y="239" textLength="300" lengthAdjust="spacingAndGlyphs">
+            <tspan class="nome" data-l="vibio">LIANVS</tspan> · ET · <tspan class="nome" data-l="atio">L·ATTI<tspan class="lac" data-r="VS [?]">[ … ]</tspan>S</tspan> · ET · <tspan class="nome" data-l="verrio">M·VERRIVS·CEMINVS</tspan>
+          </text>
+          <text x="200" y="266" textLength="300" lengthAdjust="spacingAndGlyphs">
+            SOL<tspan class="lac" data-r="VM">[ … ]</tspan> TESSELLAS <tspan class="lac" data-r="F·CVRA·R">[ … ]</tspan>VNT · ET · DONAR<tspan class="lac" data-r="VN">[ … ]</tspan>T
+          </text>
+        </g>
+
+        <!-- «Scanner» da câmara simulada -->
+        <rect id="scanner" x="8" y="176" width="384" height="4" rx="2"/>
+      </svg>
+    </figure>
+
+    <p id="legenda" aria-live="polite">Aponta a câmara à inscrição, à entrada da sala.</p>
+
+    <div class="controlos" id="controlos">
+      <button id="btn-apontar" class="principal">📷 Apontar à inscrição</button>
+    </div>
+
+    <details>
+      <summary>Dados de teste (analytics)</summary>
+      <p class="nota">Registo anónimo, guardado só neste aparelho, de qual liberto é escolhido. No projeto final servirá a investigação.</p>
+      <ul id="contagens"></ul>
+      <button id="btn-limpar" class="pequeno">Limpar dados</button>
+    </details>
+
+    <p class="nota">RA simulada; vozes sintéticas do telemóvel e silhuetas provisórias.</p>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
