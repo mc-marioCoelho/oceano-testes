@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teste 03 · Motor de RA</title>
+  <link rel="stylesheet" href="estilo.css">
+  <script src="medicao.js"></script>
+</head>
+<body>
+  <main class="pagina">
+    <p class="sub">Teste 03 · comparação de motores de realidade aumentada</p>
+    <h1>MINDAR · ZAPPAR</h1>
+    <p class="sub">Os mesmos alvos e o mesmo conteúdo nos dois motores. Escolhe o alvo e o motor, aponta e regista.</p>
+
+    <h2>1. Escolhe o alvo</h2>
+    <div class="alvos" id="alvos"></div>
+
+    <h2>2. Escolhe o motor</h2>
+    <div class="motores">
+      <a class="botao" id="ir-mindar" href="#">Testar com MindAR</a>
+      <a class="botao claro" id="ir-zappar" href="#">Testar com Zappar</a>
+    </div>
+
+    <h2>Como fazer o teste</h2>
+    <ol>
+      <li><strong>Abre esta página à entrada, com rede.</strong> Depois de carregada, a RA funciona dentro da sala sem rede.</li>
+      <li>Coloca-te onde o visitante fica (o passadiço). Aponta a câmara para o lado, carrega em <strong>Recomeçar</strong> e só então aponta ao alvo: o <em>1.º reconhecimento</em> mede quanto tempo demora.</li>
+      <li>Quando reconhecer, <strong>segura o telemóvel parado</strong> e carrega em <strong>Medir tremor (5 s)</strong>. Quanto mais baixo, mais estável.</li>
+      <li>Depois <strong>caminha devagar ao longo do passadiço durante cerca de 20 s</strong>, sempre a apontar. Ficam registadas as <em>perdas do alvo</em> e a <em>% de tempo reconhecido</em>.</li>
+      <li>Carrega em <strong>Guardar resultado</strong> e escreve uma nota (local, hora, luz).</li>
+      <li>Repete para o outro motor, os outros alvos e os outros telemóveis (Pixel 9a, iPhone, Android barato); de manhã e à tarde.</li>
+    </ol>
+    <p class="nota">O retângulo amarelo deve cobrir exatamente o alvo. Se ficar desalinhado, deslizar ou tremer, anota. No Zappar aparece a faixa da licença de teste: é normal neste domínio. As versões do A-Frame diferem (1.5 no MindAR, 1.6 no Zappar), pela compatibilidade de cada motor.</p>
+
+    <h2>Resultados guardados neste telemóvel</h2>
+    <div class="tabela"><table id="tabela"></table></div>
+    <p>
+      <button class="botao claro" id="copiar">Copiar resultados</button>
+      <button class="botao claro" id="limpar">Apagar resultados</button>
+    </p>
+    <p class="sub" id="aviso"></p>
+  </main>
+
+  <script>
+    const caixa = document.getElementById("alvos");
+    let escolhido = "inscricao";
+    try { escolhido = localStorage.getItem("oceano-teste03-alvo") || escolhido; } catch (e) {}
+    for (const [id, a] of Object.entries(ALVOS)) {
+      caixa.insertAdjacentHTML("beforeend",
+        '<label><input type="radio" name="alvo" value="' + id + '"' + (id === escolhido ? " checked" : "") + '>' +
+        '<img src="alvos/' + id + '.jpg" alt="">' + a.nome + '</label>');
+    }
+    function ligar() {
+      const alvo = document.querySelector('input[name="alvo"]:checked').value;
+      try { localStorage.setItem("oceano-teste03-alvo", alvo); } catch (e) {}
+      document.getElementById("ir-mindar").href = "mindar.html?alvo=" + alvo;
+      document.getElementById("ir-zappar").href = "zappar.html?alvo=" + alvo;
+    }
+    caixa.addEventListener("change", ligar); ligar();
+
+    const COLS = [["quando", "Quando"], ["motor", "Motor"], ["alvo", "Alvo"], ["aparelho", "Aparelho"], ["primeiro", "1.º rec. (s)"],
+                  ["perdas", "Perdas"], ["pctReconhecido", "% rec."], ["duracao", "Duração (s)"], ["tremor5s", "Tremor 5 s (px)"], ["tremor2s", "Tremor 2 s (px)"], ["nota", "Nota"]];
+    function desenhar() {
+      const lista = lerResultados();
+      const t = document.getElementById("tabela");
+      if (!lista.length) { t.innerHTML = "<tr><td>Ainda não há resultados.</td></tr>"; return; }
+      t.innerHTML = "<tr>" + COLS.map(c => "<th>" + c[1] + "</th>").join("") + "</tr>" +
+        lista.map(r => "<tr>" + COLS.map(c => "<td>" + (r[c[0]] === null || r[c[0]] === undefined ? "—" : String(r[c[0]]).replace(/</g, "&lt;")) + "</td>").join("") + "</tr>").join("");
+    }
+    desenhar();
+    document.getElementById("copiar").onclick = async () => {
+      const lista = lerResultados();
+      const txt = [COLS.map(c => c[1]).join("\t")].concat(lista.map(r => COLS.map(c => r[c[0]] ?? "").join("\t"))).join("\n");
+      try { await navigator.clipboard.writeText(txt); document.getElementById("aviso").textContent = "Copiado. Cola numa folha de cálculo ou envia por mensagem."; }
+      catch (e) { prompt("Copia este texto:", txt); }
+    };
+    document.getElementById("limpar").onclick = () => {
+      if (confirm("Apagar todos os resultados guardados neste telemóvel?")) { gravarResultados([]); desenhar(); }
+    };
+  </script>
+</body>
+</html>
