@@ -55,3 +55,15 @@ body.reconhecido .hud .estado { color: #6be09a; }
   :root:not([data-theme="light"]) .botao { color: #1d1a17; background: var(--tinta); }
   :root:not([data-theme="light"]) .botao.claro { background: transparent; color: var(--tinta); }
 }
+
+/* local escolhido, no painel de medição */
+.hud .local { color: #cfc6bb; font-size: .78rem; margin-top: 2px; }
+/* escolha do local e preparação offline na página inicial */
+.locais { display: grid; gap: 6px; }
+.locais label { background: var(--cartao); border: 2px solid transparent; border-radius: 10px; padding: 10px 12px; cursor: pointer; font-size: .92rem; }
+.locais label:has(input:checked) { border-color: var(--acento); }
+.locais input { margin-right: 8px; }
+.alvos .novo { display: inline-block; background: var(--acento); color: #fff; border-radius: 999px; font-size: .7rem; padding: 1px 7px; margin-left: 4px; }
+.estado-offline { font-size: .92rem; margin: 8px 0 0; }
+.novo-txt { background: var(--acento); color: #fff; border-radius: 999px; font-size: .75rem; padding: 1px 7px; }
+.mapa-pontos { display: block; max-width: 260px; width: 60%; margin: 0 auto; border-radius: 8px; }
