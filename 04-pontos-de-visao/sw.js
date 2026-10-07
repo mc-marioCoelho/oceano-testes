@@ -1,9 +1,9 @@
-// Teste 03 · service worker: guarda as páginas, os alvos e as bibliotecas no telemóvel,
+// Teste 04 · service worker: guarda as páginas, os alvos e as bibliotecas no telemóvel,
 // para o teste funcionar dentro da sala sem rede (e no Samsung sem cartão).
 // Páginas do teste: rede primeiro (para receber correções), cópia guardada se não houver rede.
 // Bibliotecas externas (endereços com versão fixa): cópia guardada primeiro.
 
-const CACHE = "oceano-teste03-v4";
+const CACHE = "oceano-teste04-v4";
 const ALVOS = ["mosaico", "inscricao", "painel-central", "vento-boreas", "vento-zefiro",
                "painel-persp-a", "painel-persp-b", "inscricao-persp", "tapete-persp"];
 const PROPRIOS = ["./", "index.html", "pontos-de-visao.svg", "mindar.html", "zappar.html", "estilo.css", "medicao.js"]
@@ -18,7 +18,7 @@ const EXTERNOS = [
 self.addEventListener("install", e => { self.skipWaiting(); });
 self.addEventListener("activate", e => {
   e.waitUntil(caches.keys()
-    .then(ks => Promise.all(ks.filter(k => k.startsWith("oceano-teste03-") && k !== CACHE).map(k => caches.delete(k))))
+    .then(ks => Promise.all(ks.filter(k => k.startsWith("oceano-teste04-") && k !== CACHE).map(k => caches.delete(k))))
     .then(() => self.clients.claim()));
 });
 

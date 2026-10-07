@@ -3,15 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Teste 03 · Zappar</title>
+  <title>Teste 04 · MindAR</title>
   <link rel="stylesheet" href="estilo.css">
-  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
-  <script src="https://libs.zappar.com/zappar-aframe/2.0.0/zappar-aframe.js"></script>
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
   <script src="medicao.js"></script>
 </head>
 <body>
   <div class="hud">
     <div class="topo"><span id="h-motor"></span><span class="aparelho" id="h-aparelho"></span></div>
+    <div class="local" id="h-local"></div>
     <div class="estado" id="h-estado">à procura…</div>
     <dl>
       <dt>1.º reconhecimento</dt><dd id="h-primeiro">—</dd>
@@ -29,23 +30,24 @@
   </div>
   <div id="cena"></div>
   <script>
-    // Zappar: o alvo mede 2 de altura (de -1 a 1); a largura segue a proporção da imagem
+    // MindAR: o alvo mede 1 de largura; a altura segue a proporção da imagem
     registarMedidor();
     const { alvo } = parametros();
-    const a = ALVOS[alvo], h = 2, w = 2 * a.aspeto, t = 0.012 * Math.max(w, h);
+    const a = ALVOS[alvo], w = 1, h = 1 / a.aspeto, t = 0.012 * Math.max(w, h);
     const borda = (x, y, bw, bh) => '<a-plane position="' + x + ' ' + y + ' 0.001" width="' + bw + '" height="' + bh + '" material="color:#ffd000; shader:flat"></a-plane>';
     document.getElementById("cena").innerHTML =
-      '<a-scene vr-mode-ui="enabled: false">' +
-      '<a-entity zappar-permissions-ui></a-entity><a-entity zappar-compatibility-ui></a-entity>' +
-      '<a-entity camera zappar-camera></a-entity>' +
-      '<a-entity id="ancora" zappar-image="target: alvos/' + alvo + '.zpt" medidor>' +
+      '<a-scene mindar-image="imageTargetSrc: alvos/' + alvo + '.mind; maxTrack: 1; uiScanning: no; uiLoading: yes; uiError: yes"' +
+      ' color-space="sRGB" renderer="colorManagement: true" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">' +
+      '<a-camera position="0 0 0" look-controls="enabled: false"></a-camera>' +
+      '<a-entity id="ancora" mindar-image-target="targetIndex: 0" medidor>' +
         '<a-plane width="' + w + '" height="' + h + '" material="color:#ffd000; opacity:0.3; transparent:true; shader:flat"></a-plane>' +
         borda(0, h / 2, w, t) + borda(0, -h / 2, w, t) + borda(-w / 2, 0, t, h) + borda(w / 2, 0, t, h) +
       '</a-entity></a-scene>';
     const ancora = document.getElementById("ancora");
-    ancora.addEventListener("zappar-visible", () => Medicao.encontrado());
-    ancora.addEventListener("zappar-notvisible", () => Medicao.perdido());
-    Medicao.iniciar("Zappar", alvo);
+    ancora.addEventListener("targetFound", () => Medicao.encontrado());
+    ancora.addEventListener("targetLost", () => Medicao.perdido());
+    document.querySelector("a-scene").addEventListener("arReady", () => Medicao.recomecar());
+    Medicao.iniciar("MindAR", alvo);
   </script>
 </body>
 </html>

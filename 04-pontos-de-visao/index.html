@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teste 04 · Motor de RA</title>
+  <link rel="stylesheet" href="estilo.css">
+  <script src="medicao.js"></script>
+</head>
+<body>
+  <main class="pagina">
+    <p class="sub">Teste 04 · pontos de visão e alvos em perspetiva (continuação do teste 03)</p>
+    <h1>MINDAR · ZAPPAR</h1>
+    <p class="sub">Os mesmos alvos e o mesmo conteúdo nos dois motores. Escolhe onde estás, o alvo e o motor, aponta e regista.</p>
+
+    <h2>0. Antes de entrar na sala (com rede)</h2>
+    <p><button class="botao" id="preparar">Preparar para usar sem rede</button></p>
+    <p class="estado-offline" id="estado-offline">Descarrega o teste todo para este telemóvel. Só é preciso uma vez (e outra vez se o teste mudar).</p>
+
+    <h2>1. Onde estás?</h2>
+    <p><img src="pontos-de-visao.svg" alt="Mapa dos pontos de visão P1 a P10 à volta do mosaico" class="mapa-pontos"></p>
+    <p class="sub">Ao escolher o ponto, o alvo sugerido fica escolhido (podes trocá-lo).</p>
+    <div class="locais" id="locais"></div>
+
+    <h2>2. Escolhe o alvo</h2>
+    <div class="alvos" id="alvos"></div>
+
+    <h2>3. Escolhe o motor</h2>
+    <div class="motores">
+      <a class="botao" id="ir-mindar" href="#">Testar com MindAR</a>
+      <a class="botao claro" id="ir-zappar" href="#">Testar com Zappar</a>
+    </div>
+
+    <h2>Como fazer o teste</h2>
+    <ol>
+      <li><strong>Prepara o telemóvel à entrada, com rede</strong> (passo 0). Depois disso, o teste funciona dentro da sala sem rede.</li>
+      <li><strong>Escolhe o ponto</strong> (passo 1) sempre que mudares de sítio: fica escrito em cada resultado e escolhe o alvo sugerido. Podes testar também outros alvos do mesmo ponto.</li>
+      <li>Aponta a câmara para o lado, carrega em <strong>Recomeçar</strong> e só então aponta ao alvo: o <em>1.º reconhecimento</em> mede quanto tempo demora.</li>
+      <li>Quando reconhecer, <strong>segura o telemóvel parado</strong> e carrega em <strong>Medir tremor (5 s)</strong>.</li>
+      <li>Depois <strong>mexe-te devagar cerca de 20 s</strong> como faria um visitante, sempre a apontar.</li>
+      <li>Carrega em <strong>Guardar resultado</strong>. A medição recomeça sozinha, pronta para a seguinte.</li>
+      <li>Se ao fim de 20 s não reconhecer, guarda na mesma: um «não reconheceu» também é um resultado.</li>
+    </ol>
+    <p class="nota">O retângulo amarelo deve cobrir exatamente o alvo. Se ficar desalinhado, deslizar ou tremer, escreve-o na nota. Os alvos marcados <span class="novo-txt">novo</span> foram recortados das tuas fotografias de 6 out., tiradas do passadiço; os outros vêm da fotografia vertical. O Zappar só funciona depois de publicado na ZapWorks: neste endereço fica sem licença.</p>
+
+    <h2>Resultados guardados neste telemóvel</h2>
+    <div class="tabela"><table id="tabela"></table></div>
+    <p class="motores">
+      <button class="botao" id="partilhar">Partilhar resultados</button>
+      <button class="botao claro" id="copiar">Copiar</button>
+      <button class="botao claro" id="limpar">Apagar resultados</button>
+    </p>
+    <p class="sub" id="aviso"></p>
+  </main>
+
+  <script>
+    // 1. local
+    const caixaLocais = document.getElementById("locais");
+    const localAtual = lerLocal();
+    for (const [id, l] of Object.entries(LOCAIS)) {
+      caixaLocais.insertAdjacentHTML("beforeend",
+        '<label><input type="radio" name="local" value="' + id + '"' + (id === localAtual ? " checked" : "") + '>' + l.nome + '</label>');
+    }
+    caixaLocais.addEventListener("change", () => {
+      const id = document.querySelector('input[name="local"]:checked').value;
+      try { localStorage.setItem(CHAVE_LOCAL, id); } catch (e) {}
+      const sugerido = LOCAIS[id].alvo;
+      if (sugerido) { document.querySelector('input[name="alvo"][value="' + sugerido + '"]').checked = true; ligar(); }
+    });
+
+    // 2. alvo
+    const caixa = document.getElementById("alvos");
+    let escolhido = "inscricao";
+    try { escolhido = localStorage.getItem("oceano-teste04-alvo") || escolhido; } catch (e) {}
+    if (!ALVOS[escolhido]) escolhido = "inscricao";
+    for (const [id, a] of Object.entries(ALVOS)) {
+      caixa.insertAdjacentHTML("beforeend",
+        '<label><input type="radio" name="alvo" value="' + id + '"' + (id === escolhido ? " checked" : "") + '>' +
+        '<img src="alvos/' + id + '.jpg" alt="">' + a.nome + (a.novo ? '<span class="novo">novo</span>' : '') + '</label>');
+    }
+    function ligar() {
+      const alvo = document.querySelector('input[name="alvo"]:checked').value;
+      try { localStorage.setItem("oceano-teste04-alvo", alvo); } catch (e) {}
+      document.getElementById("ir-mindar").href = "mindar.html?alvo=" + alvo;
+      document.getElementById("ir-zappar").href = "zappar.html?alvo=" + alvo;
+    }
+    caixa.addEventListener("change", ligar); ligar();
+
+    // sem local escolhido não se entra na RA
+    for (const id of ["ir-mindar", "ir-zappar"]) {
+      document.getElementById(id).addEventListener("click", ev => {
+        if (!lerLocal()) { ev.preventDefault(); alert("Escolhe primeiro onde estás (passo 1)."); caixaLocais.scrollIntoView({ behavior: "smooth" }); }
+      });
+    }
+
+    // 0. preparar sem rede
+    const estado = document.getElementById("estado-offline");
+    document.getElementById("preparar").onclick = async () => {
+      if (!("serviceWorker" in navigator)) { estado.textContent = "Este navegador não permite guardar o teste. Usa o Chrome."; return; }
+      estado.textContent = "A preparar…";
+      const reg = await navigator.serviceWorker.ready;
+      navigator.serviceWorker.onmessage = e => {
+        if (e.data.tipo === "progresso") estado.textContent = "A descarregar " + e.data.feitos + " de " + e.data.total + "…";
+        if (e.data.tipo === "fim") estado.textContent = e.data.falhas.length
+          ? "Faltaram " + e.data.falhas.length + " ficheiros. Tenta outra vez com melhor rede."
+          : "✓ Pronto. O teste funciona sem rede neste telemóvel.";
+      };
+      reg.active.postMessage({ tipo: "preparar" });
+    };
+
+    // resultados
+    const COLS = [["quando", "Quando"], ["motor", "Motor"], ["alvo", "Alvo"], ["local", "Local"], ["aparelho", "Aparelho"], ["primeiro", "1.º rec. (s)"],
+                  ["perdas", "Perdas"], ["pctReconhecido", "% rec."], ["duracao", "Duração (s)"], ["tremor5s", "Tremor 5 s (px)"], ["tremor2s", "Tremor 2 s (px)"], ["nota", "Nota"]];
+    function desenhar() {
+      const lista = lerResultados();
+      const t = document.getElementById("tabela");
+      if (!lista.length) { t.innerHTML = "<tr><td>Ainda não há resultados.</td></tr>"; return; }
+      t.innerHTML = "<tr>" + COLS.map(c => "<th>" + c[1] + "</th>").join("") + "</tr>" +
+        lista.map(r => "<tr>" + COLS.map(c => "<td>" + (r[c[0]] === null || r[c[0]] === undefined ? "—" : String(r[c[0]]).replace(/</g, "&lt;")) + "</td>").join("") + "</tr>").join("");
+    }
+    desenhar();
+    function texto() {
+      const lista = lerResultados();
+      return [COLS.map(c => c[1]).join("\t")].concat(lista.map(r => COLS.map(c => r[c[0]] ?? "").join("\t"))).join("\n");
+    }
+    const aviso = document.getElementById("aviso");
+    document.getElementById("partilhar").onclick = async () => {
+      if (!lerResultados().length) { aviso.textContent = "Ainda não há resultados."; return; }
+      if (navigator.share) {
+        try { await navigator.share({ title: "Teste 04 · resultados", text: texto() }); } catch (e) { /* cancelado */ }
+      } else document.getElementById("copiar").click();
+    };
+    document.getElementById("copiar").onclick = async () => {
+      try { await navigator.clipboard.writeText(texto()); aviso.textContent = "Copiado. Cola numa folha de cálculo ou numa mensagem."; }
+      catch (e) { prompt("Copia este texto:", texto()); }
+    };
+    document.getElementById("limpar").onclick = () => {
+      if (confirm("Apagar todos os resultados guardados neste telemóvel? Partilha-os antes.")) { gravarResultados([]); desenhar(); }
+    };
+  </script>
+</body>
+</html>
