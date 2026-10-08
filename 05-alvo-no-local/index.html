@@ -26,7 +26,7 @@
     <p><label class="botao" for="foto">Tirar fotografia</label>
        <input type="file" id="foto" accept="image/*" capture="environment" hidden></p>
     <div id="recorte" hidden>
-      <p class="sub">Arrasta o dedo sobre a fotografia para recortar só a parte do mosaico que interessa (sem passadiço nem corrimão).</p>
+      <p class="sub">Arrasta o dedo sobre a fotografia para recortar só a parte do mosaico que interessa (sem passadiço nem corrimão). Da mesma fotografia podes criar vários alvos: depois de criar um, recorta outra parte e carrega outra vez em «Criar alvo» (por exemplo, o mosaico inteiro e só a inscrição).</p>
       <canvas id="tela" class="tela-recorte"></canvas>
       <p class="motores">
         <button class="botao" id="criar">Criar alvo</button>
@@ -64,6 +64,7 @@
     <div class="tabela"><table id="tabela"></table></div>
     <p class="motores">
       <button class="botao" id="partilhar">Partilhar resultados</button>
+      <button class="botao" id="partilhar-fotos">Partilhar resultados e fotografias</button>
       <button class="botao claro" id="copiar">Copiar</button>
       <button class="botao claro" id="limpar">Apagar resultados</button>
     </p>
@@ -98,10 +99,12 @@
     const tela = document.getElementById("tela"), ctx = tela.getContext("2d");
     const estadoCriar = document.getElementById("estado-criar");
     let foto = null, escala = 1, sel = null, inicio = null;
+    let fotoOriginal = null, fotoId = null; // a fotografia inteira, na resolução da câmara, para treinar alvos no PC
 
     document.getElementById("foto").addEventListener("change", async ev => {
       const f = ev.target.files[0];
       if (!f) return;
+      fotoOriginal = f; fotoId = String(Date.now());
       foto = await createImageBitmap(f); // o Chrome endireita a fotografia segundo a orientação gravada
       document.getElementById("recorte").hidden = false; // primeiro mostrar, para se saber a largura disponível
       escala = Math.min(1, tela.parentElement.clientWidth / foto.width);
@@ -189,6 +192,7 @@
           id: local + "-" + agora.getTime(), criado: agora.getTime(),
           nome: (local.startsWith("parede") ? "Parede" : local.replace("-esq", " esq.").replace("-dir", " dir.")) + " · foto " + hora,
           local, jpg, largura, altura, mind: null, zpt: null, tMind: null, tZpt: null, erros: [],
+          original: fotoOriginal, fotoId, recorte: r ? [r.x, r.y, r.w, r.h].map(v => Math.round(v / escala)) : null,
         };
         let t0 = performance.now();
         estadoCriar.textContent = "MindAR: a criar o alvo…";
@@ -301,10 +305,33 @@
     // o texto partilhado leva também a lista de alvos, com o tempo que cada motor levou a criá-los
     function texto() {
       const res = [COLS.map(c => c[1]).join("\t")].concat(lerResultados().map(r => COLS.map(c => r[c[0]] ?? "").join("\t")));
-      const alv = ["", "Alvo\tFotografado em\tLargura × altura (px)\tCriação MindAR (s)\tCriação Zappar (s)\tErros"]
-        .concat(lista.map(a => [a.nome, nomeLocal(a.local), a.largura + " × " + a.altura, a.tMind ?? "falhou", a.tZpt ?? "falhou", (a.erros || []).join(" · ")].join("\t")));
+      const alv = ["", "Alvo\tFotografado em\tLargura × altura (px)\tCriação MindAR (s)\tCriação Zappar (s)\tFotografia original\tRecorte na original (x, y, largura, altura)\tErros"]
+        .concat(lista.map(a => [a.nome, nomeLocal(a.local), a.largura + " × " + a.altura, a.tMind ?? "falhou", a.tZpt ?? "falhou",
+          a.fotoId ? "foto-" + a.fotoId + ".jpg" : "", a.recorte ? a.recorte.join(", ") : "inteira", (a.erros || []).join(" · ")].join("\t")));
       return res.concat(alv).join("\n");
     }
+
+    // as fotografias para treinar alvos no PC: cada original uma vez (várias recortes podem vir da mesma) e cada recorte
+    function ficheirosFotos() {
+      const fich = [], vistos = new Set();
+      for (const a of lista) {
+        if (a.original && !vistos.has(a.fotoId)) { vistos.add(a.fotoId); fich.push(new File([a.original], "foto-" + a.fotoId + ".jpg", { type: "image/jpeg" })); }
+        fich.push(new File([a.jpg], "recorte-" + a.id.toLowerCase() + ".jpg", { type: "image/jpeg" }));
+      }
+      return fich;
+    }
+    document.getElementById("partilhar-fotos").onclick = async () => {
+      const fich = ficheirosFotos();
+      if (!fich.length) { aviso.textContent = "Ainda não há fotografias."; return; }
+      if (navigator.canShare && navigator.canShare({ files: fich, text: "x" })) {
+        try { await navigator.share({ title: "Teste 05 · resultados e fotografias", text: texto(), files: fich }); return; }
+        catch (e) { if (e.name === "AbortError") return; }
+      }
+      // sem partilha de ficheiros: copia o texto e descarrega as fotografias
+      try { await navigator.clipboard.writeText(texto()); } catch (e) {}
+      for (const f of fich) { const l = document.createElement("a"); l.href = URL.createObjectURL(f); l.download = f.name; l.click(); }
+      aviso.textContent = "Texto copiado e fotografias descarregadas (pasta Transferências).";
+    };
     const aviso = document.getElementById("aviso");
     document.getElementById("partilhar").onclick = async () => {
       if (!lerResultados().length && !lista.length) { aviso.textContent = "Ainda não há resultados."; return; }

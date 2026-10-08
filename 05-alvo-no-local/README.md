@@ -11,7 +11,8 @@ Continuação do [teste 04](../04-pontos-de-visao/) ([resultados de 8 out.](../0
 3. **«Criar alvo»** faz, a partir da **mesma imagem**, os dois alvos: MindAR (`.mind`, compilador 1.2.5) e Zappar (`.zpt`, imagetraining 4.3.2). A imagem é reduzida a 1024 px no lado maior. Fica registado quanto tempo cada motor levou.
 4. O alvo fica guardado **neste telemóvel** (IndexedDB) e testa-se com MindAR ou Zappar, com as mesmas medições do teste 04.
 5. **«Enviar ficheiros do alvo»** partilha a fotografia e os dois alvos, para se juntarem ao site.
-6. Os resultados registam onde o alvo foi **fotografado** e onde foi **testado**, para se saber se um alvo serve também nos pontos vizinhos.
+6. **«Partilhar resultados e fotografias»** envia, numa só partilha, o texto dos resultados, a **fotografia original** (na resolução da câmara, cada uma só uma vez) e os **recortes**. O texto diz de que fotografia saiu cada alvo e onde foi feito o recorte. Assim os alvos podem ser treinados de novo no PC. Da mesma fotografia podem sair vários alvos (por exemplo, o mosaico inteiro e só a inscrição, a partir de P1).
+7. Os resultados registam onde o alvo foi **fotografado** e onde foi **testado**, para se saber se um alvo serve também nos pontos vizinhos.
 
 ## Verificado no computador (8 out.)
 
