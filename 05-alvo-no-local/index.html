@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="pt">
 <head>
   <meta charset="utf-8">
@@ -32,6 +32,7 @@
         <button class="botao" id="criar">Criar alvo</button>
         <button class="botao claro" id="inteira">Usar a fotografia inteira</button>
       </p>
+      <p class="sub"><label><input type="checkbox" id="com-zappar"> Criar também o alvo Zappar (mais ~20 s; só serve na versão publicada na ZapWorks)</label></p>
       <p class="estado-offline" id="estado-criar"></p>
     </div>
 
@@ -198,14 +199,17 @@
         estadoCriar.textContent = "MindAR: a criar o alvo…";
         try { alvo.mind = await criarMindAR(jpg); alvo.tMind = segundos(t0); }
         catch (e) { alvo.erros.push("MindAR: " + e.message); }
-        t0 = performance.now();
-        estadoCriar.textContent = "Zappar: a criar o alvo…";
-        try { alvo.zpt = await criarZappar(jpg); alvo.tZpt = segundos(t0); }
-        catch (e) { alvo.erros.push("Zappar: " + e.message); }
+        // o Zappar fica para depois: por omissão só se cria o alvo MindAR (a fotografia fica guardada para o Zappar)
+        if (document.getElementById("com-zappar").checked) {
+          t0 = performance.now();
+          estadoCriar.textContent = "Zappar: a criar o alvo…";
+          try { alvo.zpt = await criarZappar(jpg); alvo.tZpt = segundos(t0); }
+          catch (e) { alvo.erros.push("Zappar: " + e.message); }
+        }
         if (!alvo.mind && !alvo.zpt) throw new Error(alvo.erros.join(" · "));
         await Alvos.gravar(alvo);
         estadoCriar.textContent = "✓ Alvo criado: MindAR " + (alvo.mind ? alvo.tMind + " s" : "falhou") +
-          " · Zappar " + (alvo.zpt ? alvo.tZpt + " s" : "falhou") + (alvo.erros.length ? " (" + alvo.erros.join(" · ") + ")" : "");
+          (alvo.zpt ? " · Zappar " + alvo.tZpt + " s" : document.getElementById("com-zappar").checked ? " · Zappar falhou" : "") + (alvo.erros.length ? " (" + alvo.erros.join(" · ") + ")" : "");
         await mostrarAlvos(alvo.id);
         document.getElementById("alvos").scrollIntoView({ behavior: "smooth" });
       } catch (e) {
@@ -228,7 +232,7 @@
         const u = URL.createObjectURL(a.jpg); urlsMiniaturas.push(u);
         return '<label><input type="radio" name="alvo" value="' + a.id + '"' + (a.id === atual ? " checked" : "") + '>' +
           '<img src="' + u + '" alt="">' + a.nome +
-          '<small>MindAR ' + (a.mind ? a.tMind + " s" : "✗") + ' · Zappar ' + (a.zpt ? a.tZpt + " s" : "✗") + '</small></label>';
+          '<small>MindAR ' + (a.mind ? a.tMind + " s" : "✗") + ' · Zappar ' + (a.zpt ? a.tZpt + " s" : "—") + '</small></label>';
       }).join("");
       document.getElementById("sem-alvos").hidden = lista.length > 0;
       document.getElementById("acoes-alvo").hidden = lista.length === 0;
@@ -306,7 +310,7 @@
     function texto() {
       const res = [COLS.map(c => c[1]).join("\t")].concat(lerResultados().map(r => COLS.map(c => r[c[0]] ?? "").join("\t")));
       const alv = ["", "Alvo\tFotografado em\tLargura × altura (px)\tCriação MindAR (s)\tCriação Zappar (s)\tFotografia original\tRecorte na original (x, y, largura, altura)\tErros"]
-        .concat(lista.map(a => [a.nome, nomeLocal(a.local), a.largura + " × " + a.altura, a.tMind ?? "falhou", a.tZpt ?? "falhou",
+        .concat(lista.map(a => [a.nome, nomeLocal(a.local), a.largura + " × " + a.altura, a.tMind ?? "falhou", a.tZpt ?? "—",
           a.fotoId ? "foto-" + a.fotoId + ".jpg" : "", a.recorte ? a.recorte.join(", ") : "inteira", (a.erros || []).join(" · ")].join("\t")));
       return res.concat(alv).join("\n");
     }
