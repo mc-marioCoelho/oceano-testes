@@ -9,8 +9,6 @@
   <script src="https://libs.zappar.com/zappar-aframe/2.0.0/zappar-aframe.js"></script>
   <script src="alvos.js"></script>
   <script src="medicao.js"></script>
-  <!-- fora dos domínios licenciados, o Zappar mostra uma faixa em baixo: os botões sobem para não ficarem tapados -->
-  <style>.barra { bottom: 130px; }</style>
 </head>
 <body>
   <div class="hud">
@@ -53,13 +51,6 @@
       ancora.addEventListener("zappar-visible", () => Medicao.encontrado());
       ancora.addEventListener("zappar-notvisible", () => Medicao.perdido());
       Medicao.iniciar("Zappar", a);
-      // O Zappar pede um toque em «GRANT ACCESS» antes de ligar a câmara; o MindAR não.
-      // Para os tempos serem comparáveis, o cronómetro recomeça nesse primeiro toque (fora dos nossos botões).
-      document.addEventListener("click", function primeiroToque(e) {
-        if (e.target.closest(".barra, .hud")) return;
-        document.removeEventListener("click", primeiroToque, true);
-        Medicao.recomecar();
-      }, true);
     })();
   </script>
 </body>
