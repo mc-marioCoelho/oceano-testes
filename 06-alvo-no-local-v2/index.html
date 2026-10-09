@@ -72,6 +72,18 @@
       <button class="botao claro" id="limpar">Apagar resultados</button>
     </p>
     <p class="sub" id="aviso"></p>
+
+    <h2>Fim da sessão: enviar tudo para o PC (via GitHub)</h2>
+    <p class="sub">Envia resultados, recortes, alvos MindAR/Zappar e (se quiseres) as fotografias originais para o repositório privado <strong>oceano-dados</strong>. No PC, o Claude copia tudo para as pastas locais e esvazia o repositório. Liga os dados móveis ou o Wi-Fi antes de enviar. Só vai o que ainda não foi enviado deste telemóvel.</p>
+    <p class="sub"><label><input type="checkbox" id="gh-originais" checked> Incluir as fotografias originais (cerca de 4 MB cada)</label></p>
+    <p><button class="botao" id="gh-enviar">Enviar tudo para o GitHub</button></p>
+    <p class="estado-offline" id="gh-estado"></p>
+    <details class="sub" id="gh-config">
+      <summary>Chave de acesso do GitHub (só na primeira vez)</summary>
+      <p>Cola aqui a chave criada no GitHub só para o repositório oceano-dados. Fica guardada apenas neste telemóvel.</p>
+      <p><input type="password" id="gh-chave" autocomplete="off" placeholder="github_pat_…" style="width:100%;font-size:1rem;padding:8px"></p>
+      <p class="motores"><button class="botao claro" id="gh-guardar">Guardar a chave</button><button class="botao claro" id="gh-esquecer">Esquecer a chave</button></p>
+    </details>
   </main>
 
   <script>
@@ -373,6 +385,96 @@
     };
     document.getElementById("limpar").onclick = () => {
       if (confirm("Apagar todos os resultados guardados neste telemóvel? Partilha-os antes. (Os alvos ficam.)")) { gravarResultados([]); desenhar(); }
+    };
+
+    // ---- Envio para o GitHub (repositório privado oceano-dados, só de passagem) ----
+    // Usa a API do GitHub: cria os ficheiros («blobs»), junta-os numa pasta («tree») e faz um commit.
+    // A chave fica só neste navegador (localStorage). Os caminhos já enviados ficam registados, para não repetir.
+    const GH_REPO = "mc-mariocoelho/oceano-dados", GH_API = "https://api.github.com/repos/" + GH_REPO;
+    const GH_CHAVE = "oceano-teste06-gh-chave", GH_ENVIADOS = "oceano-teste06-gh-enviados";
+    const ghEstado = document.getElementById("gh-estado");
+    const lerLS = (k, d) => { try { return localStorage.getItem(k) ?? d; } catch (e) { return d; } };
+    const gravarLS = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+    if (lerLS(GH_CHAVE, "")) document.getElementById("gh-chave").placeholder = "chave guardada ✓";
+    else document.getElementById("gh-config").open = true;
+    document.getElementById("gh-guardar").onclick = () => {
+      const v = document.getElementById("gh-chave").value.trim();
+      if (!v) return;
+      gravarLS(GH_CHAVE, v); document.getElementById("gh-chave").value = "";
+      document.getElementById("gh-chave").placeholder = "chave guardada ✓";
+      confirmar(document.getElementById("gh-guardar"), "Guardada");
+    };
+    document.getElementById("gh-esquecer").onclick = () => {
+      try { localStorage.removeItem(GH_CHAVE); } catch (e) {}
+      document.getElementById("gh-chave").placeholder = "github_pat_…";
+      confirmar(document.getElementById("gh-esquecer"), "Esquecida");
+    };
+
+    async function gh(caminho, metodo, corpo) {
+      const r = await fetch(GH_API + caminho, {
+        method: metodo || "GET",
+        headers: { "Authorization": "Bearer " + lerLS(GH_CHAVE, ""), "Accept": "application/vnd.github+json" },
+        body: corpo ? JSON.stringify(corpo) : undefined,
+      });
+      if (!r.ok) {
+        const msg = r.status === 401 ? "a chave não é válida ou expirou"
+          : r.status === 403 || r.status === 404 ? "a chave não dá acesso ao repositório oceano-dados"
+          : r.status === 409 ? "o repositório está vazio (cria-o com um README)" : "erro " + r.status;
+        throw new Error(msg);
+      }
+      return r.json();
+    }
+    const base64 = blob => new Promise((ok, erro) => {
+      const fr = new FileReader(); fr.onload = () => ok(fr.result.split(",")[1]); fr.onerror = () => erro(fr.error); fr.readAsDataURL(blob);
+    });
+
+    document.getElementById("gh-enviar").onclick = async () => {
+      const b = document.getElementById("gh-enviar");
+      if (!lerLS(GH_CHAVE, "")) { document.getElementById("gh-config").open = true; ghEstado.textContent = "Falta a chave de acesso (abre a secção abaixo)."; return; }
+      if (!navigator.onLine) { ghEstado.textContent = "Sem rede. Liga os dados ou o Wi-Fi; os dados continuam guardados neste telemóvel."; return; }
+      b.disabled = true;
+      try {
+        const enviados = new Set(JSON.parse(lerLS(GH_ENVIADOS, "[]")));
+        const agora = new Date(), carimbo = agora.toISOString().slice(0, 16).replace(/[:T]/g, "-");
+        const sessao = "envios/" + carimbo + "-" + aparelho().replace(/[^\w]+/g, "-").toLowerCase();
+        // ficheiros a enviar: [caminho, Blob]
+        const fich = [
+          [sessao + "/resultados.txt", new Blob([texto()], { type: "text/plain" })],
+          [sessao + "/resultados.json", new Blob([JSON.stringify({ enviado: agora.toISOString(), aparelho: aparelho(), resultados: lerResultados(),
+            alvos: lista.map(a => ({ id: a.id, nome: a.nome, local: a.local, largura: a.largura, altura: a.altura, tMind: a.tMind, tZpt: a.tZpt, fotoId: a.fotoId, recorte: a.recorte, erros: a.erros })) }, null, 1)], { type: "application/json" })],
+        ];
+        const comOriginais = document.getElementById("gh-originais").checked, fotosVistas = new Set();
+        for (const a of lista) {
+          const pasta = "alvos/" + a.id.toLowerCase();
+          if (a.jpg) fich.push([pasta + "/recorte.jpg", a.jpg]);
+          if (a.mind) fich.push([pasta + "/alvo.mind", new Blob([a.mind])]);
+          if (a.zpt) fich.push([pasta + "/alvo.zpt", new Blob([a.zpt])]);
+          if (comOriginais && a.original && a.fotoId && !fotosVistas.has(a.fotoId)) { fotosVistas.add(a.fotoId); fich.push(["originais/foto-" + a.fotoId + ".jpg", a.original]); }
+        }
+        // os resultados vão sempre (são pequenos); o resto só se ainda não foi enviado
+        const novos = fich.filter(([c], i) => i < 2 || !enviados.has(c));
+        const ref = await gh("/git/ref/heads/main");
+        const commitBase = await gh("/git/commits/" + ref.object.sha);
+        const arvore = [];
+        let feitos = 0;
+        for (const [caminho, blob] of novos) {
+          ghEstado.textContent = "A enviar " + (++feitos) + " de " + novos.length + "… (" + caminho.split("/").pop() + ")";
+          const bl = await gh("/git/blobs", "POST", { content: await base64(blob), encoding: "base64" });
+          arvore.push({ path: caminho, mode: "100644", type: "blob", sha: bl.sha });
+        }
+        ghEstado.textContent = "A registar o envio…";
+        const tree = await gh("/git/trees", "POST", { base_tree: commitBase.tree.sha, tree: arvore });
+        const commit = await gh("/git/commits", "POST", { message: "Teste 06 · envio " + carimbo + " (" + aparelho() + ")", tree: tree.sha, parents: [ref.object.sha] });
+        await gh("/git/refs/heads/main", "PATCH", { sha: commit.sha });
+        novos.forEach(([c]) => enviados.add(c));
+        gravarLS(GH_ENVIADOS, JSON.stringify([...enviados]));
+        const mb = novos.reduce((t, [, bl]) => t + bl.size, 0) / 1e6;
+        ghEstado.textContent = "✓ Enviados " + novos.length + " ficheiros (" + mb.toFixed(1).replace(".", ",") + " MB). No PC, pede ao Claude para sincronizar o oceano-dados.";
+        b.disabled = false; confirmar(b, "Enviado");
+      } catch (e) {
+        ghEstado.textContent = "Não foi possível enviar: " + e.message + ". Os dados continuam guardados neste telemóvel.";
+        b.disabled = false;
+      }
     };
   </script>
 </body>

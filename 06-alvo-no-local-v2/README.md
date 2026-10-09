@@ -13,3 +13,11 @@ Continuação do [teste 05](../05-alvo-no-local/), que fica como estava. Funcion
 ## Limites
 
 Os mesmos do teste 05: ecrã ligado enquanto cria o alvo; medir no sítio da fotografia é o melhor caso possível; falta testar dos pontos vizinhos, a outra hora e noutros telemóveis.
+
+## Envio para o PC no fim da sessão (via GitHub)
+
+Botão **«Enviar tudo para o GitHub»** (no fim da página): envia resultados, recortes, alvos `.mind`/`.zpt` e, se a opção estiver ligada, as fotografias originais para o repositório **privado** `oceano-dados`, que serve só de passagem. Só envia o que ainda não foi enviado deste telemóvel (os resultados vão sempre).
+
+- A chave de acesso (*fine-grained token*, só para o `oceano-dados`, só «Contents: read and write», com prazo) é criada pelo Mário no GitHub e colada uma vez na página; fica só no navegador do telemóvel. Nunca vai para o código.
+- No PC, o Claude faz `git pull` do `oceano-dados`, copia as fotografias e os alvos para `media-local` e os resultados para `resultados/`, e repõe o `oceano-dados` vazio (só o README, histórico descartado), para não acumular peso.
+- Estrutura: `envios/<data>-<aparelho>/resultados.txt|json`, `alvos/<id>/recorte.jpg|alvo.mind|alvo.zpt`, `originais/foto-<id>.jpg`.
