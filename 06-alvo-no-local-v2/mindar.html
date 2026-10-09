@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teste 06 · MindAR</title>
+  <link rel="stylesheet" href="estilo.css">
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+  <script src="alvos.js"></script>
+  <script src="medicao.js"></script>
+</head>
+<body>
+  <div class="hud">
+    <div class="topo"><span id="h-motor"></span><span class="aparelho" id="h-aparelho"></span></div>
+    <div class="local" id="h-local"></div>
+    <div class="estado" id="h-estado">à procura…</div>
+    <dl>
+      <dt>1.º reconhecimento</dt><dd id="h-primeiro">—</dd>
+      <dt>Perdas do alvo</dt><dd id="h-perdas">0</dd>
+      <dt>Tempo reconhecido</dt><dd id="h-pct">—</dd>
+      <dt>Tremor (últimos 2 s)</dt><dd id="h-tremor">—</dd>
+      <dt>Tremor (medição 5 s)</dt><dd id="h-tremor5">—</dd>
+    </dl>
+  </div>
+  <div class="barra">
+    <button id="b-recomecar">Recomeçar</button>
+    <button id="b-tremor">Medir tremor (5 s)</button>
+    <button id="b-guardar">Guardar resultado</button>
+    <a href="./">Voltar</a>
+  </div>
+  <div id="cena"></div>
+  <script>
+    // MindAR: o alvo mede 1 de largura; a altura segue a proporção da fotografia
+    registarMedidor();
+    (async () => {
+      const id = new URLSearchParams(location.search).get("alvo");
+      const a = id && await Alvos.ler(id);
+      if (!a || !a.mind) { alert("Este alvo não existe neste telemóvel ou não tem versão MindAR. Volta e cria-o."); location.href = "./"; return; }
+      const w = 1, h = a.altura / a.largura, t = 0.012 * Math.max(w, h);
+      const borda = (x, y, bw, bh) => '<a-plane position="' + x + ' ' + y + ' 0.001" width="' + bw + '" height="' + bh + '" material="color:#ffd000; shader:flat"></a-plane>';
+      document.getElementById("cena").innerHTML =
+        '<a-scene mindar-image="imageTargetSrc: ' + urlDe(a.mind) + '; maxTrack: 1; uiScanning: no; uiLoading: yes; uiError: yes"' +
+        ' color-space="sRGB" renderer="colorManagement: true" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">' +
+        '<a-camera position="0 0 0" look-controls="enabled: false"></a-camera>' +
+        '<a-entity id="ancora" mindar-image-target="targetIndex: 0" medidor>' +
+          '<a-plane width="' + w + '" height="' + h + '" material="color:#ffd000; opacity:0.3; transparent:true; shader:flat"></a-plane>' +
+          borda(0, h / 2, w, t) + borda(0, -h / 2, w, t) + borda(-w / 2, 0, t, h) + borda(w / 2, 0, t, h) +
+        '</a-entity></a-scene>';
+      const ancora = document.getElementById("ancora");
+      ancora.addEventListener("targetFound", () => Medicao.encontrado());
+      ancora.addEventListener("targetLost", () => Medicao.perdido());
+      document.querySelector("a-scene").addEventListener("arReady", () => Medicao.recomecar());
+      Medicao.iniciar("MindAR", a);
+    })();
+  </script>
+</body>
+</html>
