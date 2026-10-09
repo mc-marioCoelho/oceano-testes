@@ -74,13 +74,13 @@
     <p class="sub" id="aviso"></p>
 
     <h2>Fim da sessão: enviar tudo para o PC (via GitHub)</h2>
-    <p class="sub">Envia resultados, recortes, alvos MindAR/Zappar e (se quiseres) as fotografias originais para o repositório privado <strong>oceano-dados</strong>. No PC, o Claude copia tudo para as pastas locais e esvazia o repositório. Liga os dados móveis ou o Wi-Fi antes de enviar. Só vai o que ainda não foi enviado deste telemóvel.</p>
+    <p class="sub">Envia resultados, recortes, alvos MindAR/Zappar e (se quiseres) as fotografias originais para o repositório privado <strong>oceano-dados-testes</strong>. No PC, o Claude copia tudo para as pastas locais e esvazia o repositório. Liga os dados móveis ou o Wi-Fi antes de enviar. Só vai o que ainda não foi enviado deste telemóvel.</p>
     <p class="sub"><label><input type="checkbox" id="gh-originais" checked> Incluir as fotografias originais (cerca de 4 MB cada)</label></p>
     <p><button class="botao" id="gh-enviar">Enviar tudo para o GitHub</button></p>
     <p class="estado-offline" id="gh-estado"></p>
     <details class="sub" id="gh-config">
       <summary>Chave de acesso do GitHub (só na primeira vez)</summary>
-      <p>Cola aqui a chave criada no GitHub só para o repositório oceano-dados. Fica guardada apenas neste telemóvel.</p>
+      <p>Cola aqui a chave criada no GitHub só para o repositório oceano-dados-testes. Fica guardada apenas neste telemóvel.</p>
       <p><input type="password" id="gh-chave" autocomplete="off" placeholder="github_pat_…" style="width:100%;font-size:1rem;padding:8px"></p>
       <p class="motores"><button class="botao claro" id="gh-guardar">Guardar a chave</button><button class="botao claro" id="gh-esquecer">Esquecer a chave</button></p>
     </details>
@@ -390,7 +390,7 @@
     // ---- Envio para o GitHub (repositório privado oceano-dados, só de passagem) ----
     // Usa a API do GitHub: cria os ficheiros («blobs»), junta-os numa pasta («tree») e faz um commit.
     // A chave fica só neste navegador (localStorage). Os caminhos já enviados ficam registados, para não repetir.
-    const GH_REPO = "mc-mariocoelho/oceano-dados", GH_API = "https://api.github.com/repos/" + GH_REPO;
+    const GH_REPO = "mc-mariocoelho/oceano-dados-testes", GH_API = "https://api.github.com/repos/" + GH_REPO;
     const GH_CHAVE = "oceano-teste06-gh-chave", GH_ENVIADOS = "oceano-teste06-gh-enviados";
     const ghEstado = document.getElementById("gh-estado");
     const lerLS = (k, d) => { try { return localStorage.getItem(k) ?? d; } catch (e) { return d; } };
@@ -418,7 +418,7 @@
       });
       if (!r.ok) {
         const msg = r.status === 401 ? "a chave não é válida ou expirou"
-          : r.status === 403 || r.status === 404 ? "a chave não dá acesso ao repositório oceano-dados"
+          : r.status === 403 || r.status === 404 ? "a chave não dá acesso ao repositório oceano-dados-testes"
           : r.status === 409 ? "o repositório está vazio (cria-o com um README)" : "erro " + r.status;
         throw new Error(msg);
       }
@@ -469,7 +469,7 @@
         novos.forEach(([c]) => enviados.add(c));
         gravarLS(GH_ENVIADOS, JSON.stringify([...enviados]));
         const mb = novos.reduce((t, [, bl]) => t + bl.size, 0) / 1e6;
-        ghEstado.textContent = "✓ Enviados " + novos.length + " ficheiros (" + mb.toFixed(1).replace(".", ",") + " MB). No PC, pede ao Claude para sincronizar o oceano-dados.";
+        ghEstado.textContent = "✓ Enviados " + novos.length + " ficheiros (" + mb.toFixed(1).replace(".", ",") + " MB). No PC, pede ao Claude para transferir o oceano-dados-testes.";
         b.disabled = false; confirmar(b, "Enviado");
       } catch (e) {
         ghEstado.textContent = "Não foi possível enviar: " + e.message + ". Os dados continuam guardados neste telemóvel.";
