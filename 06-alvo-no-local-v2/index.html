@@ -436,6 +436,7 @@
       if (!navigator.onLine) { ghEstado.textContent = "Sem rede. Liga os dados ou o Wi-Fi; os dados continuam guardados neste telemóvel."; return; }
       b.disabled = true;
       try {
+        await descobrirAparelho(); // nome real do telemóvel (ex.: Pixel 9a · Android 17), não só «Android 10»
         const enviados = new Set(JSON.parse(lerLS(GH_ENVIADOS, "[]")));
         const agora = new Date(), carimbo = agora.toISOString().slice(0, 16).replace(/[:T]/g, "-");
         const sessao = GH_PASTA + "/envios/" + carimbo + "-" + aparelho().replace(/[^\w]+/g, "-").toLowerCase();
