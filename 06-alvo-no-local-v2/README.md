@@ -20,4 +20,5 @@ Botão **«Enviar tudo para o GitHub»** (no fim da página): envia resultados, 
 
 - A chave de acesso (*fine-grained token*, só para o `oceano-dados-testes`, só «Contents: read and write», com prazo) é criada pelo Mário no GitHub e colada uma vez na página; fica só no navegador do telemóvel. Nunca vai para o código.
 - No PC, o Claude faz `git pull` do `oceano-dados-testes`, copia as fotografias e os alvos para `media-local` e os resultados para `resultados/`, e repõe o `oceano-dados-testes` vazio (só o README, histórico descartado), para não acumular peso.
-- Estrutura: `envios/<data>-<aparelho>/resultados.txt|json`, `alvos/<id>/recorte.jpg|alvo.mind|alvo.zpt`, `originais/foto-<id>.jpg`.
+- A chave fica guardada no telemóvel com um nome comum a todos os testes (`oceano-gh-chave`): os testes seguintes reutilizam-na.
+- Estrutura (cada teste na sua pasta): `teste-06/envios/<data>-<aparelho>/resultados.txt|json`, `teste-06/alvos/<id>/recorte.jpg|alvo.mind|alvo.zpt`, `teste-06/originais/foto-<id>.jpg`.

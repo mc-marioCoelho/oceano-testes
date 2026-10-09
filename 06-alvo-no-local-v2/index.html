@@ -390,8 +390,10 @@
     // ---- Envio para o GitHub (repositório privado oceano-dados, só de passagem) ----
     // Usa a API do GitHub: cria os ficheiros («blobs»), junta-os numa pasta («tree») e faz um commit.
     // A chave fica só neste navegador (localStorage). Os caminhos já enviados ficam registados, para não repetir.
+    // A chave é comum a todos os testes (mesmo endereço github.io): cola-se uma vez. Cada teste escreve na sua pasta.
+    const GH_PASTA = "teste-06";
     const GH_REPO = "mc-mariocoelho/oceano-dados-testes", GH_API = "https://api.github.com/repos/" + GH_REPO;
-    const GH_CHAVE = "oceano-teste06-gh-chave", GH_ENVIADOS = "oceano-teste06-gh-enviados";
+    const GH_CHAVE = "oceano-gh-chave", GH_ENVIADOS = "oceano-teste06-gh-enviados";
     const ghEstado = document.getElementById("gh-estado");
     const lerLS = (k, d) => { try { return localStorage.getItem(k) ?? d; } catch (e) { return d; } };
     const gravarLS = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
@@ -436,7 +438,7 @@
       try {
         const enviados = new Set(JSON.parse(lerLS(GH_ENVIADOS, "[]")));
         const agora = new Date(), carimbo = agora.toISOString().slice(0, 16).replace(/[:T]/g, "-");
-        const sessao = "envios/" + carimbo + "-" + aparelho().replace(/[^\w]+/g, "-").toLowerCase();
+        const sessao = GH_PASTA + "/envios/" + carimbo + "-" + aparelho().replace(/[^\w]+/g, "-").toLowerCase();
         // ficheiros a enviar: [caminho, Blob]
         const fich = [
           [sessao + "/resultados.txt", new Blob([texto()], { type: "text/plain" })],
@@ -445,11 +447,11 @@
         ];
         const comOriginais = document.getElementById("gh-originais").checked, fotosVistas = new Set();
         for (const a of lista) {
-          const pasta = "alvos/" + a.id.toLowerCase();
+          const pasta = GH_PASTA + "/alvos/" + a.id.toLowerCase();
           if (a.jpg) fich.push([pasta + "/recorte.jpg", a.jpg]);
           if (a.mind) fich.push([pasta + "/alvo.mind", new Blob([a.mind])]);
           if (a.zpt) fich.push([pasta + "/alvo.zpt", new Blob([a.zpt])]);
-          if (comOriginais && a.original && a.fotoId && !fotosVistas.has(a.fotoId)) { fotosVistas.add(a.fotoId); fich.push(["originais/foto-" + a.fotoId + ".jpg", a.original]); }
+          if (comOriginais && a.original && a.fotoId && !fotosVistas.has(a.fotoId)) { fotosVistas.add(a.fotoId); fich.push([GH_PASTA + "/originais/foto-" + a.fotoId + ".jpg", a.original]); }
         }
         // os resultados vão sempre (são pequenos); o resto só se ainda não foi enviado
         const novos = fich.filter(([c], i) => i < 2 || !enviados.has(c));
