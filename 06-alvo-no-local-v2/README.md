@@ -25,6 +25,12 @@ Os resultados exportados passam a ter as colunas «Forma do recorte» e «Pontos
 
 Os mesmos do teste 05: ecrã ligado enquanto cria o alvo; medir no sítio da fotografia é o melhor caso possível; falta testar dos pontos vizinhos, a outra hora e noutros telemóveis.
 
+Problemas conhecidos (deixados assim por decisão do Mário, 10 out.):
+- **O Zappar mantém os objetos à vista quando perde o alvo** (o MindAR esconde-os). Na sala, guiar-se pelo painel («RECONHECIDO» / «à procura»), não pelo cubo; os números guardados vêm do painel e estão certos. Para o protótipo: os dois motores devem esconder o conteúdo ao perder o alvo.
+- Na imagem da página, a tabela de resultados sai cortada (só as primeiras colunas); os números completos vão no `resultados.txt`/`.json`.
+- Os botões da forma do recorte passam despercebidos: escolher a forma **antes** de arrastar o dedo.
+- Medir sempre no local: fotografar um ecrã cria interferência (moiré) e os números não valem.
+
 ## Envio para o PC no fim da sessão (via GitHub)
 
 Botão **«Enviar tudo para o GitHub»** (no fim da página): envia resultados, recortes, alvos `.mind`/`.zpt` e, se a opção estiver ligada, as fotografias originais para o repositório **privado** `oceano-dados-testes`, que serve só de passagem. Só envia o que ainda não foi enviado deste telemóvel (os resultados vão sempre).
