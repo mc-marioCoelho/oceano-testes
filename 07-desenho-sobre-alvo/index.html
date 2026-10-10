@@ -1,0 +1,809 @@
+﻿<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teste 07 · Desenho sobre o alvo</title>
+  <link rel="stylesheet" href="estilo.css">
+  <script src="alvos.js"></script>
+  <script src="medicao.js"></script>
+  <script src="objetos.js"></script>
+  <script src="desenho.js"></script>
+</head>
+<body>
+  <main class="pagina">
+    <p class="sub">Teste 07 · desenho sobre o alvo (continuação do teste 06)</p>
+    <h1>DESENHO SOBRE O ALVO</h1>
+    <p class="sub">Desenha sobre o recorte de um alvo (por exemplo, a reconstituição de uma lacuna) e vê o desenho na RA, por cima do mosaico verdadeiro.</p>
+    <p class="nota">Começa por <strong>trazer os alvos do teste 06</strong> (passo 3): os alvos de P7 e do Euro de 10 out. vêm com eles. Também podes criar alvos novos aqui (passo 2), como no teste 06.</p>
+
+    <h2>0. Antes de entrar na sala (com rede)</h2>
+    <p><button class="botao" id="preparar">Preparar para usar sem rede</button></p>
+    <p class="estado-offline" id="estado-offline">Descarrega o teste e os dois programas que criam os alvos. Só é preciso uma vez (e outra vez se o teste mudar).</p>
+
+    <h2>1. Onde estás?</h2>
+    <p><img src="pontos-de-visao.svg" alt="Mapa dos pontos de visão P1 a P10 à volta do mosaico" class="mapa-pontos"></p>
+    <div class="locais" id="locais"></div>
+
+    <h2>2. Fotografa o alvo</h2>
+    <p><label class="botao" for="foto">Tirar fotografia</label>
+       <input type="file" id="foto" accept="image/*" capture="environment" hidden></p>
+    <div id="recorte" hidden>
+      <p class="sub">Recorta só a parte do mosaico que interessa (sem passadiço nem corrimão). Da mesma fotografia podes criar vários alvos: depois de criar um, recorta outra parte e carrega outra vez em «Criar alvo» (por exemplo, o mosaico inteiro e só a inscrição).</p>
+      <div class="formas" id="formas">
+        <label><input type="radio" name="forma" value="retangulo" checked>Retângulo</label>
+        <label><input type="radio" name="forma" value="trapezio">Trapézio</label>
+        <label><input type="radio" name="forma" value="triangulo">Triângulo</label>
+        <label><input type="radio" name="forma" value="elipse">Elipse</label>
+        <label><input type="radio" name="forma" value="poligono">Polígono livre</label>
+      </div>
+      <p class="sub" id="ajuda-forma"></p>
+      <canvas id="tela" class="tela-recorte"></canvas>
+      <p class="motores">
+        <button class="botao" id="criar">Criar alvo</button>
+        <button class="botao claro" id="inteira">Usar a fotografia inteira</button>
+        <button class="botao claro" id="desfazer" hidden>Desfazer último canto</button>
+      </p>
+      <p class="sub"><label><input type="checkbox" id="com-zappar"> Criar também o alvo Zappar (mais ~20 s; no github.io o Zappar mostra em baixo uma faixa da licença)</label></p>
+      <p class="estado-offline" id="estado-criar"></p>
+    </div>
+
+    <h2>3. Alvos criados neste telemóvel</h2>
+    <div class="alvos" id="alvos"></div>
+    <p class="sub" id="sem-alvos">Ainda não criaste nenhum alvo.</p>
+    <p><button class="botao claro" id="importar">Trazer os alvos dos testes 06 e 05</button></p>
+    <p class="sub" id="estado-importar">Copia para aqui os alvos criados nos testes 06 e 05 neste telemóvel (os outros testes ficam iguais).</p>
+    <p class="motores" id="acoes-alvo" hidden>
+      <button class="botao" id="desenhar">Desenhar sobre este alvo</button>
+      <button class="botao claro" id="marcar">Marcar pontos neste alvo</button>
+      <button class="botao claro" id="enviar">Enviar ficheiros do alvo</button>
+      <button class="botao claro" id="apagar-alvo">Apagar este alvo</button>
+    </p>
+    <div id="marcacao" hidden>
+      <p class="sub">Toca em cada sítio onde queres um objeto 3D na RA (por exemplo, em cada um dos quatro nomes da inscrição) e dá-lhe um nome. Sem pontos, aparece um cubo ao centro. Não é preciso criar o alvo outra vez.</p>
+      <canvas id="tela-pontos" class="tela-recorte"></canvas>
+      <p class="motores">
+        <button class="botao" id="pontos-guardar">Guardar pontos</button>
+        <button class="botao claro" id="pontos-desfazer">Desfazer último</button>
+        <button class="botao claro" id="pontos-fechar">Fechar</button>
+      </p>
+    </div>
+
+    <div id="desenho" class="desenho" hidden>
+      <h2>Desenho · <span id="d-titulo"></span></h2>
+      <p class="sub">O desenho cobre o recorte inteiro: o que pintares em cima da lacuna fica em cima da lacuna verdadeira, na RA. Escolhe a ferramenta e desenha com um dedo. Para ampliar, usa os botões de zoom e a ferramenta «Mover» para deslizar.</p>
+      <div class="d-barra" id="d-ferramentas">
+        <button type="button" data-f="pincel">✎ Pincel</button>
+        <button type="button" data-f="tesela">▦ Tesselas</button>
+        <button type="button" data-f="laco">◌ Mancha</button>
+        <button type="button" data-f="borracha">⌫ Borracha</button>
+        <button type="button" data-f="contagotas">◉ Conta-gotas</button>
+        <button type="button" data-f="mover">✥ Mover</button>
+      </div>
+      <div class="d-barra">
+        <input type="color" id="d-cor" value="#8a4b2a" aria-label="cor">
+        <span class="d-paleta" id="d-paleta"></span>
+      </div>
+      <div class="d-barra d-controlos">
+        <label>Tamanho <input type="range" id="d-tamanho" min="2" max="120" value="20"></label>
+        <label>Opacidade <input type="range" id="d-opacidade" min="10" max="100" value="100"></label>
+        <label>Ver o recorte <input type="range" id="d-fundo" min="0" max="100" value="100"></label>
+      </div>
+      <div class="d-barra" id="d-zoom"><span>Zoom</span>
+        <button type="button" data-z="1">1×</button><button type="button" data-z="2">2×</button><button type="button" data-z="4">4×</button>
+      </div>
+      <div class="d-caixa" id="d-caixa"><canvas id="d-tela"></canvas></div>
+      <p class="motores">
+        <button class="botao" id="d-guardar">Guardar desenho</button>
+        <button class="botao claro" id="d-desfazer">Desfazer</button>
+        <button class="botao claro" id="d-limpar">Apagar tudo</button>
+        <button class="botao claro" id="d-fechar">Fechar</button>
+      </p>
+      <details class="sub">
+        <summary>Desenhar no Photoshop (PC)</summary>
+        <ol>
+          <li><button class="botao claro" id="d-baixar-recorte">Descarregar o recorte</button> (o nome do ficheiro diz o tamanho em píxeis).</li>
+          <li>No Photoshop, abre o recorte, desenha numa camada nova, esconde a camada do recorte e exporta só o desenho em <strong>PNG com transparência</strong>, do mesmo tamanho (ou maior, com as mesmas proporções: 2×, 3×).</li>
+          <li>Passa o PNG para o telemóvel (pelo Google Drive, por exemplo) e <label class="botao claro" for="d-png">Carregar PNG</label><input type="file" id="d-png" accept="image/png,image/webp" hidden> Fica por cima do que já estiver desenhado; podes continuar a desenhar por cima.</li>
+        </ol>
+        <p><button class="botao claro" id="d-baixar-png">Descarregar o desenho (PNG)</button></p>
+      </details>
+    </div>
+
+    <h2>4. Testa o alvo escolhido</h2>
+    <div class="motores">
+      <a class="botao" id="ir-mindar" href="#">Testar com MindAR</a>
+      <a class="botao claro" id="ir-zappar" href="#">Testar com Zappar</a>
+    </div>
+
+    <h2>Como fazer o teste</h2>
+    <ol>
+      <li><strong>Desenho:</strong> escolhe o alvo, carrega em <strong>Desenhar sobre este alvo</strong>, desenha (ou carrega o PNG) e <strong>Guardar desenho</strong>. Na RA, o desenho aparece no lugar do cubo. O botão <strong>Desenho</strong> muda a opacidade (100 → 60 → 30 % → escondido), para comparar com o mosaico verdadeiro; <strong>Moldura</strong> mostra ou esconde o contorno amarelo.</li>
+      <li><strong>O que observar:</strong> o desenho fica <em>em cima</em> da lacuna? (Se não, quanto foge e para que lado.) Fica parado quando seguras o telemóvel? Lê-se a reconstituição com a luz da sala? Escreve isto na nota de cada resultado e tira uma fotografia da RA.</li>
+      <li><strong>Prepara o telemóvel à entrada, com rede</strong> (passo 0).</li>
+      <li><strong>Escolhe o ponto</strong> onde estás (passo 1) sempre que mudares de sítio.</li>
+      <li><strong>Fotografa</strong> (passo 2) com o telemóvel à altura a que um visitante o seguraria. Recorta só o mosaico e carrega em <strong>Criar alvo</strong>. Espera: pode demorar até um minuto.</li>
+      <li>No Zappar, carrega primeiro em <strong>GRANT ACCESS</strong>: o cronómetro recomeça nesse toque. Na RA, aponta a câmara para o lado, carrega em <strong>Recomeçar</strong> e só então aponta ao alvo: o <em>1.º reconhecimento</em> mede quanto tempo demora.</li>
+      <li>Quando reconhecer, segura parado e carrega em <strong>Medir tremor (5 s)</strong>; depois mexe-te devagar cerca de 20 s e <strong>Guardar resultado</strong>.</li>
+      <li><strong>Forma do recorte:</strong> se o passadiço ou o corrimão entram na fotografia, usa o trapézio (encaixa os cantos no limite do mosaico, em perspetiva) ou o polígono livre. O que fica fora é pintado com a cor média, com passagem suave.</li>
+      <li><strong>Objetos 3D:</strong> sem pontos marcados, aparece um cubo com sombra ao centro do alvo. Para a inscrição, cria o alvo e carrega em <strong>Marcar pontos neste alvo</strong>: toca em cada nome (C. Calpurnius, G. Vibius Quintilianus, L. Attius, M. Verrius Geminus) e guarda. Na RA aparece um objeto diferente em cada nome. Na nota, diz se os objetos ficaram em cima dos nomes.</li>
+      <li><strong>Depois, testa o mesmo alvo a partir dos pontos vizinhos</strong> (escolhe o novo ponto no passo 1): é isso que diz se serve para os visitantes.</li>
+    </ol>
+    <p class="nota">Medir no sítio exato da fotografia é o melhor caso possível. Se nem assim reconhecer, aquela parte do mosaico não serve de alvo. O Zappar também funciona aqui no github.io (verificado a 9 out.), com uma faixa da licença em baixo; os botões ficam acima dela. Os alvos ficam guardados em cada endereço (os do github.io não aparecem na ZapWorks, e o contrário).</p>
+
+    <h2>Resultados guardados neste telemóvel</h2>
+    <div class="tabela"><table id="tabela"></table></div>
+    <p class="sub" id="n-capturas"></p>
+    <p class="motores">
+      <button class="botao" id="partilhar">Partilhar resultados</button>
+      <button class="botao" id="partilhar-fotos">Partilhar resultados e fotografias</button>
+      <button class="botao claro" id="copiar">Copiar</button>
+      <button class="botao claro" id="limpar">Apagar resultados</button>
+    </p>
+    <p class="sub" id="aviso"></p>
+
+    <h2>Fim da sessão: enviar tudo para o PC (via GitHub)</h2>
+    <p class="sub">Envia resultados, recortes, alvos MindAR/Zappar e (se quiseres) as fotografias originais para o repositório privado <strong>oceano-dados-testes</strong>. No PC, o Claude copia tudo para as pastas locais e esvazia o repositório. Liga os dados móveis ou o Wi-Fi antes de enviar. Só vai o que ainda não foi enviado deste telemóvel.</p>
+    <p class="sub"><label><input type="checkbox" id="gh-originais" checked> Incluir as fotografias originais (cerca de 4 MB cada)</label></p>
+    <p class="sub"><label><input type="checkbox" id="gh-pagina" checked> Incluir uma imagem da página inteira, como está no fim da sessão (para o DDB)</label></p>
+    <p><button class="botao claro" id="pagina-guardar">Só guardar a imagem da página neste telemóvel</button></p>
+    <p><button class="botao" id="gh-enviar">Enviar tudo para o GitHub</button></p>
+    <p class="estado-offline" id="gh-estado"></p>
+    <details class="sub" id="gh-config">
+      <summary>Chave de acesso do GitHub (só na primeira vez)</summary>
+      <p>Cola aqui a chave criada no GitHub só para o repositório oceano-dados-testes. Fica guardada apenas neste telemóvel.</p>
+      <p><input type="password" id="gh-chave" autocomplete="off" placeholder="github_pat_…" style="width:100%;font-size:1rem;padding:8px"></p>
+      <p class="motores"><button class="botao claro" id="gh-guardar">Guardar a chave</button><button class="botao claro" id="gh-esquecer">Esquecer a chave</button></p>
+    </details>
+  </main>
+
+  <script>
+    const MINDAR_COMPILADOR = "https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image.prod.js";
+    const ZAPPAR_TREINO = "https://cdn.jsdelivr.net/npm/@zappar/imagetraining@4.3.2/umd/zappar-imagetraining.js";
+    const BUFFER = "https://cdn.jsdelivr.net/npm/buffer@6.0.3/+esm";
+    const HTML2CANVAS = "https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js";
+    const LADO_MAX = 1024; // a fotografia recortada é reduzida a este lado maior antes de criar o alvo
+
+    // 1. local
+    const caixaLocais = document.getElementById("locais");
+    const localAtual = lerLocal();
+    for (const [id, l] of Object.entries(LOCAIS)) {
+      caixaLocais.insertAdjacentHTML("beforeend",
+        '<label><input type="radio" name="local" value="' + id + '"' + (id === localAtual ? " checked" : "") + '>' + l.nome + '</label>');
+    }
+    caixaLocais.addEventListener("change", () => {
+      const id = document.querySelector('input[name="local"]:checked').value;
+      try { localStorage.setItem(CHAVE_LOCAL, id); } catch (e) {}
+    });
+    function exigirLocal() {
+      if (lerLocal()) return true;
+      alert("Escolhe primeiro onde estás (passo 1).");
+      caixaLocais.scrollIntoView({ behavior: "smooth" });
+      return false;
+    }
+
+    // 2. fotografia e recorte
+    const tela = document.getElementById("tela"), ctx = tela.getContext("2d");
+    const estadoCriar = document.getElementById("estado-criar");
+    let foto = null, escala = 1, sel = null, inicio = null;
+    let fotoOriginal = null, fotoId = null; // a fotografia inteira, na resolução da câmara, para treinar alvos no PC
+
+    // Forma do recorte. Retângulo, trapézio, triângulo e elipse: arrasta-se o dedo (a caixa onde a forma cabe).
+    // Trapézio e polígono livre ficam com cantos que se podem puxar um a um (no polígono, cada toque fora de um canto junta outro).
+    // O alvo continua a ser uma imagem retangular (é o que o MindAR e o Zappar aceitam): o que fica fora da forma
+    // é pintado com a cor média de dentro, com uma transição suave, e por isso não conta para o reconhecimento.
+    let forma = "retangulo", cantos = [], arrasto = -1;
+    const AJUDAS = {
+      retangulo: "Arrasta o dedo sobre a fotografia, de um canto ao canto oposto.",
+      trapezio: "Arrasta o dedo para fazer um trapézio (para baixo: lado de cima mais estreito; para cima: o contrário). Depois puxa cada canto até ao limite do mosaico, como o vês em perspetiva.",
+      triangulo: "Arrasta o dedo: para baixo, o bico fica em cima; para cima, o bico fica em baixo.",
+      elipse: "Arrasta o dedo: a elipse ocupa a caixa que desenhares.",
+      poligono: "Toca em cada canto, pela ordem (pelo menos 3). Para corrigir, puxa um canto ou carrega em «Desfazer último canto».",
+    };
+    const ajudaForma = document.getElementById("ajuda-forma"), btDesfazer = document.getElementById("desfazer");
+    function mudarForma() {
+      forma = document.querySelector('input[name="forma"]:checked').value;
+      sel = null; cantos = []; arrasto = -1;
+      ajudaForma.textContent = AJUDAS[forma];
+      btDesfazer.hidden = forma !== "poligono";
+      if (foto) desenharTela();
+    }
+    document.getElementById("formas").addEventListener("change", mudarForma);
+    mudarForma();
+
+    document.getElementById("foto").addEventListener("change", async ev => {
+      const f = ev.target.files[0];
+      if (!f) return;
+      fotoOriginal = f; fotoId = String(Date.now());
+      foto = await createImageBitmap(f); // o Chrome endireita a fotografia segundo a orientação gravada
+      document.getElementById("recorte").hidden = false; // primeiro mostrar, para se saber a largura disponível
+      escala = Math.min(1, tela.parentElement.clientWidth / foto.width);
+      tela.width = Math.round(foto.width * escala); tela.height = Math.round(foto.height * escala);
+      sel = null; cantos = []; desenharTela();
+      estadoCriar.textContent = "";
+      tela.scrollIntoView({ behavior: "smooth" });
+      ev.target.value = "";
+    });
+
+    function normalizar(s) {
+      return { x: Math.min(s.x0, s.x1), y: Math.min(s.y0, s.y1), w: Math.abs(s.x1 - s.x0), h: Math.abs(s.y1 - s.y0) };
+    }
+    // cantos da forma (em píxeis da tela) a partir da caixa arrastada
+    function cantosDaCaixa(s) {
+      const r = normalizar(s), cx = r.x + r.w / 2, cy = r.y + r.h / 2, x2 = r.x + r.w, y2 = r.y + r.h;
+      const paraCima = s.y1 < s.y0, d = r.w * 0.2;
+      if (forma === "retangulo") return [[r.x, r.y], [x2, r.y], [x2, y2], [r.x, y2]];
+      if (forma === "trapezio") return paraCima ? [[r.x, r.y], [x2, r.y], [x2 - d, y2], [r.x + d, y2]]
+                                                : [[r.x + d, r.y], [x2 - d, r.y], [x2, y2], [r.x, y2]];
+      if (forma === "triangulo") return paraCima ? [[r.x, r.y], [x2, r.y], [cx, y2]] : [[cx, r.y], [x2, y2], [r.x, y2]];
+      const n = 48; // elipse: 48 cantos chegam para parecer curva
+      return Array.from({ length: n }, (_, i) => [cx + r.w / 2 * Math.cos(2 * Math.PI * i / n), cy + r.h / 2 * Math.sin(2 * Math.PI * i / n)]);
+    }
+    // a forma pronta a usar, ou null se ainda não houver forma
+    function formaAtual() { return cantos.length >= 3 ? cantos : null; }
+    const comPegas = () => forma === "trapezio" || forma === "poligono";
+
+    function caminho(c, pts) { c.beginPath(); pts.forEach(([x, y], i) => i ? c.lineTo(x, y) : c.moveTo(x, y)); c.closePath(); }
+    function desenharTela() {
+      ctx.drawImage(foto, 0, 0, tela.width, tela.height);
+      const pts = formaAtual();
+      if (pts) {
+        ctx.fillStyle = "rgba(0,0,0,.55)";
+        ctx.beginPath(); ctx.rect(0, 0, tela.width, tela.height);
+        pts.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.closePath();
+        ctx.fill("evenodd"); // escurece só o que fica fora da forma
+        ctx.strokeStyle = "#ffd000"; ctx.lineWidth = 3; caminho(ctx, pts); ctx.stroke();
+      } else if (cantos.length === 2) {
+        ctx.strokeStyle = "#ffd000"; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(...cantos[0]); ctx.lineTo(...cantos[1]); ctx.stroke();
+      }
+      if (comPegas()) for (const [x, y] of cantos) { // pegas para puxar os cantos
+        ctx.beginPath(); ctx.arc(x, y, 9, 0, 2 * Math.PI);
+        ctx.fillStyle = "#ffd000"; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = "#2b2622"; ctx.stroke();
+      }
+    }
+    function ponto(ev) {
+      const b = tela.getBoundingClientRect();
+      return [Math.max(0, Math.min(tela.width, (ev.clientX - b.left) * tela.width / b.width)),
+              Math.max(0, Math.min(tela.height, (ev.clientY - b.top) * tela.height / b.height))];
+    }
+    // canto mais próximo do dedo (até ~1 cm no ecrã), ou -1
+    function cantoPerto(x, y) {
+      const raio = 28 * tela.width / tela.getBoundingClientRect().width;
+      let melhor = -1, dm = raio;
+      cantos.forEach(([cx, cy], i) => { const d = Math.hypot(cx - x, cy - y); if (d < dm) { dm = d; melhor = i; } });
+      return melhor;
+    }
+    tela.addEventListener("pointerdown", ev => {
+      tela.setPointerCapture(ev.pointerId);
+      const [x, y] = ponto(ev);
+      if (comPegas() && (arrasto = cantoPerto(x, y)) >= 0) return; // puxar um canto
+      if (forma === "poligono") { cantos.push([x, y]); desenharTela(); return; }
+      inicio = true; sel = { x0: x, y0: y, x1: x, y1: y };
+    });
+    tela.addEventListener("pointermove", ev => {
+      const [x, y] = ponto(ev);
+      if (arrasto >= 0) { cantos[arrasto] = [x, y]; desenharTela(); return; }
+      if (!inicio) return;
+      sel.x1 = x; sel.y1 = y; cantos = cantosDaCaixa(sel); desenharTela();
+    });
+    tela.addEventListener("pointerup", () => {
+      if (inicio && sel) { const r = normalizar(sel); if (r.w < 20 || r.h < 20) { cantos = []; desenharTela(); } }
+      inicio = null; sel = null; arrasto = -1;
+    });
+    btDesfazer.onclick = () => { cantos.pop(); desenharTela(); };
+
+    document.getElementById("criar").onclick = () => criar(formaAtual());
+    document.getElementById("inteira").onclick = () => { cantos = []; desenharTela(); criar(null); };
+
+    // recorta (pela caixa onde a forma cabe), reduz e, se a forma não for um retângulo, pinta o que fica fora dela
+    async function prepararImagem(pts) {
+      let sx = 0, sy = 0, sw = foto.width, sh = foto.height, guardarForma = null;
+      if (pts) {
+        const xs = pts.map(p => p[0] / escala), ys = pts.map(p => p[1] / escala);
+        sx = Math.max(0, Math.min(...xs)); sy = Math.max(0, Math.min(...ys));
+        sw = Math.min(foto.width, Math.max(...xs)) - sx; sh = Math.min(foto.height, Math.max(...ys)) - sy;
+        // cantos dentro do recorte, de 0 a 1 (para desenhar o contorno na RA)
+        guardarForma = { tipo: forma, pts: pts.map(([x, y]) => [+((x / escala - sx) / sw).toFixed(4), +((y / escala - sy) / sh).toFixed(4)]) };
+      }
+      const k = Math.min(1, LADO_MAX / Math.max(sw, sh));
+      const c = document.createElement("canvas");
+      c.width = Math.round(sw * k); c.height = Math.round(sh * k);
+      c.getContext("2d").drawImage(foto, sx, sy, sw, sh, 0, 0, c.width, c.height);
+      if (guardarForma && guardarForma.tipo !== "retangulo") mascarar(c, guardarForma.pts);
+      const jpg = await new Promise(ok => c.toBlob(ok, "image/jpeg", 0.92));
+      return { jpg, largura: c.width, altura: c.height, caixa: pts ? [sx, sy, sw, sh].map(Math.round) : null, forma: guardarForma };
+    }
+
+    // Pinta o que fica fora da forma com a cor média de dentro dela. A passagem é suave: um contorno nítido
+    // seria para o motor um «pormenor» falso, que ele tentaria reconhecer na sala.
+    function mascarar(c, uv) {
+      const W = c.width, H = c.height, g = c.getContext("2d");
+      const tela2 = () => { const t = document.createElement("canvas"); t.width = W; t.height = H; return t; };
+      const contorno = cx => caminho(cx, uv.map(([u, v]) => [u * W, v * H]));
+      // 1. máscara da forma e cor média lá dentro (um em cada quatro píxeis chega)
+      const m = tela2(), mg = m.getContext("2d");
+      mg.fillStyle = "#fff"; contorno(mg); mg.fill();
+      const px = g.getImageData(0, 0, W, H).data, mk = mg.getImageData(0, 0, W, H).data;
+      let r = 0, gr = 0, b = 0, n = 0;
+      for (let i = 0; i < px.length; i += 16) if (mk[i + 3] > 128) { r += px[i]; gr += px[i + 1]; b += px[i + 2]; n++; }
+      const media = n ? "rgb(" + Math.round(r / n) + "," + Math.round(gr / n) + "," + Math.round(b / n) + ")" : "#808080";
+      // 2. encolhe a máscara f píxeis e desfoca-a: a transição fica toda dentro da forma (o passadiço não volta a entrar)
+      const f = Math.max(4, Math.round(0.015 * Math.max(W, H)));
+      mg.globalCompositeOperation = "destination-out"; mg.lineWidth = 2 * f; mg.lineJoin = "round"; contorno(mg); mg.stroke();
+      const s = tela2(), sg = s.getContext("2d");
+      sg.filter = "blur(" + (f / 2) + "px)"; sg.drawImage(m, 0, 0);
+      // 3. a fotografia só dentro da máscara, por cima da cor média
+      const fo = tela2(), fg = fo.getContext("2d");
+      fg.drawImage(c, 0, 0); fg.globalCompositeOperation = "destination-in"; fg.drawImage(s, 0, 0);
+      g.fillStyle = media; g.fillRect(0, 0, W, H); g.drawImage(fo, 0, 0);
+    }
+
+    async function criarMindAR(jpg) {
+      const m = await import(MINDAR_COMPILADOR);
+      const img = new Image(); img.src = URL.createObjectURL(jpg); await img.decode();
+      const c = new m.Compiler();
+      await c.compileImageTargets([img], p => { estadoCriar.textContent = "MindAR: a criar o alvo… " + Math.round(p) + " %"; });
+      return await c.exportData();
+    }
+
+    function carregarScript(src) {
+      return new Promise((ok, erro) => {
+        if (document.querySelector('script[src="' + src + '"]')) return ok();
+        const s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = () => erro(new Error("sem acesso a " + src));
+        document.head.appendChild(s);
+      });
+    }
+    // O programa da Zappar foi feito para o Node e precisa do «Buffer», que o navegador não tem:
+    // junta-se uma versão para navegador. Corre na página (a versão com worker fica parada).
+    async function criarZappar(jpg) {
+      if (!globalThis.Buffer) globalThis.Buffer = (await import(BUFFER)).Buffer;
+      await carregarScript(ZAPPAR_TREINO);
+      const treino = new ZapparImageTraining.ImageTrainer();
+      try {
+        const zpt = await treino.train(await jpg.arrayBuffer());
+        return zpt.buffer.slice(zpt.byteOffset, zpt.byteOffset + zpt.byteLength);
+      } finally { try { await treino.dispose(); } catch (e) {} }
+    }
+
+    const segundos = t0 => +((performance.now() - t0) / 1000).toFixed(1);
+
+    async function criar(r) {
+      if (!exigirLocal()) return;
+      const botoes = [document.getElementById("criar"), document.getElementById("inteira")];
+      botoes.forEach(b => b.disabled = true);
+      let criado = false;
+      try {
+        const { jpg, largura, altura, caixa, forma: fr } = await prepararImagem(r);
+        const local = lerLocal(), agora = new Date();
+        const hora = agora.toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" });
+        const alvo = {
+          id: local + "-" + agora.getTime(), criado: agora.getTime(),
+          nome: (local.startsWith("parede") ? "Parede" : local.replace("-esq", " esq.").replace("-dir", " dir.")) + " · foto " + hora,
+          local, jpg, largura, altura, mind: null, zpt: null, tMind: null, tZpt: null, erros: [],
+          original: fotoOriginal, fotoId, recorte: caixa, forma: fr, pontos: [],
+        };
+        let t0 = performance.now();
+        estadoCriar.textContent = "MindAR: a criar o alvo…";
+        try { alvo.mind = await criarMindAR(jpg); alvo.tMind = segundos(t0); }
+        catch (e) { alvo.erros.push("MindAR: " + e.message); }
+        // o Zappar fica para depois: por omissão só se cria o alvo MindAR (a fotografia fica guardada para o Zappar)
+        if (document.getElementById("com-zappar").checked) {
+          t0 = performance.now();
+          estadoCriar.textContent = "Zappar: a criar o alvo…";
+          try { alvo.zpt = await criarZappar(jpg); alvo.tZpt = segundos(t0); }
+          catch (e) { alvo.erros.push("Zappar: " + e.message); }
+        }
+        if (!alvo.mind && !alvo.zpt) throw new Error(alvo.erros.join(" · "));
+        await Alvos.gravar(alvo); criado = true;
+        estadoCriar.textContent = "✓ Alvo criado: MindAR " + (alvo.mind ? alvo.tMind + " s" : "falhou") +
+          (alvo.zpt ? " · Zappar " + alvo.tZpt + " s" : document.getElementById("com-zappar").checked ? " · Zappar falhou" : "") + (alvo.erros.length ? " (" + alvo.erros.join(" · ") + ")" : "");
+        await mostrarAlvos(alvo.id);
+        document.getElementById("alvos").scrollIntoView({ behavior: "smooth" });
+      } catch (e) {
+        estadoCriar.textContent = "Não foi possível criar o alvo: " + e.message;
+      } finally {
+        botoes.forEach(b => b.disabled = false);
+        if (criado) confirmar(r ? botoes[0] : botoes[1], "Alvo criado");
+      }
+    }
+
+    // 3. alvos guardados
+    const caixa = document.getElementById("alvos");
+    let lista = [], urlsMiniaturas = [];
+    async function mostrarAlvos(escolher) {
+      lista = await Alvos.todos();
+      urlsMiniaturas.forEach(u => URL.revokeObjectURL(u)); urlsMiniaturas = [];
+      let atual = escolher;
+      try { atual = atual || localStorage.getItem("oceano-teste07-alvo"); } catch (e) {}
+      if (!lista.some(a => a.id === atual)) atual = lista.length ? lista[0].id : null;
+      caixa.innerHTML = lista.map(a => {
+        const u = URL.createObjectURL(a.jpg); urlsMiniaturas.push(u);
+        return '<label><input type="radio" name="alvo" value="' + a.id + '"' + (a.id === atual ? " checked" : "") + '>' +
+          '<img src="' + u + '" alt="">' + a.nome +
+          '<small>MindAR ' + (a.mind ? a.tMind + " s" : "✗") + ' · Zappar ' + (a.zpt ? a.tZpt + " s" : "—") +
+          (a.forma && a.forma.tipo !== "retangulo" ? ' · ' + nomeForma(a) : '') +
+          (a.pontos && a.pontos.length ? ' · ' + a.pontos.length + ' ponto(s)' : '') + (a.desenho ? ' · <b>com desenho</b>' : '') + '</small></label>';
+      }).join("");
+      document.getElementById("sem-alvos").hidden = lista.length > 0;
+      document.getElementById("acoes-alvo").hidden = lista.length === 0;
+      ligar();
+    }
+    function alvoEscolhido() {
+      const i = document.querySelector('input[name="alvo"]:checked');
+      return i ? lista.find(a => a.id === i.value) : null;
+    }
+    function ligar() {
+      const a = alvoEscolhido();
+      try { if (a) localStorage.setItem("oceano-teste07-alvo", a.id); } catch (e) {}
+      document.getElementById("ir-mindar").href = a ? "mindar.html?alvo=" + encodeURIComponent(a.id) : "#";
+      document.getElementById("ir-zappar").href = a ? "zappar.html?alvo=" + encodeURIComponent(a.id) : "#";
+    }
+    caixa.addEventListener("change", () => { ligar(); fecharPontos(); if (Editor.aberto) Editor.fechar(); });
+    Editor.iniciar();
+    document.getElementById("desenhar").onclick = () => {
+      const a = alvoEscolhido(); if (!a) return;
+      fecharPontos();
+      Editor.abrir(a, al => mostrarAlvos(al.id));
+    };
+    mostrarAlvos();
+
+    // pontos marcados no alvo: na RA aparece um objeto 3D em cada um (cubo, esfera, cilindro, cone, com cores diferentes)
+    const telaP = document.getElementById("tela-pontos"), ctxP = telaP.getContext("2d");
+    let imgP = null, alvoP = null, pontosP = [];
+    function fecharPontos() { document.getElementById("marcacao").hidden = true; alvoP = null; }
+    document.getElementById("marcar").onclick = async () => {
+      const a = alvoEscolhido(); if (!a) return;
+      alvoP = a; pontosP = (a.pontos || []).map(p => ({ ...p }));
+      imgP = await createImageBitmap(a.jpg);
+      document.getElementById("marcacao").hidden = false;
+      const k = Math.min(1, telaP.parentElement.clientWidth / imgP.width);
+      telaP.width = Math.round(imgP.width * k); telaP.height = Math.round(imgP.height * k);
+      desenharPontos();
+      telaP.scrollIntoView({ behavior: "smooth" });
+    };
+    function desenharPontos() {
+      ctxP.drawImage(imgP, 0, 0, telaP.width, telaP.height);
+      if (alvoP.forma && alvoP.forma.tipo !== "retangulo") { // contorno da forma, para se ver onde vale a pena marcar
+        ctxP.setLineDash([8, 6]); ctxP.strokeStyle = "#ffd000"; ctxP.lineWidth = 2;
+        caminho(ctxP, alvoP.forma.pts.map(([u, v]) => [u * telaP.width, v * telaP.height])); ctxP.stroke(); ctxP.setLineDash([]);
+      }
+      pontosP.forEach((p, i) => {
+        const x = p.u * telaP.width, y = p.v * telaP.height;
+        ctxP.beginPath(); ctxP.arc(x, y, 13, 0, 2 * Math.PI);
+        ctxP.fillStyle = CORES_PONTOS[i % CORES_PONTOS.length]; ctxP.fill();
+        ctxP.lineWidth = 2; ctxP.strokeStyle = "#fff"; ctxP.stroke();
+        ctxP.fillStyle = "#fff"; ctxP.font = "bold 14px system-ui, sans-serif"; ctxP.textAlign = "center"; ctxP.textBaseline = "middle";
+        ctxP.fillText(String(i + 1), x, y);
+      });
+    }
+    telaP.addEventListener("click", ev => {
+      const b = telaP.getBoundingClientRect();
+      const u = (ev.clientX - b.left) / b.width, v = (ev.clientY - b.top) / b.height;
+      const nome = prompt("Nome deste ponto (ex.: C. Calpurnius). Pode ficar vazio.", "Ponto " + (pontosP.length + 1));
+      if (nome === null) return;
+      pontosP.push({ u: +u.toFixed(4), v: +v.toFixed(4), nome: nome.trim() });
+      desenharPontos();
+    });
+    document.getElementById("pontos-desfazer").onclick = () => { pontosP.pop(); if (alvoP) desenharPontos(); };
+    document.getElementById("pontos-fechar").onclick = fecharPontos;
+    document.getElementById("pontos-guardar").onclick = async () => {
+      if (!alvoP) return;
+      alvoP.pontos = pontosP; await Alvos.gravar(alvoP);
+      confirmar(document.getElementById("pontos-guardar"), pontosP.length + " ponto(s) guardado(s)");
+      await mostrarAlvos(alvoP.id);
+    };
+
+    for (const [id, campo] of [["ir-mindar", "mind"], ["ir-zappar", "zpt"]]) {
+      document.getElementById(id).addEventListener("click", ev => {
+        const a = alvoEscolhido();
+        if (!exigirLocal()) { ev.preventDefault(); return; }
+        if (!a) { ev.preventDefault(); alert("Cria primeiro um alvo (passo 2)."); return; }
+        if (!a[campo]) { ev.preventDefault(); alert("Este alvo não tem versão " + (campo === "mind" ? "MindAR" : "Zappar") + "."); }
+      });
+    }
+
+    // enviar a fotografia e os dois alvos (para o Claude os juntar ao site)
+    document.getElementById("enviar").onclick = async () => {
+      const a = alvoEscolhido(); if (!a) return;
+      const base = "alvo-" + a.id.toLowerCase();
+      const ficheiros = [new File([a.jpg], base + ".jpg", { type: "image/jpeg" })];
+      if (a.mind) ficheiros.push(new File([a.mind], base + ".mind", { type: "application/octet-stream" }));
+      if (a.zpt) ficheiros.push(new File([a.zpt], base + ".zpt", { type: "application/octet-stream" }));
+      if (navigator.canShare && navigator.canShare({ files: ficheiros })) {
+        try { await navigator.share({ title: "Teste 07 · " + a.nome, files: ficheiros }); confirmar(document.getElementById("enviar"), "Enviado"); return; } catch (e) { if (e.name === "AbortError") return; }
+      }
+      for (const f of ficheiros) { // sem partilha de ficheiros: descarrega-os
+        const l = document.createElement("a"); l.href = URL.createObjectURL(f); l.download = f.name; l.click();
+      }
+      confirmar(document.getElementById("enviar"), "Descarregado");
+    };
+    // trazer os alvos dos testes 06 e 05: lê as bases desses testes sem as alterar e copia o que ainda não existe aqui
+    async function lerAlvosDe(nomeBD) {
+      if (indexedDB.databases && !(await indexedDB.databases()).some(d => d.name === nomeBD)) return [];
+      const bd = await new Promise((ok, erro) => { const r = indexedDB.open(nomeBD); r.onsuccess = () => ok(r.result); r.onerror = () => erro(r.error); });
+      try {
+        if (!bd.objectStoreNames.contains("alvos")) return [];
+        return await new Promise((ok, erro) => { const q = bd.transaction("alvos", "readonly").objectStore("alvos").getAll(); q.onsuccess = () => ok(q.result); q.onerror = () => erro(q.error); });
+      } finally { bd.close(); }
+    }
+    document.getElementById("importar").onclick = async () => {
+      const est = document.getElementById("estado-importar"), b = document.getElementById("importar");
+      try {
+        const jaTenho = new Set((await Alvos.todos()).map(a => a.id)), partes = [];
+        let total = 0;
+        for (const [bd, nome] of [["oceano-teste06", "teste 06"], ["oceano-teste05", "teste 05"]]) {
+          const antigos = await lerAlvosDe(bd);
+          const novos = antigos.filter(a => !jaTenho.has(a.id));
+          for (const a of novos) { await Alvos.gravar(a); jaTenho.add(a.id); }
+          total += novos.length;
+          if (antigos.length) partes.push(novos.length + " do " + nome + (antigos.length > novos.length ? " (" + (antigos.length - novos.length) + " já cá estavam)" : ""));
+        }
+        est.textContent = partes.length ? "Trazidos: " + partes.join(" · ") + "." : "Não há alvos dos testes 06 nem 05 neste telemóvel.";
+        confirmar(b, total + " trazido(s)");
+        if (total) await mostrarAlvos();
+      } catch (e) { est.textContent = "Não foi possível ler os alvos dos outros testes: " + e.message; }
+    };
+    document.getElementById("apagar-alvo").onclick = async () => {
+      const a = alvoEscolhido(); if (!a) return;
+      if (confirm("Apagar o alvo «" + a.nome + "» deste telemóvel? Os resultados ficam.")) { await Alvos.apagar(a.id); mostrarAlvos(); }
+    };
+
+    // 0. preparar sem rede
+    const estado = document.getElementById("estado-offline");
+    document.getElementById("preparar").onclick = async () => {
+      if (!("serviceWorker" in navigator)) { estado.textContent = "Este navegador não permite guardar o teste. Usa o Chrome."; return; }
+      estado.textContent = "A preparar…";
+      const reg = await navigator.serviceWorker.ready;
+      navigator.serviceWorker.onmessage = e => {
+        if (e.data.tipo === "progresso") estado.textContent = "A descarregar " + e.data.feitos + " de " + e.data.total + "…";
+        if (e.data.tipo === "fim") estado.textContent = e.data.falhas.length
+          ? "Faltaram " + e.data.falhas.length + " ficheiros. Tenta outra vez com melhor rede."
+          : "✓ Pronto. O teste funciona sem rede neste telemóvel.";
+      };
+      reg.active.postMessage({ tipo: "preparar" });
+    };
+
+    // resultados
+    const COLS = [["quando", "Quando"], ["motor", "Motor"], ["alvo", "Alvo"], ["fotografado", "Fotografado em"], ["local", "Testado em"], ["aparelho", "Aparelho"],
+                  ["primeiro", "1.º rec. (s)"], ["perdas", "Perdas"], ["pctReconhecido", "% rec."], ["duracao", "Duração (s)"],
+                  ["tremor5s", "Tremor 5 s (px)"], ["tremor2s", "Tremor 2 s (px)"], ["desenho", "Desenho na RA"], ["nota", "Nota"]];
+    function desenhar() {
+      const lr = lerResultados();
+      const t = document.getElementById("tabela");
+      if (!lr.length) { t.innerHTML = "<tr><td>Ainda não há resultados.</td></tr>"; return; }
+      t.innerHTML = "<tr>" + COLS.map(c => "<th>" + c[1] + "</th>").join("") + "</tr>" +
+        lr.map(r => "<tr>" + COLS.map(c => "<td>" + (r[c[0]] === null || r[c[0]] === undefined ? "—" : String(r[c[0]]).replace(/</g, "&lt;")) + "</td>").join("") + "</tr>").join("");
+    }
+    desenhar();
+    Capturas.todas().then(l => {
+      document.getElementById("n-capturas").textContent = l.length
+        ? l.length + " fotografia(s) da RA guardada(s) neste telemóvel (botão «Fotografar a RA»); seguem com «Partilhar resultados e fotografias» e com «Enviar tudo para o GitHub»." : "";
+    }).catch(() => {});
+    // o texto partilhado leva também a lista de alvos, com o tempo que cada motor levou a criá-los
+    function texto() {
+      const res = [COLS.map(c => c[1]).join("\t")].concat(lerResultados().map(r => COLS.map(c => r[c[0]] ?? "").join("\t")));
+      const alv = ["", "Alvo\tFotografado em\tLargura × altura (px)\tCriação MindAR (s)\tCriação Zappar (s)\tFotografia original\tRecorte na original (x, y, largura, altura)\tForma do recorte\tPontos marcados\tDesenho\tErros"]
+        .concat(lista.map(a => [a.nome, nomeLocal(a.local), a.largura + " × " + a.altura, a.tMind ?? "falhou", a.tZpt ?? "—",
+          a.fotoId ? "foto-" + a.fotoId + ".jpg" : "", a.recorte ? a.recorte.join(", ") : "inteira", a.recorte ? nomeForma(a) : "—",
+          (a.pontos || []).map((p, i) => (i + 1) + " " + p.nome).join(" | "), a.desenho ? (a.desenhoInfo ? a.desenhoInfo.origem : "sim") : "—", (a.erros || []).join(" · ")].join("\t")));
+      return res.concat(alv).join("\n");
+    }
+
+    // as fotografias para treinar alvos no PC: cada original uma vez (várias recortes podem vir da mesma) e cada recorte
+    async function ficheirosFotos() {
+      const fich = (await Capturas.todas()).map(c => new File([c.jpg], c.id + ".jpg", { type: "image/jpeg" })), vistos = new Set();
+      for (const a of lista) {
+        if (a.original && !vistos.has(a.fotoId)) { vistos.add(a.fotoId); fich.push(new File([a.original], "foto-" + a.fotoId + ".jpg", { type: "image/jpeg" })); }
+        fich.push(new File([a.jpg], "recorte-" + a.id.toLowerCase() + ".jpg", { type: "image/jpeg" }));
+        if (a.desenho) fich.push(new File([a.desenho], "desenho-" + a.id.toLowerCase() + ".png", { type: "image/png" }));
+      }
+      return fich;
+    }
+    document.getElementById("partilhar-fotos").onclick = async () => {
+      const fich = await ficheirosFotos();
+      if (!fich.length) { aviso.textContent = "Ainda não há fotografias."; return; }
+      if (navigator.canShare && navigator.canShare({ files: fich, text: "x" })) {
+        try { await navigator.share({ title: "Teste 07 · resultados e fotografias", text: texto(), files: fich }); confirmar(document.getElementById("partilhar-fotos"), "Enviado"); return; }
+        catch (e) { if (e.name === "AbortError") return; }
+      }
+      // sem partilha de ficheiros: copia o texto e descarrega as fotografias
+      try { await navigator.clipboard.writeText(texto()); } catch (e) {}
+      for (const f of fich) { const l = document.createElement("a"); l.href = URL.createObjectURL(f); l.download = f.name; l.click(); }
+      aviso.textContent = "Texto copiado e fotografias descarregadas (pasta Transferências).";
+      confirmar(document.getElementById("partilhar-fotos"), "Descarregado");
+    };
+    const aviso = document.getElementById("aviso");
+    document.getElementById("partilhar").onclick = async () => {
+      if (!lerResultados().length && !lista.length) { aviso.textContent = "Ainda não há resultados."; return; }
+      if (navigator.share) {
+        try { await navigator.share({ title: "Teste 07 · resultados", text: texto() }); confirmar(document.getElementById("partilhar"), "Enviado"); } catch (e) { /* cancelado */ }
+      } else document.getElementById("copiar").click();
+    };
+    document.getElementById("copiar").onclick = async () => {
+      try { await navigator.clipboard.writeText(texto()); aviso.textContent = "Copiado. Cola numa folha de cálculo ou numa mensagem."; confirmar(document.getElementById("copiar"), "Copiado"); }
+      catch (e) { prompt("Copia este texto:", texto()); }
+    };
+    document.getElementById("limpar").onclick = () => {
+      if (confirm("Apagar todos os resultados guardados neste telemóvel? Partilha-os antes. (Os alvos ficam.)")) { gravarResultados([]); desenhar(); }
+    };
+
+    // ---- Envio para o GitHub (repositório privado oceano-dados, só de passagem) ----
+    // Usa a API do GitHub: cria os ficheiros («blobs»), junta-os numa pasta («tree») e faz um commit.
+    // A chave fica só neste navegador (localStorage). Os caminhos já enviados ficam registados, para não repetir.
+    // A chave é comum a todos os testes (mesmo endereço github.io): cola-se uma vez. Cada teste escreve na sua pasta.
+    const GH_PASTA = "teste-07";
+    const GH_REPO = "mc-mariocoelho/oceano-dados-testes", GH_API = "https://api.github.com/repos/" + GH_REPO;
+    const GH_CHAVE = "oceano-gh-chave", GH_ENVIADOS = "oceano-teste07-gh-enviados";
+    const ghEstado = document.getElementById("gh-estado");
+    const lerLS = (k, d) => { try { return localStorage.getItem(k) ?? d; } catch (e) { return d; } };
+    const gravarLS = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+    if (lerLS(GH_CHAVE, "")) document.getElementById("gh-chave").placeholder = "chave guardada ✓";
+    else document.getElementById("gh-config").open = true;
+    document.getElementById("gh-guardar").onclick = () => {
+      const v = document.getElementById("gh-chave").value.trim();
+      if (!v) return;
+      gravarLS(GH_CHAVE, v); document.getElementById("gh-chave").value = "";
+      document.getElementById("gh-chave").placeholder = "chave guardada ✓";
+      confirmar(document.getElementById("gh-guardar"), "Guardada");
+    };
+    document.getElementById("gh-esquecer").onclick = () => {
+      try { localStorage.removeItem(GH_CHAVE); } catch (e) {}
+      document.getElementById("gh-chave").placeholder = "github_pat_…";
+      confirmar(document.getElementById("gh-esquecer"), "Esquecida");
+    };
+
+    async function gh(caminho, metodo, corpo) {
+      const r = await fetch(GH_API + caminho, {
+        method: metodo || "GET",
+        headers: { "Authorization": "Bearer " + lerLS(GH_CHAVE, ""), "Accept": "application/vnd.github+json" },
+        body: corpo ? JSON.stringify(corpo) : undefined,
+      });
+      if (!r.ok) {
+        // a explicação do GitHub (em inglês) e o passo onde falhou, para se perceber a causa
+        let det = "";
+        try { const j = await r.json(); det = (j.message || "") + (j.errors ? " · " + JSON.stringify(j.errors).slice(0, 200) : ""); } catch (e) {}
+        const passo = (metodo || "GET") + " " + caminho.replace(/[0-9a-f]{40}/g, "…");
+        const msg = r.status === 401 ? "a chave não é válida ou expirou"
+          : r.status === 403 || r.status === 404 ? "a chave não dá acesso ao repositório oceano-dados-testes"
+          : r.status === 409 ? "o repositório está vazio (cria-o com um README)" : "erro " + r.status;
+        const erro = new Error(msg + " [" + passo + (det ? " — " + det : "") + "]");
+        erro.status = r.status;
+        throw erro;
+      }
+      return r.json();
+    }
+    const base64 = blob => new Promise((ok, erro) => {
+      const fr = new FileReader(); fr.onload = () => ok(fr.result.split(",")[1]); fr.onerror = () => erro(fr.error); fr.readAsDataURL(blob);
+    });
+
+    // Imagem da página inteira (de cima a baixo, não só o que se vê no ecrã), para o DDB.
+    // O navegador não deixa a página fotografar o ecrã: o html2canvas redesenha-a numa imagem.
+    // A secção da chave do GitHub fica de fora. A altura é limitada a ~16 000 px (limite das imagens no telemóvel).
+    async function imagemPagina() {
+      await carregarScript(HTML2CANVAS);
+      // o html2canvas deixa em branco as imagens SVG (o mapa dos pontos): passa-se o mapa a PNG antes
+      let mapa = null;
+      const im = document.querySelector(".mapa-pontos");
+      if (im && im.complete && im.clientWidth) {
+        const c = document.createElement("canvas"); c.width = im.clientWidth * 2; c.height = im.clientHeight * 2;
+        c.getContext("2d").drawImage(im, 0, 0, c.width, c.height); mapa = c.toDataURL("image/png");
+      }
+      const y = window.scrollY, alto = document.documentElement.scrollHeight;
+      window.scrollTo(0, 0); // sem isto, a imagem sai cortada em cima
+      try {
+        const c = await html2canvas(document.body, {
+          scale: Math.min(2, window.devicePixelRatio || 1, 16000 / alto),
+          backgroundColor: getComputedStyle(document.body).backgroundColor,
+          ignoreElements: el => el.id === "gh-config",
+          onclone: doc => { const m = doc.querySelector(".mapa-pontos"); if (m && mapa) m.src = mapa; },
+          logging: false,
+        });
+        return await new Promise((ok, erro) => c.toBlob(b => b ? ok(b) : erro(new Error("imagem demasiado grande")), "image/jpeg", 0.85));
+      } finally { window.scrollTo(0, y); }
+    }
+    document.getElementById("pagina-guardar").onclick = async () => {
+      const b = document.getElementById("pagina-guardar");
+      b.disabled = true; ghEstado.textContent = "A fazer a imagem da página…";
+      try {
+        const img = await imagemPagina(), nome = "teste07-pagina-" + new Date().toISOString().slice(0, 16).replace(/[:T]/g, "-") + ".jpg";
+        const l = document.createElement("a"); l.href = URL.createObjectURL(img); l.download = nome; l.click();
+        ghEstado.textContent = "✓ Imagem guardada (pasta Transferências): " + nome;
+        b.disabled = false; confirmar(b, "Guardada");
+      } catch (e) { ghEstado.textContent = "Não foi possível fazer a imagem: " + e.message; b.disabled = false; }
+    };
+
+    // Envio robusto (10 out., depois de falhar a meio com 94 ficheiros):
+    // - em lotes de 15 ficheiros, cada lote fica gravado no GitHub (commit) antes do seguinte;
+    //   se a rede cair, o que já foi gravado não se repete na tentativa seguinte;
+    // - pausa curta entre ficheiros (o GitHub limita os pedidos por minuto);
+    // - até 3 novas tentativas quando a rede falha ou o GitHub pede para esperar;
+    // - o ecrã fica ligado durante o envio (se o telemóvel bloquear, o Chrome pode parar a página).
+    const LOTE = 15;
+    const pausa = ms => new Promise(ok => setTimeout(ok, ms));
+    async function tentar(fn) {
+      for (let n = 0; ; n++) {
+        try { return await fn(); }
+        catch (e) {
+          const repetivel = !e.status || e.status === 403 || e.status === 429 || e.status >= 500; // sem resposta, limite ou falha do GitHub
+          if (!repetivel || n >= 3) throw e;
+          ghEstado.textContent = "A ligação falhou; nova tentativa daqui a " + [5, 15, 30][n] + " s…";
+          await pausa([5000, 15000, 30000][n]);
+        }
+      }
+    }
+
+    document.getElementById("gh-enviar").onclick = async () => {
+      const b = document.getElementById("gh-enviar");
+      if (!lerLS(GH_CHAVE, "")) { document.getElementById("gh-config").open = true; ghEstado.textContent = "Falta a chave de acesso (abre a secção abaixo)."; return; }
+      if (!navigator.onLine) { ghEstado.textContent = "Sem rede. Liga os dados ou o Wi-Fi; os dados continuam guardados neste telemóvel."; return; }
+      b.disabled = true;
+      let emCurso = ""; // ficheiro a ser enviado (para a mensagem de erro)
+      let ecraLigado = null; // pedido para o ecrã não apagar durante o envio
+      try {
+        await descobrirAparelho(); // nome real do telemóvel (ex.: Pixel 9a · Android 17), não só «Android 10»
+        const enviados = new Set(JSON.parse(lerLS(GH_ENVIADOS, "[]")));
+        const agora = new Date(), carimbo = agora.toISOString().slice(0, 16).replace(/[:T]/g, "-");
+        const sessao = GH_PASTA + "/envios/" + carimbo + "-" + aparelho().replace(/[^\w]+/g, "-").toLowerCase();
+        // ficheiros a enviar: [caminho, Blob]
+        const fich = [
+          [sessao + "/resultados.txt", new Blob([texto()], { type: "text/plain" })],
+          [sessao + "/resultados.json", new Blob([JSON.stringify({ enviado: agora.toISOString(), aparelho: aparelho(), resultados: lerResultados(),
+            alvos: lista.map(a => ({ id: a.id, nome: a.nome, local: a.local, largura: a.largura, altura: a.altura, tMind: a.tMind, tZpt: a.tZpt, fotoId: a.fotoId, recorte: a.recorte, forma: a.forma || null, pontos: a.pontos || [], desenho: a.desenhoInfo || null, erros: a.erros })) }, null, 1)], { type: "application/json" })],
+        ];
+        if (document.getElementById("gh-pagina").checked) {
+          ghEstado.textContent = "A fazer a imagem da página…";
+          try { fich.push([sessao + "/pagina.jpg", await imagemPagina()]); }
+          catch (e) { ghEstado.textContent = "A imagem da página falhou (" + e.message + "); o resto segue."; }
+        }
+        for (const cap of await Capturas.todas()) fich.push([GH_PASTA + "/capturas-ra/" + cap.id + ".jpg", cap.jpg]); // «Fotografar a RA»
+        const comOriginais = document.getElementById("gh-originais").checked, fotosVistas = new Set();
+        for (const a of lista) {
+          const pasta = GH_PASTA + "/alvos/" + a.id.toLowerCase();
+          if (a.jpg) fich.push([pasta + "/recorte.jpg", a.jpg]);
+          if (a.mind) fich.push([pasta + "/alvo.mind", new Blob([a.mind])]);
+          if (a.zpt) fich.push([pasta + "/alvo.zpt", new Blob([a.zpt])]);
+          // o desenho pode mudar depois de enviado: o nome leva a hora da última gravação
+          if (a.desenho) fich.push([pasta + "/desenho-" + new Date((a.desenhoInfo && a.desenhoInfo.atualizado) || 0).toISOString().slice(0, 16).replace(/[:T]/g, "-") + ".png", a.desenho]);
+          if (comOriginais && a.original && a.fotoId && !fotosVistas.has(a.fotoId)) { fotosVistas.add(a.fotoId); fich.push([GH_PASTA + "/originais/foto-" + a.fotoId + ".jpg", a.original]); }
+        }
+        // os ficheiros deste envio (resultados e imagem da página) vão sempre; o resto só se ainda não foi enviado
+        const novos = fich.filter(([c]) => c.startsWith(sessao + "/") || !enviados.has(c));
+        try { ecraLigado = await navigator.wakeLock.request("screen"); } catch (e) { /* sem wake lock: segue na mesma */ }
+        let base = (await tentar(() => gh("/git/ref/heads/main"))).object.sha;
+        const lotes = Math.ceil(novos.length / LOTE);
+        let feitos = 0;
+        for (let l = 0; l < lotes; l++) {
+          const lote = novos.slice(l * LOTE, (l + 1) * LOTE), arvore = [];
+          for (const [caminho, blob] of lote) {
+            emCurso = caminho.split("/").pop() + " (" + (blob.size / 1e6).toFixed(1).replace(".", ",") + " MB, " + (feitos + 1) + " de " + novos.length + ")";
+            ghEstado.textContent = "A enviar " + (++feitos) + " de " + novos.length + " (lote " + (l + 1) + " de " + lotes + ")… " + caminho.split("/").pop();
+            const conteudo = await base64(blob);
+            const bl = await tentar(() => gh("/git/blobs", "POST", { content: conteudo, encoding: "base64" }));
+            arvore.push({ path: caminho, mode: "100644", type: "blob", sha: bl.sha });
+            await pausa(400);
+          }
+          emCurso = ""; ghEstado.textContent = "A gravar o lote " + (l + 1) + " de " + lotes + "…";
+          const commitBase = await tentar(() => gh("/git/commits/" + base));
+          const tree = await tentar(() => gh("/git/trees", "POST", { base_tree: commitBase.tree.sha, tree: arvore }));
+          const commit = await tentar(() => gh("/git/commits", "POST", { message: "Teste 07 · envio " + carimbo + " (" + aparelho() + ") · lote " + (l + 1) + "/" + lotes, tree: tree.sha, parents: [base] }));
+          await tentar(() => gh("/git/refs/heads/main", "PATCH", { sha: commit.sha }));
+          base = commit.sha;
+          // o lote está gravado: fica registado, para não se repetir se a rede cair mais à frente
+          lote.forEach(([c]) => enviados.add(c));
+          gravarLS(GH_ENVIADOS, JSON.stringify([...enviados]));
+        }
+        const mb = novos.reduce((t, [, bl]) => t + bl.size, 0) / 1e6;
+        ghEstado.textContent = "✓ Enviados " + novos.length + " ficheiros (" + mb.toFixed(1).replace(".", ",") + " MB). No PC, pede ao Claude para transferir o oceano-dados-testes.";
+        b.disabled = false; confirmar(b, "Enviado");
+      } catch (e) {
+        ghEstado.textContent = "Não foi possível enviar: " + e.message + (emCurso ? " · ficheiro: " + emCurso : "") +
+          ". O que já foi gravado não se repete: carrega outra vez em «Enviar tudo» para continuar. Os dados continuam guardados neste telemóvel.";
+        b.disabled = false;
+      } finally {
+        try { if (ecraLigado) await ecraLigado.release(); } catch (e) {}
+      }
+    };
+  </script>
+</body>
+</html>

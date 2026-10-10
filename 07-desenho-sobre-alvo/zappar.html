@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teste 07 · Zappar</title>
+  <link rel="stylesheet" href="estilo.css">
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  <script src="https://libs.zappar.com/zappar-aframe/2.0.0/zappar-aframe.js"></script>
+  <script src="alvos.js"></script>
+  <script src="medicao.js"></script>
+  <script src="objetos.js"></script>
+  <!-- fora dos domínios licenciados, o Zappar mostra uma faixa em baixo: os botões sobem para não ficarem tapados -->
+  <style>.barra { bottom: 130px; }</style>
+</head>
+<body>
+  <div class="hud">
+    <div class="topo"><span id="h-motor"></span><span class="aparelho" id="h-aparelho"></span></div>
+    <div class="local" id="h-local"></div>
+    <div class="estado" id="h-estado">à procura…</div>
+    <dl>
+      <dt>1.º reconhecimento</dt><dd id="h-primeiro">—</dd>
+      <dt>Perdas do alvo</dt><dd id="h-perdas">0</dd>
+      <dt>Tempo reconhecido</dt><dd id="h-pct">—</dd>
+      <dt>Tremor (últimos 2 s)</dt><dd id="h-tremor">—</dd>
+      <dt>Tremor (medição 5 s)</dt><dd id="h-tremor5">—</dd>
+    </dl>
+    <div class="pontos" id="h-pontos" hidden></div>
+  </div>
+  <div class="barra">
+    <button id="b-recomecar">Recomeçar</button>
+    <button id="b-tremor">Medir tremor (5 s)</button>
+    <button id="b-guardar">Guardar resultado</button>
+    <button id="b-foto">Fotografar a RA</button>
+    <button id="b-desenho">Desenho</button>
+    <button id="b-moldura">Moldura</button>
+    <a href="./">Voltar</a>
+  </div>
+  <div id="cena"></div>
+  <script>
+    // Zappar: o alvo mede 2 de altura (de -1 a 1); a largura segue a proporção da fotografia
+    registarMedidor();
+    registarObjetos();
+    (async () => {
+      const id = new URLSearchParams(location.search).get("alvo");
+      const a = id && await Alvos.ler(id);
+      if (!a || !a.zpt) { alert("Este alvo não existe neste telemóvel ou não tem versão Zappar. Volta e cria-o."); location.href = "./"; return; }
+      const h = 2, w = 2 * a.largura / a.altura;
+      // moldura amarela + objetos 3D com sombra (ver objetos.js)
+      document.getElementById("cena").innerHTML =
+        '<a-scene shadow="type: pcfsoft" vr-mode-ui="enabled: false">' +
+        htmlAssetsDesenho(a) + '<a-entity zappar-permissions-ui></a-entity><a-entity zappar-compatibility-ui></a-entity>' +
+        '<a-entity camera zappar-camera></a-entity>' +
+        '<a-entity id="ancora" zappar-image="target: ' + urlDe(a.zpt) + '" medidor><a-entity id="conteudo" visible="false">' +
+          htmlMoldura(a, w, h) + htmlDesenho(a, w, h) + htmlObjetos(a, w, h) +
+        '</a-entity></a-entity></a-scene>';
+      mostrarLegenda(a);
+      ligarBotoesDesenho(a);
+      const ancora = document.getElementById("ancora");
+      const conteudo = document.getElementById("conteudo");
+      // o Zappar não esconde sozinho o que está sobre o alvo quando o perde (problema do teste 06): esconde-se aqui
+      ancora.addEventListener("zappar-visible", () => { conteudo.object3D.visible = true; Medicao.encontrado(); });
+      ancora.addEventListener("zappar-notvisible", () => { conteudo.object3D.visible = false; Medicao.perdido(); });
+      Medicao.iniciar("Zappar", a);
+      // O Zappar pede um toque em «GRANT ACCESS» antes de ligar a câmara; o MindAR não.
+      // Para os tempos serem comparáveis, o cronómetro recomeça nesse primeiro toque (fora dos nossos botões).
+      document.addEventListener("click", function primeiroToque(e) {
+        if (e.target.closest(".barra, .hud")) return;
+        document.removeEventListener("click", primeiroToque, true);
+        Medicao.recomecar();
+      }, true);
+    })();
+  </script>
+</body>
+</html>
