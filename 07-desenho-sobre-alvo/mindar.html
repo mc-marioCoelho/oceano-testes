@@ -32,11 +32,32 @@
     <button id="b-foto">Fotografar a RA</button>
     <button id="b-desenho">Desenho</button>
     <button id="b-moldura">Moldura</button>
+    <button id="b-estab">Estabilizar</button>
     <a href="./">Voltar</a>
   </div>
   <div id="cena"></div>
   <script>
     // MindAR: o alvo mede 1 de largura; a altura segue a proporção da fotografia
+    // Estabilização (filtro «One Euro» do MindAR): quanto mais forte, menos tremor e mais atraso quando te mexes.
+    // filterMinCF baixo = menos tremor parado; filterBeta baixo = mais atraso nos movimentos rápidos.
+    // O nível fica guardado no telemóvel; mudar recarrega a página (o MindAR só lê estes valores ao arrancar).
+    const ESTAB = {
+      normal: { nome: "normal", cf: 0.001, beta: 1000 },  // valores de origem do MindAR (os dos testes 03–06)
+      media:  { nome: "média",  cf: 0.0001, beta: 10 },
+      forte:  { nome: "forte",  cf: 0.0001, beta: 0.001 }, // o exemplo da documentação do MindAR para tremor
+    };
+    const ORDEM = ["normal", "media", "forte"];
+    let nivel = "normal";
+    try { nivel = localStorage.getItem("oceano-teste07-estab") || "normal"; } catch (e) {}
+    if (!ESTAB[nivel]) nivel = "normal";
+    const be = document.getElementById("b-estab");
+    be.textContent = "Estabilizar: " + ESTAB[nivel].nome;
+    be.onclick = () => {
+      const seg = ORDEM[(ORDEM.indexOf(nivel) + 1) % ORDEM.length];
+      try { localStorage.setItem("oceano-teste07-estab", seg); } catch (e) {}
+      location.reload();
+    };
+    Medicao.estab = ESTAB[nivel].nome;
     registarMedidor();
     registarObjetos();
     (async () => {
@@ -46,7 +67,7 @@
       const w = 1, h = a.altura / a.largura;
       // moldura amarela + objetos 3D com sombra (ver objetos.js)
       document.getElementById("cena").innerHTML =
-        '<a-scene mindar-image="imageTargetSrc: ' + urlDe(a.mind) + '; maxTrack: 1; uiScanning: no; uiLoading: yes; uiError: yes"' +
+        '<a-scene mindar-image="imageTargetSrc: ' + urlDe(a.mind) + '; maxTrack: 1; filterMinCF: ' + ESTAB[nivel].cf + '; filterBeta: ' + ESTAB[nivel].beta + '; uiScanning: no; uiLoading: yes; uiError: yes"' +
         ' shadow="type: pcfsoft" color-space="sRGB" renderer="colorManagement: true" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">' +
         htmlAssetsDesenho(a) + '<a-camera position="0 0 0" look-controls="enabled: false"></a-camera>' +
         '<a-entity id="ancora" mindar-image-target="targetIndex: 0" medidor>' +

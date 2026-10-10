@@ -146,6 +146,7 @@ const Medicao = {
       tremor2s: this.passos.length ? +this.media(this.passos.map(p => p[1])).toFixed(1) : null,
       tremor5s: this.tremor5 === null ? null : +this.tremor5.toFixed(1),
       desenho: this.estadoDesenho ? this.estadoDesenho() : null, // teste 07: como estava o desenho (ex.: «60 %»)
+      estab: this.estab || (this.motor === "MindAR" ? "normal" : "—"), // teste 07: nível de estabilização do MindAR (o Zappar não tem este ajuste)
     };
   },
 
@@ -203,7 +204,7 @@ async function fotografarRA(botao) {
     "Teste 07 · " + Medicao.motor + " · " + Medicao.alvo.nome + (Medicao.visivel ? " · RECONHECIDO" : " · à procura"),
     "Em: " + (nomeLocal(lerLocal()) || "?") + " · " + aparelho(),
     quando.toLocaleString("pt-PT") + " · 1.º rec. " + (r.primeiro === null ? "—" : String(r.primeiro).replace(".", ",") + " s") +
-      " · tremor 2 s " + (r.tremor2s === null ? "—" : String(r.tremor2s).replace(".", ",") + " px") + " · " + r.pctReconhecido + " % rec." + (r.desenho && r.desenho !== "sem desenho" ? " · desenho " + r.desenho : ""),
+      " · tremor 2 s " + (r.tremor2s === null ? "—" : String(r.tremor2s).replace(".", ",") + " px") + " · " + r.pctReconhecido + " % rec." + (r.desenho && r.desenho !== "sem desenho" ? " · desenho " + r.desenho : "") + (Medicao.estab ? " · estab. " + Medicao.estab : ""),
   ];
   const pontos = Medicao.alvo.pontos || [], tl = 15;
   g.font = "12px system-ui, sans-serif"; g.textBaseline = "top";

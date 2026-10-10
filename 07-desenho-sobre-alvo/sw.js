@@ -4,7 +4,7 @@
 // Páginas do teste: rede primeiro (para receber correções), cópia guardada se não houver rede.
 // Bibliotecas externas (endereços com versão fixa): cópia guardada primeiro.
 
-const CACHE = "oceano-teste07-v1";
+const CACHE = "oceano-teste07-v2";
 const PROPRIOS = ["./", "index.html", "pontos-de-visao.svg", "mindar.html", "zappar.html", "estilo.css", "alvos.js", "medicao.js", "objetos.js", "desenho.js"];
 const ZT = "https://cdn.jsdelivr.net/npm/@zappar/imagetraining@4.3.2/umd/";
 const EXTERNOS = [

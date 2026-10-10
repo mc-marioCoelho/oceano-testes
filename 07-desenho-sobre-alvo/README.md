@@ -23,6 +23,20 @@ O desenho é uma imagem **PNG transparente com as mesmas proporções do recorte
 - Envio para o GitHub (`teste-07/`): o desenho segue com o alvo, em `alvos/<id>/desenho-<data>-<hora>.png` (se for alterado, segue outra vez com a nova hora). A partilha de fotografias também o leva.
 - Guarda alvos e resultados à parte do teste 06 (`oceano-teste07`).
 
+## Estabilização do MindAR (acrescentado a 11 out.)
+
+O Mário notou que o desenho «dança» um bocadinho sobre o alvo. O MindAR tem um filtro (*One Euro*) que alisa a posição do alvo de imagem para imagem: com mais filtro, o desenho treme menos com o telemóvel parado, mas atrasa-se quando o telemóvel se mexe. O botão **«Estabilizar»** (só no MindAR) passa por três níveis e recarrega a página:
+
+| Nível | filterMinCF | filterBeta | Esperado |
+|---|---|---|---|
+| normal | 0,001 | 1000 | valores de origem (os dos testes 03–06) |
+| média | 0,0001 | 10 | menos tremor, algum atraso |
+| forte | 0,0001 | 0,001 | o mínimo de tremor, mais atraso ao mexer |
+
+O nível entra nos resultados (coluna «Estabilização») e na faixa de «Fotografar a RA». **Como comparar:** no mesmo ponto e com o mesmo alvo, para cada nível: «Recomeçar», segurar parado e «Medir tremor (5 s)», depois mexer devagar e reparar se o desenho se atrasa; «Guardar resultado» com uma nota. Comparar também com o Zappar, que a 10 out. tremia cerca de 3× menos.
+
+Porque é que a lacuna treme mais: o motor segue os pormenores da parte conservada (a cara, as linhas); a lacuna é argamassa lisa, longe desses pormenores, e um erro pequeno na estimativa da inclinação do alvo cresce com a distância. Um recorte que inclua pormenores **dos dois lados** da lacuna (cercadura, círculo do medalhão) deve ajudar.
+
 ## O que observar na sala
 
 - **P7** (melhor caso: 100 % nos dois motores) e **lacuna do Euro** (só MindAR).
