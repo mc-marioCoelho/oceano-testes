@@ -1,6 +1,6 @@
 # Teste 06 · ensaio em casa (10 out. 2026)
 
-*Ensaio de funcionamento, não medição: o «mosaico» foi uma fotografia da inscrição aberta no ecrã do PC. Os números servem só para confirmar que se registam; fotografar um ecrã cria interferência (moiré) que baralha os dois motores. Dados e imagens em `media-local/fotos/teste-06-2026-10-10-ensaio/` (fora do Git).*
+*Ensaio de funcionamento, não medição: o «mosaico» foi uma fotografia da inscrição aberta no ecrã do PC. Os números servem só para confirmar que se registam; fotografar um ecrã cria interferência (moiré) que baralha os dois motores. Os dados e as imagens do ensaio foram descartados no mesmo dia, a pedido do Mário (serviram só para confirmar o circuito); fica este registo.*
 
 ## O que testei e porquê
 
