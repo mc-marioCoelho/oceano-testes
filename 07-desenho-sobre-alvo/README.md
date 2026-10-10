@@ -23,7 +23,7 @@ O desenho é uma imagem **PNG transparente com as mesmas proporções do recorte
 - Envio para o GitHub (`teste-07/`): o desenho segue com o alvo, em `alvos/<id>/desenho-<data>-<hora>.png` (se for alterado, segue outra vez com a nova hora). A partilha de fotografias também o leva.
 - Guarda alvos e resultados à parte do teste 06 (`oceano-teste07`).
 
-## Estabilização do MindAR (acrescentado a 11 out.)
+## Estabilização do MindAR (acrescentado a 10 out., à noite)
 
 O Mário notou que o desenho «dança» um bocadinho sobre o alvo. O MindAR tem um filtro (*One Euro*) que alisa a posição do alvo de imagem para imagem: com mais filtro, o desenho treme menos com o telemóvel parado, mas atrasa-se quando o telemóvel se mexe. O botão **«Estabilizar»** (só no MindAR) passa por três níveis e recarrega a página:
 
