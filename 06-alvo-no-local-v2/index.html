@@ -599,10 +599,14 @@
         body: corpo ? JSON.stringify(corpo) : undefined,
       });
       if (!r.ok) {
+        // a explicação do GitHub (em inglês) e o passo onde falhou, para se perceber a causa
+        let det = "";
+        try { const j = await r.json(); det = (j.message || "") + (j.errors ? " · " + JSON.stringify(j.errors).slice(0, 200) : ""); } catch (e) {}
+        const passo = (metodo || "GET") + " " + caminho.replace(/[0-9a-f]{40}/g, "…");
         const msg = r.status === 401 ? "a chave não é válida ou expirou"
           : r.status === 403 || r.status === 404 ? "a chave não dá acesso ao repositório oceano-dados-testes"
           : r.status === 409 ? "o repositório está vazio (cria-o com um README)" : "erro " + r.status;
-        throw new Error(msg);
+        throw new Error(msg + " [" + passo + (det ? " — " + det : "") + "]");
       }
       return r.json();
     }
@@ -651,6 +655,7 @@
       if (!lerLS(GH_CHAVE, "")) { document.getElementById("gh-config").open = true; ghEstado.textContent = "Falta a chave de acesso (abre a secção abaixo)."; return; }
       if (!navigator.onLine) { ghEstado.textContent = "Sem rede. Liga os dados ou o Wi-Fi; os dados continuam guardados neste telemóvel."; return; }
       b.disabled = true;
+      let emCurso = ""; // ficheiro a ser enviado (para a mensagem de erro)
       try {
         await descobrirAparelho(); // nome real do telemóvel (ex.: Pixel 9a · Android 17), não só «Android 10»
         const enviados = new Set(JSON.parse(lerLS(GH_ENVIADOS, "[]")));
@@ -683,11 +688,12 @@
         const arvore = [];
         let feitos = 0;
         for (const [caminho, blob] of novos) {
+          emCurso = caminho.split("/").pop() + " (" + (blob.size / 1e6).toFixed(1).replace(".", ",") + " MB, " + (feitos + 1) + " de " + novos.length + ")";
           ghEstado.textContent = "A enviar " + (++feitos) + " de " + novos.length + "… (" + caminho.split("/").pop() + ")";
           const bl = await gh("/git/blobs", "POST", { content: await base64(blob), encoding: "base64" });
           arvore.push({ path: caminho, mode: "100644", type: "blob", sha: bl.sha });
         }
-        ghEstado.textContent = "A registar o envio…";
+        emCurso = ""; ghEstado.textContent = "A registar o envio…";
         const tree = await gh("/git/trees", "POST", { base_tree: commitBase.tree.sha, tree: arvore });
         const commit = await gh("/git/commits", "POST", { message: "Teste 06 · envio " + carimbo + " (" + aparelho() + ")", tree: tree.sha, parents: [ref.object.sha] });
         await gh("/git/refs/heads/main", "PATCH", { sha: commit.sha });
@@ -697,7 +703,7 @@
         ghEstado.textContent = "✓ Enviados " + novos.length + " ficheiros (" + mb.toFixed(1).replace(".", ",") + " MB). No PC, pede ao Claude para transferir o oceano-dados-testes.";
         b.disabled = false; confirmar(b, "Enviado");
       } catch (e) {
-        ghEstado.textContent = "Não foi possível enviar: " + e.message + ". Os dados continuam guardados neste telemóvel.";
+        ghEstado.textContent = "Não foi possível enviar: " + e.message + (emCurso ? " · ficheiro: " + emCurso : "") + ". Os dados continuam guardados neste telemóvel.";
         b.disabled = false;
       }
     };
