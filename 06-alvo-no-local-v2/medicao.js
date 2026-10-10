@@ -81,6 +81,8 @@ const Medicao = {
     document.getElementById("b-recomecar").onclick = () => this.recomecar();
     document.getElementById("b-tremor").onclick = () => this.medirTremor();
     document.getElementById("b-guardar").onclick = () => this.guardar();
+    const bf = document.getElementById("b-foto");
+    if (bf) bf.onclick = () => fotografarRA(bf);
     this.recomecar();
     setInterval(() => this.mostrar(), 250);
   },
@@ -175,6 +177,63 @@ function confirmar(botao, msg) {
   const antes = botao.textContent;
   botao.classList.add("ok"); botao.textContent = "✓ " + msg; botao.disabled = true;
   setTimeout(() => { botao.classList.remove("ok"); botao.textContent = antes; botao.disabled = false; }, 2000);
+}
+
+// «Fotografar a RA» (para o DDB): junta numa imagem o que se vê no ecrã — a câmara, a moldura e os objetos 3D —
+// com uma faixa em cima com os dados do momento. Guarda-a no telemóvel (alvos.js, loja «capturas»);
+// segue no «Enviar tudo para o GitHub» da página inicial.
+// No MindAR a câmara é um vídeo por trás da cena 3D; no Zappar já vem desenhada dentro da cena.
+// A cena 3D desenha-se outra vez e copia-se logo a seguir (o navegador apaga-a entre imagens).
+async function fotografarRA(botao) {
+  const cena = document.querySelector("a-scene");
+  if (!cena || !cena.renderer || !cena.camera) return;
+  const k = Math.min(2, window.devicePixelRatio || 1), W = window.innerWidth, H = window.innerHeight;
+  const c = document.createElement("canvas"); c.width = Math.round(W * k); c.height = Math.round(H * k);
+  const g = c.getContext("2d"); g.scale(k, k);
+  g.fillStyle = "#000"; g.fillRect(0, 0, W, H);
+  const pinta = (el, fonte) => { const r = el.getBoundingClientRect(); g.drawImage(fonte || el, r.left, r.top, r.width, r.height); };
+  for (const v of document.querySelectorAll("video")) if (v.readyState >= 2 && v.getBoundingClientRect().width) pinta(v);
+  cena.renderer.render(cena.object3D, cena.camera);
+  pinta(cena.canvas);
+
+  // faixa com os dados
+  const r = Medicao.resumo(), quando = new Date();
+  const linhas = [
+    "Teste 06 · " + Medicao.motor + " · " + Medicao.alvo.nome + (Medicao.visivel ? " · RECONHECIDO" : " · à procura"),
+    "Em: " + (nomeLocal(lerLocal()) || "?") + " · " + aparelho(),
+    quando.toLocaleString("pt-PT") + " · 1.º rec. " + (r.primeiro === null ? "—" : String(r.primeiro).replace(".", ",") + " s") +
+      " · tremor 2 s " + (r.tremor2s === null ? "—" : String(r.tremor2s).replace(".", ",") + " px") + " · " + r.pctReconhecido + " % rec.",
+  ];
+  const pontos = Medicao.alvo.pontos || [], tl = 15;
+  g.font = "12px system-ui, sans-serif"; g.textBaseline = "top";
+  // legenda dos pontos marcados (com as cores dos objetos): passa à linha seguinte quando não cabe
+  let x = 8, y = 8 + linhas.length * tl;
+  const legenda = pontos.map((p, i) => {
+    const t = (i + 1) + " " + (p.nome || ""), larg = 13 + g.measureText(t).width;
+    if (x > 8 && x + larg > W - 8) { x = 8; y += tl; }
+    const item = { t, x, y, cor: CORES_PONTOS[i % CORES_PONTOS.length] };
+    x += larg + 12; return item;
+  });
+  const alto = (pontos.length ? y + tl : 8 + linhas.length * tl) + 6;
+  g.fillStyle = "rgba(20,18,16,.78)"; g.fillRect(0, 0, W, alto);
+  linhas.forEach((t, i) => { g.fillStyle = i ? "#e6ddd2" : "#ffcf6b"; g.fillText(t, 8, 8 + i * tl, W - 16); });
+  for (const it of legenda) {
+    g.fillStyle = it.cor; g.beginPath(); g.arc(it.x + 5, it.y + 7, 5, 0, 2 * Math.PI); g.fill();
+    g.fillStyle = "#e6ddd2"; g.fillText(it.t, it.x + 13, it.y);
+  }
+
+  const jpg = await new Promise(ok => c.toBlob(ok, "image/jpeg", 0.88));
+  const hora = quando.toTimeString().slice(0, 8).replace(/:/g, "");
+  await Capturas.gravar({
+    id: "ra-" + Medicao.motor.toLowerCase() + "-" + (lerLocal() || "sem-local").toLowerCase() + "-" + quando.toISOString().slice(0, 10) + "-" + hora,
+    criado: quando.getTime(), motor: Medicao.motor, alvo: Medicao.alvo.nome, alvoId: Medicao.alvo.id, local: lerLocal(),
+    reconhecido: Medicao.visivel, jpg,
+  });
+  // clarão breve, como numa máquina fotográfica
+  const f = document.createElement("div");
+  f.style.cssText = "position:fixed;inset:0;background:#fff;opacity:.7;z-index:10002;pointer-events:none;transition:opacity .35s";
+  document.body.appendChild(f); requestAnimationFrame(() => { f.style.opacity = "0"; }); setTimeout(() => f.remove(), 400);
+  confirmar(botao, "Fotografado");
 }
 
 // Componente A-Frame: projeta o centro do alvo no ecrã a cada imagem

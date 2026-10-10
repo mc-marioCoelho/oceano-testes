@@ -19,6 +19,7 @@ Continuação do [teste 05](../05-alvo-no-local/), que fica como estava. Funcion
 Os resultados exportados passam a ter as colunas «Forma do recorte» e «Pontos marcados».
 
 9. **Imagem da página inteira (para o DDB):** o «Enviar tudo para o GitHub» junta uma imagem JPG da página de cima a baixo, como está nesse momento (alvos, tabela de resultados), em `envios/<data>-<aparelho>/pagina.jpg` (opção ligada por omissão). Há também um botão para a guardar só no telemóvel. Faz-se com o html2canvas, que redesenha a página numa imagem (o navegador não deixa a página fotografar o ecrã); a secção da chave do GitHub fica de fora. No PC, vai para `media-local/fotos/teste-06-<data>/capturas/`.
+10. **«Fotografar a RA»** (barra de baixo do MindAR e do Zappar): junta numa imagem a câmara, a moldura e os objetos 3D, com uma faixa em cima com motor, alvo, ponto, aparelho, hora, 1.º reconhecimento, tremor e a legenda dos pontos marcados. Um clarão branco confirma. As fotografias ficam no telemóvel (loja `capturas`, IndexedDB versão 2) e seguem com «Partilhar resultados e fotografias» e com «Enviar tudo para o GitHub» (`teste-06/capturas-ra/ra-<motor>-<ponto>-<data>-<hora>.jpg`). No PC, também vão para `capturas/`.
 
 ## Limites
 

@@ -87,6 +87,7 @@
 
     <h2>Resultados guardados neste telemóvel</h2>
     <div class="tabela"><table id="tabela"></table></div>
+    <p class="sub" id="n-capturas"></p>
     <p class="motores">
       <button class="botao" id="partilhar">Partilhar resultados</button>
       <button class="botao" id="partilhar-fotos">Partilhar resultados e fotografias</button>
@@ -515,6 +516,10 @@
         lr.map(r => "<tr>" + COLS.map(c => "<td>" + (r[c[0]] === null || r[c[0]] === undefined ? "—" : String(r[c[0]]).replace(/</g, "&lt;")) + "</td>").join("") + "</tr>").join("");
     }
     desenhar();
+    Capturas.todas().then(l => {
+      document.getElementById("n-capturas").textContent = l.length
+        ? l.length + " fotografia(s) da RA guardada(s) neste telemóvel (botão «Fotografar a RA»); seguem com «Partilhar resultados e fotografias» e com «Enviar tudo para o GitHub»." : "";
+    }).catch(() => {});
     // o texto partilhado leva também a lista de alvos, com o tempo que cada motor levou a criá-los
     function texto() {
       const res = [COLS.map(c => c[1]).join("\t")].concat(lerResultados().map(r => COLS.map(c => r[c[0]] ?? "").join("\t")));
@@ -526,8 +531,8 @@
     }
 
     // as fotografias para treinar alvos no PC: cada original uma vez (várias recortes podem vir da mesma) e cada recorte
-    function ficheirosFotos() {
-      const fich = [], vistos = new Set();
+    async function ficheirosFotos() {
+      const fich = (await Capturas.todas()).map(c => new File([c.jpg], c.id + ".jpg", { type: "image/jpeg" })), vistos = new Set();
       for (const a of lista) {
         if (a.original && !vistos.has(a.fotoId)) { vistos.add(a.fotoId); fich.push(new File([a.original], "foto-" + a.fotoId + ".jpg", { type: "image/jpeg" })); }
         fich.push(new File([a.jpg], "recorte-" + a.id.toLowerCase() + ".jpg", { type: "image/jpeg" }));
@@ -535,7 +540,7 @@
       return fich;
     }
     document.getElementById("partilhar-fotos").onclick = async () => {
-      const fich = ficheirosFotos();
+      const fich = await ficheirosFotos();
       if (!fich.length) { aviso.textContent = "Ainda não há fotografias."; return; }
       if (navigator.canShare && navigator.canShare({ files: fich, text: "x" })) {
         try { await navigator.share({ title: "Teste 06 · resultados e fotografias", text: texto(), files: fich }); confirmar(document.getElementById("partilhar-fotos"), "Enviado"); return; }
@@ -662,6 +667,7 @@
           try { fich.push([sessao + "/pagina.jpg", await imagemPagina()]); }
           catch (e) { ghEstado.textContent = "A imagem da página falhou (" + e.message + "); o resto segue."; }
         }
+        for (const cap of await Capturas.todas()) fich.push([GH_PASTA + "/capturas-ra/" + cap.id + ".jpg", cap.jpg]); // «Fotografar a RA»
         const comOriginais = document.getElementById("gh-originais").checked, fotosVistas = new Set();
         for (const a of lista) {
           const pasta = GH_PASTA + "/alvos/" + a.id.toLowerCase();
