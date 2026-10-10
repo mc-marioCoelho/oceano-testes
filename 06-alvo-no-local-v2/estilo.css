@@ -78,3 +78,14 @@ button:disabled { opacity: .5; }
 
 /* Teste 06: confirmação depois de carregar num botão (verde com ✓ durante 2 s) */
 .botao.ok, .barra button.ok { background: #2e9d5b !important; color: #fff !important; border-color: #2e9d5b !important; opacity: 1 !important; }
+
+/* Teste 06 (10 out.): forma do recorte e legenda dos pontos marcados */
+.formas { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 6px; }
+.formas label { background: var(--cartao); border: 2px solid transparent; border-radius: 999px; padding: 6px 12px; cursor: pointer; font-size: .9rem; }
+.formas label:has(input:checked) { border-color: var(--acento); font-weight: 600; }
+.formas input { display: none; }
+.hud .pontos { display: flex; flex-wrap: wrap; gap: 2px 12px; margin-top: 6px; font-size: .8rem; }
+.hud .pontos i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
+
+/* o atributo hidden tem de esconder mesmo quando a classe define display (ex.: .motores, .botao) */
+[hidden] { display: none !important; }

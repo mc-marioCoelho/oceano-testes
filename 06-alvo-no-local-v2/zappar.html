@@ -9,6 +9,7 @@
   <script src="https://libs.zappar.com/zappar-aframe/2.0.0/zappar-aframe.js"></script>
   <script src="alvos.js"></script>
   <script src="medicao.js"></script>
+  <script src="objetos.js"></script>
   <!-- fora dos domínios licenciados, o Zappar mostra uma faixa em baixo: os botões sobem para não ficarem tapados -->
   <style>.barra { bottom: 130px; }</style>
 </head>
@@ -24,6 +25,7 @@
       <dt>Tremor (últimos 2 s)</dt><dd id="h-tremor">—</dd>
       <dt>Tremor (medição 5 s)</dt><dd id="h-tremor5">—</dd>
     </dl>
+    <div class="pontos" id="h-pontos" hidden></div>
   </div>
   <div class="barra">
     <button id="b-recomecar">Recomeçar</button>
@@ -35,20 +37,21 @@
   <script>
     // Zappar: o alvo mede 2 de altura (de -1 a 1); a largura segue a proporção da fotografia
     registarMedidor();
+    registarObjetos();
     (async () => {
       const id = new URLSearchParams(location.search).get("alvo");
       const a = id && await Alvos.ler(id);
       if (!a || !a.zpt) { alert("Este alvo não existe neste telemóvel ou não tem versão Zappar. Volta e cria-o."); location.href = "./"; return; }
-      const h = 2, w = 2 * a.largura / a.altura, t = 0.012 * Math.max(w, h);
-      const borda = (x, y, bw, bh) => '<a-plane position="' + x + ' ' + y + ' 0.001" width="' + bw + '" height="' + bh + '" material="color:#ffd000; shader:flat"></a-plane>';
+      const h = 2, w = 2 * a.largura / a.altura;
+      // moldura amarela + objetos 3D com sombra (ver objetos.js)
       document.getElementById("cena").innerHTML =
-        '<a-scene vr-mode-ui="enabled: false">' +
+        '<a-scene shadow="type: pcfsoft" vr-mode-ui="enabled: false">' +
         '<a-entity zappar-permissions-ui></a-entity><a-entity zappar-compatibility-ui></a-entity>' +
         '<a-entity camera zappar-camera></a-entity>' +
         '<a-entity id="ancora" zappar-image="target: ' + urlDe(a.zpt) + '" medidor>' +
-          '<a-plane width="' + w + '" height="' + h + '" material="color:#ffd000; opacity:0.3; transparent:true; shader:flat"></a-plane>' +
-          borda(0, h / 2, w, t) + borda(0, -h / 2, w, t) + borda(-w / 2, 0, t, h) + borda(w / 2, 0, t, h) +
+          htmlMoldura(a, w, h) + htmlObjetos(a, w, h) +
         '</a-entity></a-scene>';
+      mostrarLegenda(a);
       const ancora = document.getElementById("ancora");
       ancora.addEventListener("zappar-visible", () => Medicao.encontrado());
       ancora.addEventListener("zappar-notvisible", () => Medicao.perdido());

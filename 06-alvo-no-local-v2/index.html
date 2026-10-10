@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="estilo.css">
   <script src="alvos.js"></script>
   <script src="medicao.js"></script>
+  <script src="objetos.js"></script>
 </head>
 <body>
   <main class="pagina">
@@ -26,11 +27,20 @@
     <p><label class="botao" for="foto">Tirar fotografia</label>
        <input type="file" id="foto" accept="image/*" capture="environment" hidden></p>
     <div id="recorte" hidden>
-      <p class="sub">Arrasta o dedo sobre a fotografia para recortar só a parte do mosaico que interessa (sem passadiço nem corrimão). Da mesma fotografia podes criar vários alvos: depois de criar um, recorta outra parte e carrega outra vez em «Criar alvo» (por exemplo, o mosaico inteiro e só a inscrição).</p>
+      <p class="sub">Recorta só a parte do mosaico que interessa (sem passadiço nem corrimão). Da mesma fotografia podes criar vários alvos: depois de criar um, recorta outra parte e carrega outra vez em «Criar alvo» (por exemplo, o mosaico inteiro e só a inscrição).</p>
+      <div class="formas" id="formas">
+        <label><input type="radio" name="forma" value="retangulo" checked>Retângulo</label>
+        <label><input type="radio" name="forma" value="trapezio">Trapézio</label>
+        <label><input type="radio" name="forma" value="triangulo">Triângulo</label>
+        <label><input type="radio" name="forma" value="elipse">Elipse</label>
+        <label><input type="radio" name="forma" value="poligono">Polígono livre</label>
+      </div>
+      <p class="sub" id="ajuda-forma"></p>
       <canvas id="tela" class="tela-recorte"></canvas>
       <p class="motores">
         <button class="botao" id="criar">Criar alvo</button>
         <button class="botao claro" id="inteira">Usar a fotografia inteira</button>
+        <button class="botao claro" id="desfazer" hidden>Desfazer último canto</button>
       </p>
       <p class="sub"><label><input type="checkbox" id="com-zappar"> Criar também o alvo Zappar (mais ~20 s; no github.io o Zappar mostra em baixo uma faixa da licença)</label></p>
       <p class="estado-offline" id="estado-criar"></p>
@@ -42,9 +52,19 @@
     <p><button class="botao claro" id="importar">Trazer os alvos do teste 05</button></p>
     <p class="sub" id="estado-importar">Copia para aqui os alvos criados no teste 05 neste telemóvel (o teste 05 fica igual).</p>
     <p class="motores" id="acoes-alvo" hidden>
+      <button class="botao claro" id="marcar">Marcar pontos neste alvo</button>
       <button class="botao claro" id="enviar">Enviar ficheiros do alvo</button>
       <button class="botao claro" id="apagar-alvo">Apagar este alvo</button>
     </p>
+    <div id="marcacao" hidden>
+      <p class="sub">Toca em cada sítio onde queres um objeto 3D na RA (por exemplo, em cada um dos quatro nomes da inscrição) e dá-lhe um nome. Sem pontos, aparece um cubo ao centro. Não é preciso criar o alvo outra vez.</p>
+      <canvas id="tela-pontos" class="tela-recorte"></canvas>
+      <p class="motores">
+        <button class="botao" id="pontos-guardar">Guardar pontos</button>
+        <button class="botao claro" id="pontos-desfazer">Desfazer último</button>
+        <button class="botao claro" id="pontos-fechar">Fechar</button>
+      </p>
+    </div>
 
     <h2>4. Testa o alvo escolhido</h2>
     <div class="motores">
@@ -59,6 +79,8 @@
       <li><strong>Fotografa</strong> (passo 2) com o telemóvel à altura a que um visitante o seguraria. Recorta só o mosaico e carrega em <strong>Criar alvo</strong>. Espera: pode demorar até um minuto.</li>
       <li>No Zappar, carrega primeiro em <strong>GRANT ACCESS</strong>: o cronómetro recomeça nesse toque. Na RA, aponta a câmara para o lado, carrega em <strong>Recomeçar</strong> e só então aponta ao alvo: o <em>1.º reconhecimento</em> mede quanto tempo demora.</li>
       <li>Quando reconhecer, segura parado e carrega em <strong>Medir tremor (5 s)</strong>; depois mexe-te devagar cerca de 20 s e <strong>Guardar resultado</strong>.</li>
+      <li><strong>Forma do recorte:</strong> se o passadiço ou o corrimão entram na fotografia, usa o trapézio (encaixa os cantos no limite do mosaico, em perspetiva) ou o polígono livre. O que fica fora é pintado com a cor média, com passagem suave.</li>
+      <li><strong>Objetos 3D:</strong> sem pontos marcados, aparece um cubo com sombra ao centro do alvo. Para a inscrição, cria o alvo e carrega em <strong>Marcar pontos neste alvo</strong>: toca em cada nome (C. Calpurnius, G. Vibius Quintilianus, L. Attius, M. Verrius Geminus) e guarda. Na RA aparece um objeto diferente em cada nome. Na nota, diz se os objetos ficaram em cima dos nomes.</li>
       <li><strong>Depois, testa o mesmo alvo a partir dos pontos vizinhos</strong> (escolhe o novo ponto no passo 1): é isso que diz se serve para os visitantes.</li>
     </ol>
     <p class="nota">Medir no sítio exato da fotografia é o melhor caso possível. Se nem assim reconhecer, aquela parte do mosaico não serve de alvo. O Zappar também funciona aqui no github.io (verificado a 9 out.), com uma faixa da licença em baixo; os botões ficam acima dela. Os alvos ficam guardados em cada endereço (os do github.io não aparecem na ZapWorks, e o contrário).</p>
@@ -116,6 +138,29 @@
     let foto = null, escala = 1, sel = null, inicio = null;
     let fotoOriginal = null, fotoId = null; // a fotografia inteira, na resolução da câmara, para treinar alvos no PC
 
+    // Forma do recorte. Retângulo, trapézio, triângulo e elipse: arrasta-se o dedo (a caixa onde a forma cabe).
+    // Trapézio e polígono livre ficam com cantos que se podem puxar um a um (no polígono, cada toque fora de um canto junta outro).
+    // O alvo continua a ser uma imagem retangular (é o que o MindAR e o Zappar aceitam): o que fica fora da forma
+    // é pintado com a cor média de dentro, com uma transição suave, e por isso não conta para o reconhecimento.
+    let forma = "retangulo", cantos = [], arrasto = -1;
+    const AJUDAS = {
+      retangulo: "Arrasta o dedo sobre a fotografia, de um canto ao canto oposto.",
+      trapezio: "Arrasta o dedo para fazer um trapézio (para baixo: lado de cima mais estreito; para cima: o contrário). Depois puxa cada canto até ao limite do mosaico, como o vês em perspetiva.",
+      triangulo: "Arrasta o dedo: para baixo, o bico fica em cima; para cima, o bico fica em baixo.",
+      elipse: "Arrasta o dedo: a elipse ocupa a caixa que desenhares.",
+      poligono: "Toca em cada canto, pela ordem (pelo menos 3). Para corrigir, puxa um canto ou carrega em «Desfazer último canto».",
+    };
+    const ajudaForma = document.getElementById("ajuda-forma"), btDesfazer = document.getElementById("desfazer");
+    function mudarForma() {
+      forma = document.querySelector('input[name="forma"]:checked').value;
+      sel = null; cantos = []; arrasto = -1;
+      ajudaForma.textContent = AJUDAS[forma];
+      btDesfazer.hidden = forma !== "poligono";
+      if (foto) desenharTela();
+    }
+    document.getElementById("formas").addEventListener("change", mudarForma);
+    mudarForma();
+
     document.getElementById("foto").addEventListener("change", async ev => {
       const f = ev.target.files[0];
       if (!f) return;
@@ -124,46 +169,124 @@
       document.getElementById("recorte").hidden = false; // primeiro mostrar, para se saber a largura disponível
       escala = Math.min(1, tela.parentElement.clientWidth / foto.width);
       tela.width = Math.round(foto.width * escala); tela.height = Math.round(foto.height * escala);
-      sel = null; desenharTela();
+      sel = null; cantos = []; desenharTela();
       estadoCriar.textContent = "";
       tela.scrollIntoView({ behavior: "smooth" });
       ev.target.value = "";
     });
 
-    function desenharTela() {
-      ctx.drawImage(foto, 0, 0, tela.width, tela.height);
-      if (!sel) return;
-      const r = normalizar(sel);
-      ctx.fillStyle = "rgba(0,0,0,.55)";
-      ctx.fillRect(0, 0, tela.width, r.y); ctx.fillRect(0, r.y + r.h, tela.width, tela.height - r.y - r.h);
-      ctx.fillRect(0, r.y, r.x, r.h); ctx.fillRect(r.x + r.w, r.y, tela.width - r.x - r.w, r.h);
-      ctx.strokeStyle = "#ffd000"; ctx.lineWidth = 3; ctx.strokeRect(r.x, r.y, r.w, r.h);
-    }
     function normalizar(s) {
       return { x: Math.min(s.x0, s.x1), y: Math.min(s.y0, s.y1), w: Math.abs(s.x1 - s.x0), h: Math.abs(s.y1 - s.y0) };
+    }
+    // cantos da forma (em píxeis da tela) a partir da caixa arrastada
+    function cantosDaCaixa(s) {
+      const r = normalizar(s), cx = r.x + r.w / 2, cy = r.y + r.h / 2, x2 = r.x + r.w, y2 = r.y + r.h;
+      const paraCima = s.y1 < s.y0, d = r.w * 0.2;
+      if (forma === "retangulo") return [[r.x, r.y], [x2, r.y], [x2, y2], [r.x, y2]];
+      if (forma === "trapezio") return paraCima ? [[r.x, r.y], [x2, r.y], [x2 - d, y2], [r.x + d, y2]]
+                                                : [[r.x + d, r.y], [x2 - d, r.y], [x2, y2], [r.x, y2]];
+      if (forma === "triangulo") return paraCima ? [[r.x, r.y], [x2, r.y], [cx, y2]] : [[cx, r.y], [x2, y2], [r.x, y2]];
+      const n = 48; // elipse: 48 cantos chegam para parecer curva
+      return Array.from({ length: n }, (_, i) => [cx + r.w / 2 * Math.cos(2 * Math.PI * i / n), cy + r.h / 2 * Math.sin(2 * Math.PI * i / n)]);
+    }
+    // a forma pronta a usar, ou null se ainda não houver forma
+    function formaAtual() { return cantos.length >= 3 ? cantos : null; }
+    const comPegas = () => forma === "trapezio" || forma === "poligono";
+
+    function caminho(c, pts) { c.beginPath(); pts.forEach(([x, y], i) => i ? c.lineTo(x, y) : c.moveTo(x, y)); c.closePath(); }
+    function desenharTela() {
+      ctx.drawImage(foto, 0, 0, tela.width, tela.height);
+      const pts = formaAtual();
+      if (pts) {
+        ctx.fillStyle = "rgba(0,0,0,.55)";
+        ctx.beginPath(); ctx.rect(0, 0, tela.width, tela.height);
+        pts.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.closePath();
+        ctx.fill("evenodd"); // escurece só o que fica fora da forma
+        ctx.strokeStyle = "#ffd000"; ctx.lineWidth = 3; caminho(ctx, pts); ctx.stroke();
+      } else if (cantos.length === 2) {
+        ctx.strokeStyle = "#ffd000"; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(...cantos[0]); ctx.lineTo(...cantos[1]); ctx.stroke();
+      }
+      if (comPegas()) for (const [x, y] of cantos) { // pegas para puxar os cantos
+        ctx.beginPath(); ctx.arc(x, y, 9, 0, 2 * Math.PI);
+        ctx.fillStyle = "#ffd000"; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = "#2b2622"; ctx.stroke();
+      }
     }
     function ponto(ev) {
       const b = tela.getBoundingClientRect();
       return [Math.max(0, Math.min(tela.width, (ev.clientX - b.left) * tela.width / b.width)),
               Math.max(0, Math.min(tela.height, (ev.clientY - b.top) * tela.height / b.height))];
     }
-    tela.addEventListener("pointerdown", ev => { tela.setPointerCapture(ev.pointerId); const [x, y] = ponto(ev); inicio = true; sel = { x0: x, y0: y, x1: x, y1: y }; });
-    tela.addEventListener("pointermove", ev => { if (!inicio) return; const [x, y] = ponto(ev); sel.x1 = x; sel.y1 = y; desenharTela(); });
-    tela.addEventListener("pointerup", () => { inicio = null; if (sel && normalizar(sel).w < 20) { sel = null; desenharTela(); } });
+    // canto mais próximo do dedo (até ~1 cm no ecrã), ou -1
+    function cantoPerto(x, y) {
+      const raio = 28 * tela.width / tela.getBoundingClientRect().width;
+      let melhor = -1, dm = raio;
+      cantos.forEach(([cx, cy], i) => { const d = Math.hypot(cx - x, cy - y); if (d < dm) { dm = d; melhor = i; } });
+      return melhor;
+    }
+    tela.addEventListener("pointerdown", ev => {
+      tela.setPointerCapture(ev.pointerId);
+      const [x, y] = ponto(ev);
+      if (comPegas() && (arrasto = cantoPerto(x, y)) >= 0) return; // puxar um canto
+      if (forma === "poligono") { cantos.push([x, y]); desenharTela(); return; }
+      inicio = true; sel = { x0: x, y0: y, x1: x, y1: y };
+    });
+    tela.addEventListener("pointermove", ev => {
+      const [x, y] = ponto(ev);
+      if (arrasto >= 0) { cantos[arrasto] = [x, y]; desenharTela(); return; }
+      if (!inicio) return;
+      sel.x1 = x; sel.y1 = y; cantos = cantosDaCaixa(sel); desenharTela();
+    });
+    tela.addEventListener("pointerup", () => {
+      if (inicio && sel) { const r = normalizar(sel); if (r.w < 20 || r.h < 20) { cantos = []; desenharTela(); } }
+      inicio = null; sel = null; arrasto = -1;
+    });
+    btDesfazer.onclick = () => { cantos.pop(); desenharTela(); };
 
-    document.getElementById("criar").onclick = () => criar(sel ? normalizar(sel) : null);
-    document.getElementById("inteira").onclick = () => { sel = null; desenharTela(); criar(null); };
+    document.getElementById("criar").onclick = () => criar(formaAtual());
+    document.getElementById("inteira").onclick = () => { cantos = []; desenharTela(); criar(null); };
 
-    // recorta e reduz a fotografia; devolve o JPG e as medidas
-    async function prepararImagem(r) {
-      const sx = r ? r.x / escala : 0, sy = r ? r.y / escala : 0;
-      const sw = r ? r.w / escala : foto.width, sh = r ? r.h / escala : foto.height;
+    // recorta (pela caixa onde a forma cabe), reduz e, se a forma não for um retângulo, pinta o que fica fora dela
+    async function prepararImagem(pts) {
+      let sx = 0, sy = 0, sw = foto.width, sh = foto.height, guardarForma = null;
+      if (pts) {
+        const xs = pts.map(p => p[0] / escala), ys = pts.map(p => p[1] / escala);
+        sx = Math.max(0, Math.min(...xs)); sy = Math.max(0, Math.min(...ys));
+        sw = Math.min(foto.width, Math.max(...xs)) - sx; sh = Math.min(foto.height, Math.max(...ys)) - sy;
+        // cantos dentro do recorte, de 0 a 1 (para desenhar o contorno na RA)
+        guardarForma = { tipo: forma, pts: pts.map(([x, y]) => [+((x / escala - sx) / sw).toFixed(4), +((y / escala - sy) / sh).toFixed(4)]) };
+      }
       const k = Math.min(1, LADO_MAX / Math.max(sw, sh));
       const c = document.createElement("canvas");
       c.width = Math.round(sw * k); c.height = Math.round(sh * k);
       c.getContext("2d").drawImage(foto, sx, sy, sw, sh, 0, 0, c.width, c.height);
+      if (guardarForma && guardarForma.tipo !== "retangulo") mascarar(c, guardarForma.pts);
       const jpg = await new Promise(ok => c.toBlob(ok, "image/jpeg", 0.92));
-      return { jpg, largura: c.width, altura: c.height };
+      return { jpg, largura: c.width, altura: c.height, caixa: pts ? [sx, sy, sw, sh].map(Math.round) : null, forma: guardarForma };
+    }
+
+    // Pinta o que fica fora da forma com a cor média de dentro dela. A passagem é suave: um contorno nítido
+    // seria para o motor um «pormenor» falso, que ele tentaria reconhecer na sala.
+    function mascarar(c, uv) {
+      const W = c.width, H = c.height, g = c.getContext("2d");
+      const tela2 = () => { const t = document.createElement("canvas"); t.width = W; t.height = H; return t; };
+      const contorno = cx => caminho(cx, uv.map(([u, v]) => [u * W, v * H]));
+      // 1. máscara da forma e cor média lá dentro (um em cada quatro píxeis chega)
+      const m = tela2(), mg = m.getContext("2d");
+      mg.fillStyle = "#fff"; contorno(mg); mg.fill();
+      const px = g.getImageData(0, 0, W, H).data, mk = mg.getImageData(0, 0, W, H).data;
+      let r = 0, gr = 0, b = 0, n = 0;
+      for (let i = 0; i < px.length; i += 16) if (mk[i + 3] > 128) { r += px[i]; gr += px[i + 1]; b += px[i + 2]; n++; }
+      const media = n ? "rgb(" + Math.round(r / n) + "," + Math.round(gr / n) + "," + Math.round(b / n) + ")" : "#808080";
+      // 2. encolhe a máscara f píxeis e desfoca-a: a transição fica toda dentro da forma (o passadiço não volta a entrar)
+      const f = Math.max(4, Math.round(0.015 * Math.max(W, H)));
+      mg.globalCompositeOperation = "destination-out"; mg.lineWidth = 2 * f; mg.lineJoin = "round"; contorno(mg); mg.stroke();
+      const s = tela2(), sg = s.getContext("2d");
+      sg.filter = "blur(" + (f / 2) + "px)"; sg.drawImage(m, 0, 0);
+      // 3. a fotografia só dentro da máscara, por cima da cor média
+      const fo = tela2(), fg = fo.getContext("2d");
+      fg.drawImage(c, 0, 0); fg.globalCompositeOperation = "destination-in"; fg.drawImage(s, 0, 0);
+      g.fillStyle = media; g.fillRect(0, 0, W, H); g.drawImage(fo, 0, 0);
     }
 
     async function criarMindAR(jpg) {
@@ -201,14 +324,14 @@
       botoes.forEach(b => b.disabled = true);
       let criado = false;
       try {
-        const { jpg, largura, altura } = await prepararImagem(r);
+        const { jpg, largura, altura, caixa, forma: fr } = await prepararImagem(r);
         const local = lerLocal(), agora = new Date();
         const hora = agora.toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" });
         const alvo = {
           id: local + "-" + agora.getTime(), criado: agora.getTime(),
           nome: (local.startsWith("parede") ? "Parede" : local.replace("-esq", " esq.").replace("-dir", " dir.")) + " · foto " + hora,
           local, jpg, largura, altura, mind: null, zpt: null, tMind: null, tZpt: null, erros: [],
-          original: fotoOriginal, fotoId, recorte: r ? [r.x, r.y, r.w, r.h].map(v => Math.round(v / escala)) : null,
+          original: fotoOriginal, fotoId, recorte: caixa, forma: fr, pontos: [],
         };
         let t0 = performance.now();
         estadoCriar.textContent = "MindAR: a criar o alvo…";
@@ -248,7 +371,9 @@
         const u = URL.createObjectURL(a.jpg); urlsMiniaturas.push(u);
         return '<label><input type="radio" name="alvo" value="' + a.id + '"' + (a.id === atual ? " checked" : "") + '>' +
           '<img src="' + u + '" alt="">' + a.nome +
-          '<small>MindAR ' + (a.mind ? a.tMind + " s" : "✗") + ' · Zappar ' + (a.zpt ? a.tZpt + " s" : "—") + '</small></label>';
+          '<small>MindAR ' + (a.mind ? a.tMind + " s" : "✗") + ' · Zappar ' + (a.zpt ? a.tZpt + " s" : "—") +
+          (a.forma && a.forma.tipo !== "retangulo" ? ' · ' + nomeForma(a) : '') +
+          (a.pontos && a.pontos.length ? ' · ' + a.pontos.length + ' ponto(s)' : '') + '</small></label>';
       }).join("");
       document.getElementById("sem-alvos").hidden = lista.length > 0;
       document.getElementById("acoes-alvo").hidden = lista.length === 0;
@@ -264,8 +389,54 @@
       document.getElementById("ir-mindar").href = a ? "mindar.html?alvo=" + encodeURIComponent(a.id) : "#";
       document.getElementById("ir-zappar").href = a ? "zappar.html?alvo=" + encodeURIComponent(a.id) : "#";
     }
-    caixa.addEventListener("change", ligar);
+    caixa.addEventListener("change", () => { ligar(); fecharPontos(); });
     mostrarAlvos();
+
+    // pontos marcados no alvo: na RA aparece um objeto 3D em cada um (cubo, esfera, cilindro, cone, com cores diferentes)
+    const telaP = document.getElementById("tela-pontos"), ctxP = telaP.getContext("2d");
+    let imgP = null, alvoP = null, pontosP = [];
+    function fecharPontos() { document.getElementById("marcacao").hidden = true; alvoP = null; }
+    document.getElementById("marcar").onclick = async () => {
+      const a = alvoEscolhido(); if (!a) return;
+      alvoP = a; pontosP = (a.pontos || []).map(p => ({ ...p }));
+      imgP = await createImageBitmap(a.jpg);
+      document.getElementById("marcacao").hidden = false;
+      const k = Math.min(1, telaP.parentElement.clientWidth / imgP.width);
+      telaP.width = Math.round(imgP.width * k); telaP.height = Math.round(imgP.height * k);
+      desenharPontos();
+      telaP.scrollIntoView({ behavior: "smooth" });
+    };
+    function desenharPontos() {
+      ctxP.drawImage(imgP, 0, 0, telaP.width, telaP.height);
+      if (alvoP.forma && alvoP.forma.tipo !== "retangulo") { // contorno da forma, para se ver onde vale a pena marcar
+        ctxP.setLineDash([8, 6]); ctxP.strokeStyle = "#ffd000"; ctxP.lineWidth = 2;
+        caminho(ctxP, alvoP.forma.pts.map(([u, v]) => [u * telaP.width, v * telaP.height])); ctxP.stroke(); ctxP.setLineDash([]);
+      }
+      pontosP.forEach((p, i) => {
+        const x = p.u * telaP.width, y = p.v * telaP.height;
+        ctxP.beginPath(); ctxP.arc(x, y, 13, 0, 2 * Math.PI);
+        ctxP.fillStyle = CORES_PONTOS[i % CORES_PONTOS.length]; ctxP.fill();
+        ctxP.lineWidth = 2; ctxP.strokeStyle = "#fff"; ctxP.stroke();
+        ctxP.fillStyle = "#fff"; ctxP.font = "bold 14px system-ui, sans-serif"; ctxP.textAlign = "center"; ctxP.textBaseline = "middle";
+        ctxP.fillText(String(i + 1), x, y);
+      });
+    }
+    telaP.addEventListener("click", ev => {
+      const b = telaP.getBoundingClientRect();
+      const u = (ev.clientX - b.left) / b.width, v = (ev.clientY - b.top) / b.height;
+      const nome = prompt("Nome deste ponto (ex.: C. Calpurnius). Pode ficar vazio.", "Ponto " + (pontosP.length + 1));
+      if (nome === null) return;
+      pontosP.push({ u: +u.toFixed(4), v: +v.toFixed(4), nome: nome.trim() });
+      desenharPontos();
+    });
+    document.getElementById("pontos-desfazer").onclick = () => { pontosP.pop(); if (alvoP) desenharPontos(); };
+    document.getElementById("pontos-fechar").onclick = fecharPontos;
+    document.getElementById("pontos-guardar").onclick = async () => {
+      if (!alvoP) return;
+      alvoP.pontos = pontosP; await Alvos.gravar(alvoP);
+      confirmar(document.getElementById("pontos-guardar"), pontosP.length + " ponto(s) guardado(s)");
+      await mostrarAlvos(alvoP.id);
+    };
 
     for (const [id, campo] of [["ir-mindar", "mind"], ["ir-zappar", "zpt"]]) {
       document.getElementById(id).addEventListener("click", ev => {
@@ -344,9 +515,10 @@
     // o texto partilhado leva também a lista de alvos, com o tempo que cada motor levou a criá-los
     function texto() {
       const res = [COLS.map(c => c[1]).join("\t")].concat(lerResultados().map(r => COLS.map(c => r[c[0]] ?? "").join("\t")));
-      const alv = ["", "Alvo\tFotografado em\tLargura × altura (px)\tCriação MindAR (s)\tCriação Zappar (s)\tFotografia original\tRecorte na original (x, y, largura, altura)\tErros"]
+      const alv = ["", "Alvo\tFotografado em\tLargura × altura (px)\tCriação MindAR (s)\tCriação Zappar (s)\tFotografia original\tRecorte na original (x, y, largura, altura)\tForma do recorte\tPontos marcados\tErros"]
         .concat(lista.map(a => [a.nome, nomeLocal(a.local), a.largura + " × " + a.altura, a.tMind ?? "falhou", a.tZpt ?? "—",
-          a.fotoId ? "foto-" + a.fotoId + ".jpg" : "", a.recorte ? a.recorte.join(", ") : "inteira", (a.erros || []).join(" · ")].join("\t")));
+          a.fotoId ? "foto-" + a.fotoId + ".jpg" : "", a.recorte ? a.recorte.join(", ") : "inteira", a.recorte ? nomeForma(a) : "—",
+          (a.pontos || []).map((p, i) => (i + 1) + " " + p.nome).join(" | "), (a.erros || []).join(" · ")].join("\t")));
       return res.concat(alv).join("\n");
     }
 
@@ -444,7 +616,7 @@
         const fich = [
           [sessao + "/resultados.txt", new Blob([texto()], { type: "text/plain" })],
           [sessao + "/resultados.json", new Blob([JSON.stringify({ enviado: agora.toISOString(), aparelho: aparelho(), resultados: lerResultados(),
-            alvos: lista.map(a => ({ id: a.id, nome: a.nome, local: a.local, largura: a.largura, altura: a.altura, tMind: a.tMind, tZpt: a.tZpt, fotoId: a.fotoId, recorte: a.recorte, erros: a.erros })) }, null, 1)], { type: "application/json" })],
+            alvos: lista.map(a => ({ id: a.id, nome: a.nome, local: a.local, largura: a.largura, altura: a.altura, tMind: a.tMind, tZpt: a.tZpt, fotoId: a.fotoId, recorte: a.recorte, forma: a.forma || null, pontos: a.pontos || [], erros: a.erros })) }, null, 1)], { type: "application/json" })],
         ];
         const comOriginais = document.getElementById("gh-originais").checked, fotosVistas = new Set();
         for (const a of lista) {

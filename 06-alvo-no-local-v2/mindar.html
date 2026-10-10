@@ -9,6 +9,7 @@
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
   <script src="alvos.js"></script>
   <script src="medicao.js"></script>
+  <script src="objetos.js"></script>
 </head>
 <body>
   <div class="hud">
@@ -22,6 +23,7 @@
       <dt>Tremor (últimos 2 s)</dt><dd id="h-tremor">—</dd>
       <dt>Tremor (medição 5 s)</dt><dd id="h-tremor5">—</dd>
     </dl>
+    <div class="pontos" id="h-pontos" hidden></div>
   </div>
   <div class="barra">
     <button id="b-recomecar">Recomeçar</button>
@@ -33,20 +35,21 @@
   <script>
     // MindAR: o alvo mede 1 de largura; a altura segue a proporção da fotografia
     registarMedidor();
+    registarObjetos();
     (async () => {
       const id = new URLSearchParams(location.search).get("alvo");
       const a = id && await Alvos.ler(id);
       if (!a || !a.mind) { alert("Este alvo não existe neste telemóvel ou não tem versão MindAR. Volta e cria-o."); location.href = "./"; return; }
-      const w = 1, h = a.altura / a.largura, t = 0.012 * Math.max(w, h);
-      const borda = (x, y, bw, bh) => '<a-plane position="' + x + ' ' + y + ' 0.001" width="' + bw + '" height="' + bh + '" material="color:#ffd000; shader:flat"></a-plane>';
+      const w = 1, h = a.altura / a.largura;
+      // moldura amarela + objetos 3D com sombra (ver objetos.js)
       document.getElementById("cena").innerHTML =
         '<a-scene mindar-image="imageTargetSrc: ' + urlDe(a.mind) + '; maxTrack: 1; uiScanning: no; uiLoading: yes; uiError: yes"' +
-        ' color-space="sRGB" renderer="colorManagement: true" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">' +
+        ' shadow="type: pcfsoft" color-space="sRGB" renderer="colorManagement: true" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">' +
         '<a-camera position="0 0 0" look-controls="enabled: false"></a-camera>' +
         '<a-entity id="ancora" mindar-image-target="targetIndex: 0" medidor>' +
-          '<a-plane width="' + w + '" height="' + h + '" material="color:#ffd000; opacity:0.3; transparent:true; shader:flat"></a-plane>' +
-          borda(0, h / 2, w, t) + borda(0, -h / 2, w, t) + borda(-w / 2, 0, t, h) + borda(w / 2, 0, t, h) +
+          htmlMoldura(a, w, h) + htmlObjetos(a, w, h) +
         '</a-entity></a-scene>';
+      mostrarLegenda(a);
       const ancora = document.getElementById("ancora");
       ancora.addEventListener("targetFound", () => Medicao.encontrado());
       ancora.addEventListener("targetLost", () => Medicao.perdido());

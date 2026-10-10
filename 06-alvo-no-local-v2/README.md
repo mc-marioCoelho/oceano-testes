@@ -10,6 +10,14 @@ Continuação do [teste 05](../05-alvo-no-local/), que fica como estava. Funcion
 4. **«Trazer os alvos do teste 05»:** copia para o teste 06 os alvos criados no teste 05 no mesmo telemóvel, sem os tirar do teste 05. Assim os alvos de 9 out. podem testar-se com o Zappar sem voltar a fotografar.
 5. O teste 06 guarda alvos e resultados à parte do teste 05 (`oceano-teste06`).
 
+## Acrescentado a 10 out. (pedido do Mário, antes da ida à sala)
+
+6. **Objetos 3D com sombra** por cima do alvo reconhecido, no MindAR e no Zappar (`objetos.js`): um cubo semitransparente ao centro, com uma luz e um «chão» invisível que só mostra a sombra. O cubo mostra melhor do que o retângulo plano o tremor e os erros de perspetiva que um visitante vai ver. Não muda as medições (o tremor mede-se pela posição do alvo).
+7. **Forma do recorte:** retângulo, **trapézio** (arrasta-se e depois puxa-se cada canto até ao limite do mosaico visto em perspetiva), triângulo, elipse ou polígono livre. O alvo continua retangular (é o que os dois motores aceitam): o que fica fora da forma é pintado com a **cor média de dentro**, com uma **passagem suave** e toda dentro da forma, para o motor não aprender um contorno falso nem o passadiço. Substitui a edição no Photoshop combinada a 9 out. para o P5. Na RA, a moldura amarela segue a forma.
+8. **Pontos marcados:** «Marcar pontos neste alvo» (também nos alvos já criados, sem os criar outra vez). Cada toque marca um sítio e recebe um nome. Na RA aparece um objeto diferente em cada ponto (cubo, esfera, cilindro, cone; cores diferentes) e a legenda no painel. **Uso previsto: a inscrição**, com um ponto em cada um dos quatro libertos (C. Calpurnius, G. Vibius Quintilianus, L. Attius, M. Verrius Geminus). Não é leitura do texto (OCR): o motor reconhece a inscrição como imagem e os objetos ficam onde os nomes foram marcados, que é o método que a experiência final vai usar.
+
+Os resultados exportados passam a ter as colunas «Forma do recorte» e «Pontos marcados».
+
 ## Limites
 
 Os mesmos do teste 05: ecrã ligado enquanto cria o alvo; medir no sítio da fotografia é o melhor caso possível; falta testar dos pontos vizinhos, a outra hora e noutros telemóveis.
