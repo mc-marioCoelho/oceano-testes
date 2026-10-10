@@ -1,0 +1,57 @@
+Quando	Motor	Alvo	Fotografado em	Testado em	Aparelho	1.º rec. (s)	Perdas	% rec.	Duração (s)	Tremor 5 s (px)	Tremor 2 s (px)	Nota
+10/10/2026, 16:13:18	MindAR	P1 esq. · foto 16:12	P1 · entrada, mais à esquerda	P1 · entrada, mais à esquerda	Pixel 9a · Android 17	2.9	0	82	16		1.7	
+10/10/2026, 16:14:03	Zappar	P1 esq. · foto 16:12	P1 · entrada, mais à esquerda	P1 · entrada, mais à esquerda	Pixel 9a · Android 17	0.2	5	94	6		0.3	
+10/10/2026, 16:16:28	MindAR	P1 · foto 16:15	P1 · entrada, ao centro	P1 · entrada, ao centro	Pixel 9a · Android 17		0	100	25	1.1	1.2	
+10/10/2026, 16:17:22	Zappar	P1 · foto 16:15	P1 · entrada, ao centro	P1 · entrada, ao centro	Pixel 9a · Android 17		0	100	23	0.1	0.1	
+10/10/2026, 16:19:39	MindAR	P1 dir. · foto 16:18	P1 · entrada, mais à direita	P1 · entrada, mais à direita	Pixel 9a · Android 17		0	100	10		0.6	
+10/10/2026, 16:20:20	Zappar	P1 dir. · foto 16:18	P1 · entrada, mais à direita	P1 · entrada, mais à direita	Pixel 9a · Android 17		0	100	11		0.1	
+10/10/2026, 16:24:23	MindAR	P2 · foto 16:23	P2 · passadiço direito (amarelo), na diagonal → Oceano	P2 · passadiço direito (amarelo), na diagonal → Oceano	Pixel 9a · Android 17		0	100	25	1.2	1.2	
+10/10/2026, 16:24:37	MindAR	P2 · foto 16:23	P2 · passadiço direito (amarelo), na diagonal → Oceano	P2 · passadiço direito (amarelo), na diagonal → Oceano	Pixel 9a · Android 17		0	100	13		0.9	
+10/10/2026, 16:25:08	Zappar	P2 · foto 16:23	P2 · passadiço direito (amarelo), na diagonal → Oceano	P2 · passadiço direito (amarelo), na diagonal → Oceano	Pixel 9a · Android 17		0	100	7		0.3	
+10/10/2026, 16:27:47	MindAR	P4 · foto 16:26	P4 · passadiço direito → Bóreas	P4 · passadiço direito → Bóreas	Pixel 9a · Android 17		0	100	8		0.8	
+10/10/2026, 16:28:25	Zappar	P4 · foto 16:26	P4 · passadiço direito → Bóreas	P4 · passadiço direito → Bóreas	Pixel 9a · Android 17	0.7	3	94	17		0.2	
+10/10/2026, 16:30:49	MindAR	P3 · foto 16:29	P3 · passadiço direito, de frente → Oceano	P3 · passadiço direito, de frente → Oceano	Pixel 9a · Android 17		0	100	10		0.6	
+10/10/2026, 16:31:28	Zappar	P3 · foto 16:29	P3 · passadiço direito, de frente → Oceano	P3 · passadiço direito, de frente → Oceano	Pixel 9a · Android 17		0	100	14	0.3	0.4	
+10/10/2026, 16:33:37	MindAR	P5 · foto 16:32	P5 · passadiço direito, junto ao fundo → lacuna do tapete	P5 · passadiço direito, junto ao fundo → lacuna do tapete	Pixel 9a · Android 17		0	100	14		1.8	
+10/10/2026, 16:33:48	MindAR	P5 · foto 16:32	P5 · passadiço direito, junto ao fundo → lacuna do tapete	P5 · passadiço direito, junto ao fundo → lacuna do tapete	Pixel 9a · Android 17	7.5	1	80	10		1.1	
+10/10/2026, 16:34:26	Zappar	P5 · foto 16:32	P5 · passadiço direito, junto ao fundo → lacuna do tapete	P5 · passadiço direito, junto ao fundo → lacuna do tapete	Pixel 9a · Android 17		1	21	11		0.3	
+10/10/2026, 16:37:11	MindAR	P6 · foto 16:35	P6 · passadiço do fundo, ao centro	P6 · passadiço do fundo, ao centro	Pixel 9a · Android 17		0	0	19			
+10/10/2026, 16:37:53	Zappar	P6 · foto 16:35	P6 · passadiço do fundo, ao centro	P6 · passadiço do fundo, ao centro	Pixel 9a · Android 17	0	51	18	17	17.2	25.1	
+10/10/2026, 16:40:02	MindAR	P7 · foto 16:39	P7 · passadiço esquerdo, junto ao fundo → lacuna do tapete	P7 · passadiço esquerdo, junto ao fundo → lacuna do tapete	Pixel 9a · Android 17		0	100	12		0.9	
+10/10/2026, 16:40:14	MindAR	P7 · foto 16:39	P7 · passadiço esquerdo, junto ao fundo → lacuna do tapete	P7 · passadiço esquerdo, junto ao fundo → lacuna do tapete	Pixel 9a · Android 17		0	100	11		1.1	
+10/10/2026, 16:40:57	Zappar	P7 · foto 16:39	P7 · passadiço esquerdo, junto ao fundo → lacuna do tapete	P7 · passadiço esquerdo, junto ao fundo → lacuna do tapete	Pixel 9a · Android 17		0	100	9		0.1	
+10/10/2026, 16:41:00	Zappar	P7 · foto 16:39	P7 · passadiço esquerdo, junto ao fundo → lacuna do tapete	P7 · passadiço esquerdo, junto ao fundo → lacuna do tapete	Pixel 9a · Android 17		0	100	2		0.1	
+10/10/2026, 16:43:02	MindAR	P8 · foto 16:41	P8 · passadiço esquerdo (turquesa) → Zéfiro	P8 · passadiço esquerdo (turquesa) → Zéfiro	Pixel 9a · Android 17		0	100	12	0.3	0.4	
+10/10/2026, 16:43:26	Zappar	P8 · foto 16:41	P8 · passadiço esquerdo (turquesa) → Zéfiro	P8 · passadiço esquerdo (turquesa) → Zéfiro	Pixel 9a · Android 17		0	100	8		0.4	
+10/10/2026, 16:43:32	Zappar	P8 · foto 16:41	P8 · passadiço esquerdo (turquesa) → Zéfiro	P8 · passadiço esquerdo (turquesa) → Zéfiro	Pixel 9a · Android 17		1	1	4		0.1	
+10/10/2026, 16:45:50	MindAR	P8 · foto 16:44	P8 · passadiço esquerdo (turquesa) → Zéfiro	P8 · passadiço esquerdo (turquesa) → Zéfiro	Pixel 9a · Android 17		0	100	7		1	
+10/10/2026, 16:46:17	Zappar	P8 · foto 16:44	P8 · passadiço esquerdo (turquesa) → Zéfiro	P8 · passadiço esquerdo (turquesa) → Zéfiro	Pixel 9a · Android 17		0	100	8		0.1	
+10/10/2026, 16:48:56	MindAR	P9 · foto 16:48	P9 · passadiço esquerdo, de frente → Oceano	P9 · passadiço esquerdo, de frente → Oceano	Pixel 9a · Android 17		0	100	7		0.6	
+10/10/2026, 16:49:08	MindAR	P9 · foto 16:48	P9 · passadiço esquerdo, de frente → Oceano	P9 · passadiço esquerdo, de frente → Oceano	Pixel 9a · Android 17		0	100	11		0.7	
+10/10/2026, 16:49:26	Zappar	P9 · foto 16:48	P9 · passadiço esquerdo, de frente → Oceano	P9 · passadiço esquerdo, de frente → Oceano	Pixel 9a · Android 17		0	100	7		0.2	
+10/10/2026, 16:49:29	Zappar	P9 · foto 16:48	P9 · passadiço esquerdo, de frente → Oceano	P9 · passadiço esquerdo, de frente → Oceano	Pixel 9a · Android 17		0	100	3		0.1	
+10/10/2026, 16:51:24	MindAR	P10 · foto 16:50	P10 · passadiço esquerdo, na diagonal → Oceano	P10 · passadiço esquerdo, na diagonal → Oceano	Pixel 9a · Android 17	1.9	0	86	13		0.4	
+10/10/2026, 16:51:47	Zappar	P10 · foto 16:50	P10 · passadiço esquerdo, na diagonal → Oceano	P10 · passadiço esquerdo, na diagonal → Oceano	Pixel 9a · Android 17		0	100	6		0.2	
+10/10/2026, 16:53:38	MindAR	P10 · foto 16:52	P10 · passadiço esquerdo, na diagonal → Oceano	P10 · passadiço esquerdo, na diagonal → Oceano	Pixel 9a · Android 17	0.6	1	88	9		0.4	
+10/10/2026, 16:54:28	Zappar	P10 · foto 16:52	P10 · passadiço esquerdo, na diagonal → Oceano	P10 · passadiço esquerdo, na diagonal → Oceano	Pixel 9a · Android 17		0	0	16			
+10/10/2026, 16:57:28	MindAR	outro · foto 16:56	Outro (escrever na nota)	Outro (escrever na nota)	Pixel 9a · Android 17	0.5	0	95	9		0.8	
+10/10/2026, 16:57:48	Zappar	outro · foto 16:56	Outro (escrever na nota)	Outro (escrever na nota)	Pixel 9a · Android 17		0	0	6			
+10/10/2026, 16:59:34	MindAR	outro · foto 16:58	Outro (escrever na nota)	Outro (escrever na nota)	Pixel 9a · Android 17	2.8	0	68	9		0.5	
+10/10/2026, 17:00:01	Zappar	outro · foto 16:58	Outro (escrever na nota)	Outro (escrever na nota)	Pixel 9a · Android 17		0	0	10			
+
+Alvo	Fotografado em	Largura × altura (px)	Criação MindAR (s)	Criação Zappar (s)	Fotografia original	Recorte na original (x, y, largura, altura)	Forma do recorte	Pontos marcados	Erros
+outro · foto 16:58	Outro (escrever na nota)	1024 × 512	16.8	14.1	foto-1791647907033.jpg	417, 1458, 2416, 1207	polígono		
+outro · foto 16:56	Outro (escrever na nota)	1024 × 606	13.7	12.9	foto-1791647786610.jpg	151, 1641, 2348, 1389	polígono		
+outro · foto 16:55	Outro (escrever na nota)	768 × 1024	24.1	—	foto-1791647735721.jpg	inteira	—		
+P10 · foto 16:50	P10 · passadiço esquerdo, na diagonal → Oceano	1024 × 704	18.5	19.2	foto-1791647397407.jpg	42, 1318, 2853, 1962	retângulo		
+P9 · foto 16:48	P9 · passadiço esquerdo, de frente → Oceano	1024 × 630	15.4	16.3	foto-1791647252725.jpg	328, 1501, 2545, 1565	trapézio		
+P8 · foto 16:41	P8 · passadiço esquerdo (turquesa) → Zéfiro	1024 × 894	22.8	25.9	foto-1791646899708.jpg	439, 1325, 1995, 1742	retângulo		
+P7 · foto 16:39	P7 · passadiço esquerdo, junto ao fundo → lacuna do tapete	1024 × 485	13.2	12.2	foto-1791646715128.jpg	376, 1290, 2380, 1127	trapézio		
+P6 · foto 16:35	P6 · passadiço do fundo, ao centro	1024 × 978	17.3	24.2	foto-1791646508610.jpg	0, 822, 3000, 2866	trapézio		
+P5 · foto 16:32	P5 · passadiço direito, junto ao fundo → lacuna do tapete	1024 × 553	13.2	12.5	foto-1791646320459.jpg	0, 1464, 2545, 1374	trapézio		
+P3 · foto 16:29	P3 · passadiço direito, de frente → Oceano	1024 × 783	17.7	20.2	foto-1791646144471.jpg	32, 1029, 2241, 1715	trapézio		
+P4 · foto 16:26	P4 · passadiço direito → Bóreas	997 × 1024	20.9	28.2	foto-1791645973610.jpg	216, 744, 2416, 2481	retângulo		
+P2 · foto 16:23	P2 · passadiço direito (amarelo), na diagonal → Oceano	1024 × 705	14.8	15.6	foto-1791645744265.jpg	47, 1408, 2813, 1937	trapézio		
+P1 dir. · foto 16:18	P1 · entrada, mais à direita	1024 × 543	17.5	13.7	foto-1791645468364.jpg	0, 1703, 3000, 1591	trapézio		
+P1 · foto 16:15	P1 · entrada, ao centro	1024 × 450	18.2	12.6	foto-1791645271448.jpg	0, 1758, 3000, 1318	trapézio		
+P1 esq. · foto 16:12	P1 · entrada, mais à esquerda	1024 × 574	15.3	14	foto-1791644979966.jpg	0, 1649, 3000, 1683	trapézio		

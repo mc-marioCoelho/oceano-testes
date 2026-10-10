@@ -1,0 +1,1177 @@
+{
+ "enviado": "2026-10-10T17:05:28.118Z",
+ "aparelho": "Pixel 9a · Android 17",
+ "resultados": [
+  {
+   "quando": "10/10/2026, 16:13:18",
+   "motor": "MindAR",
+   "alvo": "P1 esq. · foto 16:12",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P1 · entrada, mais à esquerda",
+   "local": "P1 · entrada, mais à esquerda",
+   "primeiro": 2.9,
+   "perdas": 0,
+   "pctReconhecido": 82,
+   "duracao": 16,
+   "tremor2s": 1.7,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:14:03",
+   "motor": "Zappar",
+   "alvo": "P1 esq. · foto 16:12",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P1 · entrada, mais à esquerda",
+   "local": "P1 · entrada, mais à esquerda",
+   "primeiro": 0.2,
+   "perdas": 5,
+   "pctReconhecido": 94,
+   "duracao": 6,
+   "tremor2s": 0.3,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:16:28",
+   "motor": "MindAR",
+   "alvo": "P1 · foto 16:15",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P1 · entrada, ao centro",
+   "local": "P1 · entrada, ao centro",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 25,
+   "tremor2s": 1.2,
+   "tremor5s": 1.1,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:17:22",
+   "motor": "Zappar",
+   "alvo": "P1 · foto 16:15",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P1 · entrada, ao centro",
+   "local": "P1 · entrada, ao centro",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 23,
+   "tremor2s": 0.1,
+   "tremor5s": 0.1,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:19:39",
+   "motor": "MindAR",
+   "alvo": "P1 dir. · foto 16:18",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P1 · entrada, mais à direita",
+   "local": "P1 · entrada, mais à direita",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 10,
+   "tremor2s": 0.6,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:20:20",
+   "motor": "Zappar",
+   "alvo": "P1 dir. · foto 16:18",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P1 · entrada, mais à direita",
+   "local": "P1 · entrada, mais à direita",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 11,
+   "tremor2s": 0.1,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:24:23",
+   "motor": "MindAR",
+   "alvo": "P2 · foto 16:23",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "local": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 25,
+   "tremor2s": 1.2,
+   "tremor5s": 1.2,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:24:37",
+   "motor": "MindAR",
+   "alvo": "P2 · foto 16:23",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "local": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 13,
+   "tremor2s": 0.9,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:25:08",
+   "motor": "Zappar",
+   "alvo": "P2 · foto 16:23",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "local": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 7,
+   "tremor2s": 0.3,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:27:47",
+   "motor": "MindAR",
+   "alvo": "P4 · foto 16:26",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P4 · passadiço direito → Bóreas",
+   "local": "P4 · passadiço direito → Bóreas",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 8,
+   "tremor2s": 0.8,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:28:25",
+   "motor": "Zappar",
+   "alvo": "P4 · foto 16:26",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P4 · passadiço direito → Bóreas",
+   "local": "P4 · passadiço direito → Bóreas",
+   "primeiro": 0.7,
+   "perdas": 3,
+   "pctReconhecido": 94,
+   "duracao": 17,
+   "tremor2s": 0.2,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:30:49",
+   "motor": "MindAR",
+   "alvo": "P3 · foto 16:29",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P3 · passadiço direito, de frente → Oceano",
+   "local": "P3 · passadiço direito, de frente → Oceano",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 10,
+   "tremor2s": 0.6,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:31:28",
+   "motor": "Zappar",
+   "alvo": "P3 · foto 16:29",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P3 · passadiço direito, de frente → Oceano",
+   "local": "P3 · passadiço direito, de frente → Oceano",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 14,
+   "tremor2s": 0.4,
+   "tremor5s": 0.3,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:33:37",
+   "motor": "MindAR",
+   "alvo": "P5 · foto 16:32",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P5 · passadiço direito, junto ao fundo → lacuna do tapete",
+   "local": "P5 · passadiço direito, junto ao fundo → lacuna do tapete",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 14,
+   "tremor2s": 1.8,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:33:48",
+   "motor": "MindAR",
+   "alvo": "P5 · foto 16:32",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P5 · passadiço direito, junto ao fundo → lacuna do tapete",
+   "local": "P5 · passadiço direito, junto ao fundo → lacuna do tapete",
+   "primeiro": 7.5,
+   "perdas": 1,
+   "pctReconhecido": 80,
+   "duracao": 10,
+   "tremor2s": 1.1,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:34:26",
+   "motor": "Zappar",
+   "alvo": "P5 · foto 16:32",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P5 · passadiço direito, junto ao fundo → lacuna do tapete",
+   "local": "P5 · passadiço direito, junto ao fundo → lacuna do tapete",
+   "primeiro": null,
+   "perdas": 1,
+   "pctReconhecido": 21,
+   "duracao": 11,
+   "tremor2s": 0.3,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:37:11",
+   "motor": "MindAR",
+   "alvo": "P6 · foto 16:35",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P6 · passadiço do fundo, ao centro",
+   "local": "P6 · passadiço do fundo, ao centro",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 0,
+   "duracao": 19,
+   "tremor2s": null,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:37:53",
+   "motor": "Zappar",
+   "alvo": "P6 · foto 16:35",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P6 · passadiço do fundo, ao centro",
+   "local": "P6 · passadiço do fundo, ao centro",
+   "primeiro": 0,
+   "perdas": 51,
+   "pctReconhecido": 18,
+   "duracao": 17,
+   "tremor2s": 25.1,
+   "tremor5s": 17.2,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:40:02",
+   "motor": "MindAR",
+   "alvo": "P7 · foto 16:39",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P7 · passadiço esquerdo, junto ao fundo → lacuna do tapete",
+   "local": "P7 · passadiço esquerdo, junto ao fundo → lacuna do tapete",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 12,
+   "tremor2s": 0.9,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:40:14",
+   "motor": "MindAR",
+   "alvo": "P7 · foto 16:39",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P7 · passadiço esquerdo, junto ao fundo → lacuna do tapete",
+   "local": "P7 · passadiço esquerdo, junto ao fundo → lacuna do tapete",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 11,
+   "tremor2s": 1.1,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:40:57",
+   "motor": "Zappar",
+   "alvo": "P7 · foto 16:39",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P7 · passadiço esquerdo, junto ao fundo → lacuna do tapete",
+   "local": "P7 · passadiço esquerdo, junto ao fundo → lacuna do tapete",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 9,
+   "tremor2s": 0.1,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:41:00",
+   "motor": "Zappar",
+   "alvo": "P7 · foto 16:39",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P7 · passadiço esquerdo, junto ao fundo → lacuna do tapete",
+   "local": "P7 · passadiço esquerdo, junto ao fundo → lacuna do tapete",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 2,
+   "tremor2s": 0.1,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:43:02",
+   "motor": "MindAR",
+   "alvo": "P8 · foto 16:41",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P8 · passadiço esquerdo (turquesa) → Zéfiro",
+   "local": "P8 · passadiço esquerdo (turquesa) → Zéfiro",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 12,
+   "tremor2s": 0.4,
+   "tremor5s": 0.3,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:43:26",
+   "motor": "Zappar",
+   "alvo": "P8 · foto 16:41",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P8 · passadiço esquerdo (turquesa) → Zéfiro",
+   "local": "P8 · passadiço esquerdo (turquesa) → Zéfiro",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 8,
+   "tremor2s": 0.4,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:43:32",
+   "motor": "Zappar",
+   "alvo": "P8 · foto 16:41",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P8 · passadiço esquerdo (turquesa) → Zéfiro",
+   "local": "P8 · passadiço esquerdo (turquesa) → Zéfiro",
+   "primeiro": null,
+   "perdas": 1,
+   "pctReconhecido": 1,
+   "duracao": 4,
+   "tremor2s": 0.1,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:45:50",
+   "motor": "MindAR",
+   "alvo": "P8 · foto 16:44",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P8 · passadiço esquerdo (turquesa) → Zéfiro",
+   "local": "P8 · passadiço esquerdo (turquesa) → Zéfiro",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 7,
+   "tremor2s": 1,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:46:17",
+   "motor": "Zappar",
+   "alvo": "P8 · foto 16:44",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P8 · passadiço esquerdo (turquesa) → Zéfiro",
+   "local": "P8 · passadiço esquerdo (turquesa) → Zéfiro",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 8,
+   "tremor2s": 0.1,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:48:56",
+   "motor": "MindAR",
+   "alvo": "P9 · foto 16:48",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P9 · passadiço esquerdo, de frente → Oceano",
+   "local": "P9 · passadiço esquerdo, de frente → Oceano",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 7,
+   "tremor2s": 0.6,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:49:08",
+   "motor": "MindAR",
+   "alvo": "P9 · foto 16:48",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P9 · passadiço esquerdo, de frente → Oceano",
+   "local": "P9 · passadiço esquerdo, de frente → Oceano",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 11,
+   "tremor2s": 0.7,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:49:26",
+   "motor": "Zappar",
+   "alvo": "P9 · foto 16:48",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P9 · passadiço esquerdo, de frente → Oceano",
+   "local": "P9 · passadiço esquerdo, de frente → Oceano",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 7,
+   "tremor2s": 0.2,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:49:29",
+   "motor": "Zappar",
+   "alvo": "P9 · foto 16:48",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P9 · passadiço esquerdo, de frente → Oceano",
+   "local": "P9 · passadiço esquerdo, de frente → Oceano",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 3,
+   "tremor2s": 0.1,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:51:24",
+   "motor": "MindAR",
+   "alvo": "P10 · foto 16:50",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P10 · passadiço esquerdo, na diagonal → Oceano",
+   "local": "P10 · passadiço esquerdo, na diagonal → Oceano",
+   "primeiro": 1.9,
+   "perdas": 0,
+   "pctReconhecido": 86,
+   "duracao": 13,
+   "tremor2s": 0.4,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:51:47",
+   "motor": "Zappar",
+   "alvo": "P10 · foto 16:50",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P10 · passadiço esquerdo, na diagonal → Oceano",
+   "local": "P10 · passadiço esquerdo, na diagonal → Oceano",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 6,
+   "tremor2s": 0.2,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:53:38",
+   "motor": "MindAR",
+   "alvo": "P10 · foto 16:52",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P10 · passadiço esquerdo, na diagonal → Oceano",
+   "local": "P10 · passadiço esquerdo, na diagonal → Oceano",
+   "primeiro": 0.6,
+   "perdas": 1,
+   "pctReconhecido": 88,
+   "duracao": 9,
+   "tremor2s": 0.4,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:54:28",
+   "motor": "Zappar",
+   "alvo": "P10 · foto 16:52",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P10 · passadiço esquerdo, na diagonal → Oceano",
+   "local": "P10 · passadiço esquerdo, na diagonal → Oceano",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 0,
+   "duracao": 16,
+   "tremor2s": null,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:57:28",
+   "motor": "MindAR",
+   "alvo": "outro · foto 16:56",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "Outro (escrever na nota)",
+   "local": "Outro (escrever na nota)",
+   "primeiro": 0.5,
+   "perdas": 0,
+   "pctReconhecido": 95,
+   "duracao": 9,
+   "tremor2s": 0.8,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:57:48",
+   "motor": "Zappar",
+   "alvo": "outro · foto 16:56",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "Outro (escrever na nota)",
+   "local": "Outro (escrever na nota)",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 0,
+   "duracao": 6,
+   "tremor2s": null,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 16:59:34",
+   "motor": "MindAR",
+   "alvo": "outro · foto 16:58",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "Outro (escrever na nota)",
+   "local": "Outro (escrever na nota)",
+   "primeiro": 2.8,
+   "perdas": 0,
+   "pctReconhecido": 68,
+   "duracao": 9,
+   "tremor2s": 0.5,
+   "tremor5s": null,
+   "nota": ""
+  },
+  {
+   "quando": "10/10/2026, 17:00:01",
+   "motor": "Zappar",
+   "alvo": "outro · foto 16:58",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "Outro (escrever na nota)",
+   "local": "Outro (escrever na nota)",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 0,
+   "duracao": 10,
+   "tremor2s": null,
+   "tremor5s": null,
+   "nota": ""
+  }
+ ],
+ "alvos": [
+  {
+   "id": "outro-1791647929544",
+   "nome": "outro · foto 16:58",
+   "local": "outro",
+   "largura": 1024,
+   "altura": 512,
+   "tMind": 16.8,
+   "tZpt": 14.1,
+   "fotoId": "1791647907033",
+   "recorte": [
+    417,
+    1458,
+    2416,
+    1207
+   ],
+   "forma": {
+    "tipo": "poligono",
+    "pts": [
+     [
+      0.0101,
+      0.9171
+     ],
+     [
+      0.9549,
+      1
+     ],
+     [
+      1,
+      0.655
+     ],
+     [
+      0.8176,
+      0.4851
+     ],
+     [
+      0.6953,
+      0.0817
+     ],
+     [
+      0.2298,
+      0
+     ],
+     [
+      0.1542,
+      0.2708
+     ],
+     [
+      0,
+      0.5196
+     ]
+    ]
+   },
+   "pontos": [],
+   "erros": []
+  },
+  {
+   "id": "outro-1791647804878",
+   "nome": "outro · foto 16:56",
+   "local": "outro",
+   "largura": 1024,
+   "altura": 606,
+   "tMind": 13.7,
+   "tZpt": 12.9,
+   "fotoId": "1791647786610",
+   "recorte": [
+    151,
+    1641,
+    2348,
+    1389
+   ],
+   "forma": {
+    "tipo": "poligono",
+    "pts": [
+     [
+      0.6036,
+      1
+     ],
+     [
+      0,
+      0.2647
+     ],
+     [
+      0.0846,
+      0
+     ],
+     [
+      0.3848,
+      0.1982
+     ],
+     [
+      0.8397,
+      0.0404
+     ],
+     [
+      1,
+      0.1965
+     ]
+    ]
+   },
+   "pontos": [],
+   "erros": []
+  },
+  {
+   "id": "outro-1791647740873",
+   "nome": "outro · foto 16:55",
+   "local": "outro",
+   "largura": 768,
+   "altura": 1024,
+   "tMind": 24.1,
+   "tZpt": null,
+   "fotoId": "1791647735721",
+   "recorte": null,
+   "forma": null,
+   "pontos": [],
+   "erros": []
+  },
+  {
+   "id": "P10-1791647415317",
+   "nome": "P10 · foto 16:50",
+   "local": "P10",
+   "largura": 1024,
+   "altura": 704,
+   "tMind": 18.5,
+   "tZpt": 19.2,
+   "fotoId": "1791647397407",
+   "recorte": [
+    42,
+    1318,
+    2853,
+    1962
+   ],
+   "forma": {
+    "tipo": "retangulo",
+    "pts": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      0
+     ],
+     [
+      1,
+      1
+     ],
+     [
+      0,
+      1
+     ]
+    ]
+   },
+   "pontos": [],
+   "erros": []
+  },
+  {
+   "id": "P9-1791647288277",
+   "nome": "P9 · foto 16:48",
+   "local": "P9",
+   "largura": 1024,
+   "altura": 630,
+   "tMind": 15.4,
+   "tZpt": 16.3,
+   "fotoId": "1791647252725",
+   "recorte": [
+    328,
+    1501,
+    2545,
+    1565
+   ],
+   "forma": {
+    "tipo": "trapezio",
+    "pts": [
+     [
+      0.1551,
+      0.0127
+     ],
+     [
+      0.7803,
+      0
+     ],
+     [
+      1,
+      0.9873
+     ],
+     [
+      0,
+      1
+     ]
+    ]
+   },
+   "pontos": [],
+   "erros": []
+  },
+  {
+   "id": "P8-1791646911849",
+   "nome": "P8 · foto 16:41",
+   "local": "P8",
+   "largura": 1024,
+   "altura": 894,
+   "tMind": 22.8,
+   "tZpt": 25.9,
+   "fotoId": "1791646899708",
+   "recorte": [
+    439,
+    1325,
+    1995,
+    1742
+   ],
+   "forma": {
+    "tipo": "retangulo",
+    "pts": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      0
+     ],
+     [
+      1,
+      1
+     ],
+     [
+      0,
+      1
+     ]
+    ]
+   },
+   "pontos": [],
+   "erros": []
+  },
+  {
+   "id": "P7-1791646753542",
+   "nome": "P7 · foto 16:39",
+   "local": "P7",
+   "largura": 1024,
+   "altura": 485,
+   "tMind": 13.2,
+   "tZpt": 12.2,
+   "fotoId": "1791646715128",
+   "recorte": [
+    376,
+    1290,
+    2380,
+    1127
+   ],
+   "forma": {
+    "tipo": "trapezio",
+    "pts": [
+     [
+      0,
+      0.4798
+     ],
+     [
+      0.7036,
+      0
+     ],
+     [
+      1,
+      0.2893
+     ],
+     [
+      0.0787,
+      1
+     ]
+    ]
+   },
+   "pontos": [],
+   "erros": []
+  },
+  {
+   "id": "P6-1791646542094",
+   "nome": "P6 · foto 16:35",
+   "local": "P6",
+   "largura": 1024,
+   "altura": 978,
+   "tMind": 17.3,
+   "tZpt": 24.2,
+   "fotoId": "1791646508610",
+   "recorte": [
+    0,
+    822,
+    3000,
+    2866
+   ],
+   "forma": {
+    "tipo": "trapezio",
+    "pts": [
+     [
+      0.3575,
+      0.0036
+     ],
+     [
+      0.6831,
+      0
+     ],
+     [
+      1,
+      1
+     ],
+     [
+      0,
+      0.9953
+     ]
+    ]
+   },
+   "pontos": [],
+   "erros": []
+  },
+  {
+   "id": "P5-1791646358029",
+   "nome": "P5 · foto 16:32",
+   "local": "P5",
+   "largura": 1024,
+   "altura": 553,
+   "tMind": 13.2,
+   "tZpt": 12.5,
+   "fotoId": "1791646320459",
+   "recorte": [
+    0,
+    1464,
+    2545,
+    1374
+   ],
+   "forma": {
+    "tipo": "trapezio",
+    "pts": [
+     [
+      0.2316,
+      0
+     ],
+     [
+      1,
+      0.5939
+     ],
+     [
+      0.9468,
+      1
+     ],
+     [
+      0,
+      0.228
+     ]
+    ]
+   },
+   "pontos": [],
+   "erros": []
+  },
+  {
+   "id": "P3-1791646186761",
+   "nome": "P3 · foto 16:29",
+   "local": "P3",
+   "largura": 1024,
+   "altura": 783,
+   "tMind": 17.7,
+   "tZpt": 20.2,
+   "fotoId": "1791646144471",
+   "recorte": [
+    32,
+    1029,
+    2241,
+    1715
+   ],
+   "forma": {
+    "tipo": "trapezio",
+    "pts": [
+     [
+      0.1027,
+      0
+     ],
+     [
+      0.9735,
+      0.0392
+     ],
+     [
+      1,
+      1
+     ],
+     [
+      0,
+      0.945
+     ]
+    ]
+   },
+   "pontos": [],
+   "erros": []
+  },
+  {
+   "id": "P4-1791645993612",
+   "nome": "P4 · foto 16:26",
+   "local": "P4",
+   "largura": 997,
+   "altura": 1024,
+   "tMind": 20.9,
+   "tZpt": 28.2,
+   "fotoId": "1791645973610",
+   "recorte": [
+    216,
+    744,
+    2416,
+    2481
+   ],
+   "forma": {
+    "tipo": "retangulo",
+    "pts": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      0
+     ],
+     [
+      1,
+      1
+     ],
+     [
+      0,
+      1
+     ]
+    ]
+   },
+   "pontos": [],
+   "erros": []
+  },
+  {
+   "id": "P2-1791645783659",
+   "nome": "P2 · foto 16:23",
+   "local": "P2",
+   "largura": 1024,
+   "altura": 705,
+   "tMind": 14.8,
+   "tZpt": 15.6,
+   "fotoId": "1791645744265",
+   "recorte": [
+    47,
+    1408,
+    2813,
+    1937
+   ],
+   "forma": {
+    "tipo": "trapezio",
+    "pts": [
+     [
+      0.4513,
+      0
+     ],
+     [
+      1,
+      0.1956
+     ],
+     [
+      0.6444,
+      1
+     ],
+     [
+      0,
+      0.3242
+     ]
+    ]
+   },
+   "pontos": [],
+   "erros": []
+  },
+  {
+   "id": "P1-dir-1791645523756",
+   "nome": "P1 dir. · foto 16:18",
+   "local": "P1-dir",
+   "largura": 1024,
+   "altura": 543,
+   "tMind": 17.5,
+   "tZpt": 13.7,
+   "fotoId": "1791645468364",
+   "recorte": [
+    0,
+    1703,
+    3000,
+    1591
+   ],
+   "forma": {
+    "tipo": "trapezio",
+    "pts": [
+     [
+      0.4305,
+      0
+     ],
+     [
+      0.7753,
+      0.0135
+     ],
+     [
+      1,
+      1
+     ],
+     [
+      0,
+      0.7328
+     ]
+    ]
+   },
+   "pontos": [],
+   "erros": []
+  },
+  {
+   "id": "P1-1791645316530",
+   "nome": "P1 · foto 16:15",
+   "local": "P1",
+   "largura": 1024,
+   "altura": 450,
+   "tMind": 18.2,
+   "tZpt": 12.6,
+   "fotoId": "1791645271448",
+   "recorte": [
+    0,
+    1758,
+    3000,
+    1318
+   ],
+   "forma": {
+    "tipo": "trapezio",
+    "pts": [
+     [
+      0,
+      0.9785
+     ],
+     [
+      1,
+      1
+     ],
+     [
+      0.6402,
+      0
+     ],
+     [
+      0.3128,
+      0.0069
+     ]
+    ]
+   },
+   "pontos": [],
+   "erros": []
+  },
+  {
+   "id": "P1-esq-1791645139478",
+   "nome": "P1 esq. · foto 16:12",
+   "local": "P1-esq",
+   "largura": 1024,
+   "altura": 574,
+   "tMind": 15.3,
+   "tZpt": 14,
+   "fotoId": "1791644979966",
+   "recorte": [
+    0,
+    1649,
+    3000,
+    1683
+   ],
+   "forma": {
+    "tipo": "trapezio",
+    "pts": [
+     [
+      0.1517,
+      0.0036
+     ],
+     [
+      0.5769,
+      0
+     ],
+     [
+      1,
+      0.7803
+     ],
+     [
+      0,
+      1
+     ]
+    ]
+   },
+   "pontos": [],
+   "erros": []
+  }
+ ]
+}
