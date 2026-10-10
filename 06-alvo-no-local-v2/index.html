@@ -606,7 +606,9 @@
         const msg = r.status === 401 ? "a chave não é válida ou expirou"
           : r.status === 403 || r.status === 404 ? "a chave não dá acesso ao repositório oceano-dados-testes"
           : r.status === 409 ? "o repositório está vazio (cria-o com um README)" : "erro " + r.status;
-        throw new Error(msg + " [" + passo + (det ? " — " + det : "") + "]");
+        const erro = new Error(msg + " [" + passo + (det ? " — " + det : "") + "]");
+        erro.status = r.status;
+        throw erro;
       }
       return r.json();
     }
@@ -650,12 +652,33 @@
       } catch (e) { ghEstado.textContent = "Não foi possível fazer a imagem: " + e.message; b.disabled = false; }
     };
 
+    // Envio robusto (10 out., depois de falhar a meio com 94 ficheiros):
+    // - em lotes de 15 ficheiros, cada lote fica gravado no GitHub (commit) antes do seguinte;
+    //   se a rede cair, o que já foi gravado não se repete na tentativa seguinte;
+    // - pausa curta entre ficheiros (o GitHub limita os pedidos por minuto);
+    // - até 3 novas tentativas quando a rede falha ou o GitHub pede para esperar;
+    // - o ecrã fica ligado durante o envio (se o telemóvel bloquear, o Chrome pode parar a página).
+    const LOTE = 15;
+    const pausa = ms => new Promise(ok => setTimeout(ok, ms));
+    async function tentar(fn) {
+      for (let n = 0; ; n++) {
+        try { return await fn(); }
+        catch (e) {
+          const repetivel = !e.status || e.status === 403 || e.status === 429 || e.status >= 500; // sem resposta, limite ou falha do GitHub
+          if (!repetivel || n >= 3) throw e;
+          ghEstado.textContent = "A ligação falhou; nova tentativa daqui a " + [5, 15, 30][n] + " s…";
+          await pausa([5000, 15000, 30000][n]);
+        }
+      }
+    }
+
     document.getElementById("gh-enviar").onclick = async () => {
       const b = document.getElementById("gh-enviar");
       if (!lerLS(GH_CHAVE, "")) { document.getElementById("gh-config").open = true; ghEstado.textContent = "Falta a chave de acesso (abre a secção abaixo)."; return; }
       if (!navigator.onLine) { ghEstado.textContent = "Sem rede. Liga os dados ou o Wi-Fi; os dados continuam guardados neste telemóvel."; return; }
       b.disabled = true;
       let emCurso = ""; // ficheiro a ser enviado (para a mensagem de erro)
+      let ecraLigado = null; // pedido para o ecrã não apagar durante o envio
       try {
         await descobrirAparelho(); // nome real do telemóvel (ex.: Pixel 9a · Android 17), não só «Android 10»
         const enviados = new Set(JSON.parse(lerLS(GH_ENVIADOS, "[]")));
@@ -683,28 +706,39 @@
         }
         // os ficheiros deste envio (resultados e imagem da página) vão sempre; o resto só se ainda não foi enviado
         const novos = fich.filter(([c]) => c.startsWith(sessao + "/") || !enviados.has(c));
-        const ref = await gh("/git/ref/heads/main");
-        const commitBase = await gh("/git/commits/" + ref.object.sha);
-        const arvore = [];
+        try { ecraLigado = await navigator.wakeLock.request("screen"); } catch (e) { /* sem wake lock: segue na mesma */ }
+        let base = (await tentar(() => gh("/git/ref/heads/main"))).object.sha;
+        const lotes = Math.ceil(novos.length / LOTE);
         let feitos = 0;
-        for (const [caminho, blob] of novos) {
-          emCurso = caminho.split("/").pop() + " (" + (blob.size / 1e6).toFixed(1).replace(".", ",") + " MB, " + (feitos + 1) + " de " + novos.length + ")";
-          ghEstado.textContent = "A enviar " + (++feitos) + " de " + novos.length + "… (" + caminho.split("/").pop() + ")";
-          const bl = await gh("/git/blobs", "POST", { content: await base64(blob), encoding: "base64" });
-          arvore.push({ path: caminho, mode: "100644", type: "blob", sha: bl.sha });
+        for (let l = 0; l < lotes; l++) {
+          const lote = novos.slice(l * LOTE, (l + 1) * LOTE), arvore = [];
+          for (const [caminho, blob] of lote) {
+            emCurso = caminho.split("/").pop() + " (" + (blob.size / 1e6).toFixed(1).replace(".", ",") + " MB, " + (feitos + 1) + " de " + novos.length + ")";
+            ghEstado.textContent = "A enviar " + (++feitos) + " de " + novos.length + " (lote " + (l + 1) + " de " + lotes + ")… " + caminho.split("/").pop();
+            const conteudo = await base64(blob);
+            const bl = await tentar(() => gh("/git/blobs", "POST", { content: conteudo, encoding: "base64" }));
+            arvore.push({ path: caminho, mode: "100644", type: "blob", sha: bl.sha });
+            await pausa(400);
+          }
+          emCurso = ""; ghEstado.textContent = "A gravar o lote " + (l + 1) + " de " + lotes + "…";
+          const commitBase = await tentar(() => gh("/git/commits/" + base));
+          const tree = await tentar(() => gh("/git/trees", "POST", { base_tree: commitBase.tree.sha, tree: arvore }));
+          const commit = await tentar(() => gh("/git/commits", "POST", { message: "Teste 06 · envio " + carimbo + " (" + aparelho() + ") · lote " + (l + 1) + "/" + lotes, tree: tree.sha, parents: [base] }));
+          await tentar(() => gh("/git/refs/heads/main", "PATCH", { sha: commit.sha }));
+          base = commit.sha;
+          // o lote está gravado: fica registado, para não se repetir se a rede cair mais à frente
+          lote.forEach(([c]) => enviados.add(c));
+          gravarLS(GH_ENVIADOS, JSON.stringify([...enviados]));
         }
-        emCurso = ""; ghEstado.textContent = "A registar o envio…";
-        const tree = await gh("/git/trees", "POST", { base_tree: commitBase.tree.sha, tree: arvore });
-        const commit = await gh("/git/commits", "POST", { message: "Teste 06 · envio " + carimbo + " (" + aparelho() + ")", tree: tree.sha, parents: [ref.object.sha] });
-        await gh("/git/refs/heads/main", "PATCH", { sha: commit.sha });
-        novos.forEach(([c]) => enviados.add(c));
-        gravarLS(GH_ENVIADOS, JSON.stringify([...enviados]));
         const mb = novos.reduce((t, [, bl]) => t + bl.size, 0) / 1e6;
         ghEstado.textContent = "✓ Enviados " + novos.length + " ficheiros (" + mb.toFixed(1).replace(".", ",") + " MB). No PC, pede ao Claude para transferir o oceano-dados-testes.";
         b.disabled = false; confirmar(b, "Enviado");
       } catch (e) {
-        ghEstado.textContent = "Não foi possível enviar: " + e.message + (emCurso ? " · ficheiro: " + emCurso : "") + ". Os dados continuam guardados neste telemóvel.";
+        ghEstado.textContent = "Não foi possível enviar: " + e.message + (emCurso ? " · ficheiro: " + emCurso : "") +
+          ". O que já foi gravado não se repete: carrega outra vez em «Enviar tudo» para continuar. Os dados continuam guardados neste telemóvel.";
         b.disabled = false;
+      } finally {
+        try { if (ecraLigado) await ecraLigado.release(); } catch (e) {}
       }
     };
   </script>
