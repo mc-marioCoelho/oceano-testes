@@ -98,6 +98,8 @@
     <h2>Fim da sessão: enviar tudo para o PC (via GitHub)</h2>
     <p class="sub">Envia resultados, recortes, alvos MindAR/Zappar e (se quiseres) as fotografias originais para o repositório privado <strong>oceano-dados-testes</strong>. No PC, o Claude copia tudo para as pastas locais e esvazia o repositório. Liga os dados móveis ou o Wi-Fi antes de enviar. Só vai o que ainda não foi enviado deste telemóvel.</p>
     <p class="sub"><label><input type="checkbox" id="gh-originais" checked> Incluir as fotografias originais (cerca de 4 MB cada)</label></p>
+    <p class="sub"><label><input type="checkbox" id="gh-pagina" checked> Incluir uma imagem da página inteira, como está no fim da sessão (para o DDB)</label></p>
+    <p><button class="botao claro" id="pagina-guardar">Só guardar a imagem da página neste telemóvel</button></p>
     <p><button class="botao" id="gh-enviar">Enviar tudo para o GitHub</button></p>
     <p class="estado-offline" id="gh-estado"></p>
     <details class="sub" id="gh-config">
@@ -112,6 +114,7 @@
     const MINDAR_COMPILADOR = "https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image.prod.js";
     const ZAPPAR_TREINO = "https://cdn.jsdelivr.net/npm/@zappar/imagetraining@4.3.2/umd/zappar-imagetraining.js";
     const BUFFER = "https://cdn.jsdelivr.net/npm/buffer@6.0.3/+esm";
+    const HTML2CANVAS = "https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js";
     const LADO_MAX = 1024; // a fotografia recortada é reduzida a este lado maior antes de criar o alvo
 
     // 1. local
@@ -602,6 +605,42 @@
       const fr = new FileReader(); fr.onload = () => ok(fr.result.split(",")[1]); fr.onerror = () => erro(fr.error); fr.readAsDataURL(blob);
     });
 
+    // Imagem da página inteira (de cima a baixo, não só o que se vê no ecrã), para o DDB.
+    // O navegador não deixa a página fotografar o ecrã: o html2canvas redesenha-a numa imagem.
+    // A secção da chave do GitHub fica de fora. A altura é limitada a ~16 000 px (limite das imagens no telemóvel).
+    async function imagemPagina() {
+      await carregarScript(HTML2CANVAS);
+      // o html2canvas deixa em branco as imagens SVG (o mapa dos pontos): passa-se o mapa a PNG antes
+      let mapa = null;
+      const im = document.querySelector(".mapa-pontos");
+      if (im && im.complete && im.clientWidth) {
+        const c = document.createElement("canvas"); c.width = im.clientWidth * 2; c.height = im.clientHeight * 2;
+        c.getContext("2d").drawImage(im, 0, 0, c.width, c.height); mapa = c.toDataURL("image/png");
+      }
+      const y = window.scrollY, alto = document.documentElement.scrollHeight;
+      window.scrollTo(0, 0); // sem isto, a imagem sai cortada em cima
+      try {
+        const c = await html2canvas(document.body, {
+          scale: Math.min(2, window.devicePixelRatio || 1, 16000 / alto),
+          backgroundColor: getComputedStyle(document.body).backgroundColor,
+          ignoreElements: el => el.id === "gh-config",
+          onclone: doc => { const m = doc.querySelector(".mapa-pontos"); if (m && mapa) m.src = mapa; },
+          logging: false,
+        });
+        return await new Promise((ok, erro) => c.toBlob(b => b ? ok(b) : erro(new Error("imagem demasiado grande")), "image/jpeg", 0.85));
+      } finally { window.scrollTo(0, y); }
+    }
+    document.getElementById("pagina-guardar").onclick = async () => {
+      const b = document.getElementById("pagina-guardar");
+      b.disabled = true; ghEstado.textContent = "A fazer a imagem da página…";
+      try {
+        const img = await imagemPagina(), nome = "teste06-pagina-" + new Date().toISOString().slice(0, 16).replace(/[:T]/g, "-") + ".jpg";
+        const l = document.createElement("a"); l.href = URL.createObjectURL(img); l.download = nome; l.click();
+        ghEstado.textContent = "✓ Imagem guardada (pasta Transferências): " + nome;
+        b.disabled = false; confirmar(b, "Guardada");
+      } catch (e) { ghEstado.textContent = "Não foi possível fazer a imagem: " + e.message; b.disabled = false; }
+    };
+
     document.getElementById("gh-enviar").onclick = async () => {
       const b = document.getElementById("gh-enviar");
       if (!lerLS(GH_CHAVE, "")) { document.getElementById("gh-config").open = true; ghEstado.textContent = "Falta a chave de acesso (abre a secção abaixo)."; return; }
@@ -618,6 +657,11 @@
           [sessao + "/resultados.json", new Blob([JSON.stringify({ enviado: agora.toISOString(), aparelho: aparelho(), resultados: lerResultados(),
             alvos: lista.map(a => ({ id: a.id, nome: a.nome, local: a.local, largura: a.largura, altura: a.altura, tMind: a.tMind, tZpt: a.tZpt, fotoId: a.fotoId, recorte: a.recorte, forma: a.forma || null, pontos: a.pontos || [], erros: a.erros })) }, null, 1)], { type: "application/json" })],
         ];
+        if (document.getElementById("gh-pagina").checked) {
+          ghEstado.textContent = "A fazer a imagem da página…";
+          try { fich.push([sessao + "/pagina.jpg", await imagemPagina()]); }
+          catch (e) { ghEstado.textContent = "A imagem da página falhou (" + e.message + "); o resto segue."; }
+        }
         const comOriginais = document.getElementById("gh-originais").checked, fotosVistas = new Set();
         for (const a of lista) {
           const pasta = GH_PASTA + "/alvos/" + a.id.toLowerCase();
@@ -626,8 +670,8 @@
           if (a.zpt) fich.push([pasta + "/alvo.zpt", new Blob([a.zpt])]);
           if (comOriginais && a.original && a.fotoId && !fotosVistas.has(a.fotoId)) { fotosVistas.add(a.fotoId); fich.push([GH_PASTA + "/originais/foto-" + a.fotoId + ".jpg", a.original]); }
         }
-        // os resultados vão sempre (são pequenos); o resto só se ainda não foi enviado
-        const novos = fich.filter(([c], i) => i < 2 || !enviados.has(c));
+        // os ficheiros deste envio (resultados e imagem da página) vão sempre; o resto só se ainda não foi enviado
+        const novos = fich.filter(([c]) => c.startsWith(sessao + "/") || !enviados.has(c));
         const ref = await gh("/git/ref/heads/main");
         const commitBase = await gh("/git/commits/" + ref.object.sha);
         const arvore = [];

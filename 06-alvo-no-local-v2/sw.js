@@ -4,7 +4,7 @@
 // Páginas do teste: rede primeiro (para receber correções), cópia guardada se não houver rede.
 // Bibliotecas externas (endereços com versão fixa): cópia guardada primeiro.
 
-const CACHE = "oceano-teste06-v2";
+const CACHE = "oceano-teste06-v3";
 const PROPRIOS = ["./", "index.html", "pontos-de-visao.svg", "mindar.html", "zappar.html", "estilo.css", "alvos.js", "medicao.js", "objetos.js"];
 const ZT = "https://cdn.jsdelivr.net/npm/@zappar/imagetraining@4.3.2/umd/";
 const EXTERNOS = [
@@ -15,6 +15,7 @@ const EXTERNOS = [
   "https://libs.zappar.com/zappar-aframe/2.0.0/zappar-aframe.js",
   ZT + "zappar-imagetraining.js", ZT + "c98e74d5b0eadc72a3c6.wasm",
   "https://cdn.jsdelivr.net/npm/buffer@6.0.3/+esm",
+  "https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js",
   "https://cdn.jsdelivr.net/npm/base64-js@1.5.1/+esm", "https://cdn.jsdelivr.net/npm/ieee754@1.2.1/+esm",
 ];
 

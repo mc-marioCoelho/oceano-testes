@@ -18,6 +18,8 @@ Continuação do [teste 05](../05-alvo-no-local/), que fica como estava. Funcion
 
 Os resultados exportados passam a ter as colunas «Forma do recorte» e «Pontos marcados».
 
+9. **Imagem da página inteira (para o DDB):** o «Enviar tudo para o GitHub» junta uma imagem JPG da página de cima a baixo, como está nesse momento (alvos, tabela de resultados), em `envios/<data>-<aparelho>/pagina.jpg` (opção ligada por omissão). Há também um botão para a guardar só no telemóvel. Faz-se com o html2canvas, que redesenha a página numa imagem (o navegador não deixa a página fotografar o ecrã); a secção da chave do GitHub fica de fora. No PC, vai para `media-local/fotos/teste-06-<data>/capturas/`.
+
 ## Limites
 
 Os mesmos do teste 05: ecrã ligado enquanto cria o alvo; medir no sítio da fotografia é o melhor caso possível; falta testar dos pontos vizinhos, a outra hora e noutros telemóveis.
