@@ -32,7 +32,7 @@ const Editor = (() => {
     camada = tela(W, H); cg = camada.getContext("2d");
     traco = tela(W, H); tg = traco.getContext("2d");
     vista = $("d-tela"); vista.width = W; vista.height = H; vg = vista.getContext("2d");
-    historia = []; importadoOriginal = null; alterado = false;
+    historia = []; importadoOriginal = null; alterado = false; barbaAplicada = false; ctl = null; $("d-ctl").hidden = true;
     if (a.desenho) { // continuar o desenho já guardado
       const img = await createImageBitmap(a.desenho);
       cg.drawImage(img, 0, 0, W, H);
@@ -65,6 +65,19 @@ const Editor = (() => {
       vg.beginPath(); alvo.forma.pts.forEach(([u, v], i) => i ? vg.lineTo(u * W, v * H) : vg.moveTo(u * W, v * H));
       vg.closePath(); vg.stroke(); vg.setLineDash([]);
     }
+    pintarControlo();
+  }
+
+  // pontos de controlo: os toques (verde, com número) e, depois de colocar a barba, onde o mapa os põe (amarelo)
+  function pintarControlo() {
+    if (!ctl) return;
+    const r = Math.max(6, W / 120);
+    vg.font = "bold " + Math.round(r * 2) + "px system-ui"; vg.lineWidth = Math.max(2, r / 3);
+    ctl.toques.forEach((t, i) => { if (!t) return;
+      vg.beginPath(); vg.arc(t[0], t[1], r, 0, 2 * Math.PI); vg.fillStyle = "#1f8a4c"; vg.fill(); vg.strokeStyle = "#fff"; vg.stroke();
+      vg.fillStyle = "#fff"; vg.strokeStyle = "#000"; vg.strokeText(mapa.pontos[i].n, t[0] + r, t[1] - r); vg.fillText(mapa.pontos[i].n, t[0] + r, t[1] - r); });
+    if (ctl.H) mapa.pontos.forEach(p => { const [x, y] = aplica(ctl.H, [p.x, p.y]);
+      vg.beginPath(); vg.arc(x, y, r * 1.6, 0, 2 * Math.PI); vg.strokeStyle = "#ffd000"; vg.stroke(); });
   }
 
   // Zoom: a tela fica maior do que o ecrã e a caixa à volta deixa-se deslizar (só com a ferramenta «Mover»).
@@ -133,6 +146,7 @@ const Editor = (() => {
     if (dedos.size > 1) { cancelar(); return; } // dois dedos: não é um traço (evita riscos ao fazer zoom)
     vista.setPointerCapture(ev.pointerId);
     const p = ponto(ev);
+    if (ferramenta === "controlo") { controloToque(p); return; }
     if (ferramenta === "contagotas") { // cor do mosaico naquele ponto
       const t = tela(1, 1), g = t.getContext("2d"); g.drawImage(fundo, p[0], p[1], 1, 1, 0, 0, 1, 1);
       const d = g.getImageData(0, 0, 1, 1).data;
@@ -195,11 +209,116 @@ const Editor = (() => {
   async function guardar() {
     const vazio = !cg.getImageData(0, 0, W, H).data.some((v, i) => i % 4 === 3 && v);
     alvo.desenho = vazio ? null : (importadoOriginal || await pngDaCamada());
-    alvo.desenhoInfo = vazio ? null : { atualizado: Date.now(), origem: importadoOriginal ? "PNG carregado" : "desenhado no telemóvel" };
+    alvo.desenhoInfo = vazio ? null : { atualizado: Date.now(), origem: importadoOriginal ? "PNG carregado" : barbaAplicada ? "barba do mapa (pontos de controlo)" : "desenhado no telemóvel" };
     await Alvos.gravar(alvo);
     alterado = false;
     confirmar($("d-guardar"), vazio ? "Desenho apagado" : "Guardado");
     if (aoGuardar) aoGuardar(alvo);
+  }
+
+  // ---- barba do mapa, pelos pontos de controlo ----
+  // O mapa do mosaico (vetorizado pelo Mário, em cm) tem 8 pontos de controlo à volta da lacuna central.
+  // Toca-se em cada um na fotografia do alvo; com 4 ou mais, calcula-se a perspetiva (homografia) do mapa
+  // para o recorte, e a barba reconstituída (mapa/barba.svg) é deformada para cima do recorte, como desenho.
+  let mapa = null, ctl = null, barbaImg = null, barbaAplicada = false;
+  const BARBA_PX_CM = 12; // resolução da barba rasterizada antes de a deformar
+  async function carregarMapa() {
+    if (mapa) return mapa;
+    mapa = await (await fetch("mapa/controlo.json")).json();
+    // a barba: recorta-se o SVG à sua caixa e rasteriza-se a 12 px/cm
+    const b = mapa.barba, txt = await (await fetch(b.svg)).text();
+    const w = b.x1 - b.x0, h = b.y1 - b.y0;
+    const svg = txt.replace(/<svg[^>]*>/, '<svg xmlns="http://www.w3.org/2000/svg" width="' + Math.round(w * BARBA_PX_CM) + '" height="' + Math.round(h * BARBA_PX_CM) + '" viewBox="' + b.x0 + ' ' + b.y0 + ' ' + w + ' ' + h + '">');
+    const img = new Image(); img.src = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" })); await img.decode();
+    const c = tela(img.width, img.height); c.getContext("2d").drawImage(img, 0, 0);
+    barbaImg = c.getContext("2d").getImageData(0, 0, c.width, c.height);
+    return mapa;
+  }
+  async function controloIniciar() {
+    $("d-ctl-msg").textContent = "A carregar o mapa…";
+    $("d-ctl").hidden = false;
+    try { await carregarMapa(); } catch (e) { $("d-ctl-msg").textContent = "Não foi possível carregar o mapa: " + e.message; return; }
+    ctl = { i: 0, toques: mapa.pontos.map(() => null), H: null };
+    ferramentaAntes = ferramenta; mudarFerramenta("controlo");
+    controloMostrar();
+  }
+  function controloFechar() { ctl = null; $("d-ctl").hidden = true; mudarFerramenta(ferramentaAntes && ferramentaAntes !== "controlo" ? ferramentaAntes : "pincel"); pintar(); }
+  function controloMostrar() {
+    const n = ctl.toques.filter(Boolean).length;
+    const p = mapa.pontos[ctl.i];
+    $("d-ctl-msg").innerHTML = ctl.i < mapa.pontos.length
+      ? "Toca no <strong>ponto " + p.n + "</strong>: " + p.onde + ". Se não aparece na fotografia, «Saltar». (" + n + " marcado" + (n === 1 ? "" : "s") + "; são precisos 4 ou mais)"
+      : n + " pontos marcados. Carrega em «Colocar a barba».";
+    $("d-ctl-aplicar").disabled = n < 4;
+    controloEsquema(); pintar();
+  }
+  // esquema do mapa (sem fotografia): os círculos do medalhão, a lacuna e os pontos numerados
+  function controloEsquema() {
+    const c = $("d-ctl-esquema"), g = c.getContext("2d"), E = mapa.esquema;
+    const X0 = 40, Y0 = 340, S = c.width / 300; // mostra x 40–340 cm, y 340–560 cm
+    const q = (x, y) => [(x - X0) * S, (y - Y0) * S];
+    g.fillStyle = "#fffaf2"; g.fillRect(0, 0, c.width, c.height);
+    g.fillStyle = "rgba(0,80,255,.15)"; g.beginPath(); E.lacuna.forEach(([x, y], i) => { const [a, b] = q(x, y); i ? g.lineTo(a, b) : g.moveTo(a, b); }); g.closePath(); g.fill();
+    g.strokeStyle = "#2b2622"; g.lineWidth = 1.5;
+    for (const r of E.raios) { const [a, b] = q(E.centro[0], E.centro[1]); g.beginPath(); g.arc(a, b, r * S, 0, 2 * Math.PI); g.stroke(); }
+    mapa.pontos.forEach((p, i) => { const [a, b] = q(p.x, p.y);
+      g.beginPath(); g.arc(a, b, i === ctl.i ? 9 : 6, 0, 2 * Math.PI);
+      g.fillStyle = ctl.toques[i] ? "#1f8a4c" : i === ctl.i ? "#ff1744" : "#999"; g.fill();
+      g.fillStyle = "#2b2622"; g.font = "bold 13px system-ui"; g.fillText(p.n, a + 8, b - 6); });
+  }
+  function controloToque(p) {
+    if (!ctl || ctl.i >= mapa.pontos.length) return;
+    ctl.toques[ctl.i] = p; ctl.i++; ctl.H = null; controloMostrar();
+  }
+  // homografia por mínimos quadrados, com coordenadas normalizadas (Hartley)
+  function normalizar(P) { const n = P.length, mx = P.reduce((s, p) => s + p[0], 0) / n, my = P.reduce((s, p) => s + p[1], 0) / n;
+    const d = P.reduce((s, p) => s + Math.hypot(p[0] - mx, p[1] - my), 0) / n || 1, k = Math.SQRT2 / d;
+    return [[k, 0, -k * mx], [0, k, -k * my], [0, 0, 1]]; }
+  const mul = (A, B) => A.map((l, i) => [0, 1, 2].map(j => l[0] * B[0][j] + l[1] * B[1][j] + l[2] * B[2][j]));
+  const inv = M => { const [a, b, c] = M[0], [d, e, f] = M[1], [g, h, i] = M[2]; const A = e * i - f * h, B = -(d * i - f * g), C = d * h - e * g, D = a * A + b * B + c * C;
+    return [[A / D, -(b * i - c * h) / D, (b * f - c * e) / D], [B / D, (a * i - c * g) / D, -(a * f - c * d) / D], [C / D, -(a * h - b * g) / D, (a * e - b * d) / D]]; };
+  const aplica = (H, [x, y]) => { const w = H[2][0] * x + H[2][1] * y + H[2][2]; return [(H[0][0] * x + H[0][1] * y + H[0][2]) / w, (H[1][0] * x + H[1][1] * y + H[1][2]) / w]; };
+  function homografia(de, para) {
+    const T1 = normalizar(de), T2 = normalizar(para), a = de.map(p => aplica(T1, p)), b = para.map(p => aplica(T2, p));
+    const M = Array.from({ length: 8 }, () => new Array(9).fill(0)); // equações normais [AᵀA | Aᵀb]
+    a.forEach(([x, y], i) => { const [u, v] = b[i];
+      for (const [l, r] of [[[x, y, 1, 0, 0, 0, -u * x, -u * y], u], [[0, 0, 0, x, y, 1, -v * x, -v * y], v]])
+        for (let j = 0; j < 8; j++) { for (let k = 0; k < 8; k++) M[j][k] += l[j] * l[k]; M[j][8] += l[j] * r; } });
+    for (let c = 0; c < 8; c++) { let m = c; for (let r = c + 1; r < 8; r++) if (Math.abs(M[r][c]) > Math.abs(M[m][c])) m = r;
+      [M[c], M[m]] = [M[m], M[c]]; for (let r = 0; r < 8; r++) if (r !== c) { const f = M[r][c] / M[c][c]; for (let k = c; k < 9; k++) M[r][k] -= f * M[c][k]; } }
+    const h = M.map((l, i) => l[8] / l[i]);
+    return mul(inv(T2), mul([[h[0], h[1], h[2]], [h[3], h[4], h[5]], [h[6], h[7], 1]], T1));
+  }
+  function controloAplicar() {
+    const pares = mapa.pontos.map((p, i) => ctl.toques[i] && [[p.x, p.y], ctl.toques[i]]).filter(Boolean);
+    if (pares.length < 4) return;
+    // pontos quase em linha: a perspetiva fica indeterminada
+    const P = pares.map(q => q[0]), cx = P.reduce((s, p) => s + p[0], 0) / P.length, cy = P.reduce((s, p) => s + p[1], 0) / P.length;
+    let sxx = 0, syy = 0, sxy = 0; for (const [x, y] of P) { sxx += (x - cx) ** 2; syy += (y - cy) ** 2; sxy += (x - cx) * (y - cy); }
+    const tr = sxx + syy, det = sxx * syy - sxy * sxy, menor = tr / 2 - Math.sqrt(Math.max(0, tr * tr / 4 - det));
+    if (Math.sqrt(menor / P.length) < 8 && !confirm("Os pontos marcados estão quase em linha (todos em cima ou todos em baixo). A perspetiva vai sair mal. Continuar na mesma?")) return;
+    const Hm = homografia(pares.map(q => q[0]), pares.map(q => q[1])), Hi = inv(Hm);
+    // erro: cada toque levado de volta ao mapa, comparado com o ponto do mapa (cm)
+    const erros = pares.map(([m, t]) => { const v = aplica(Hi, t); return Math.hypot(v[0] - m[0], v[1] - m[1]); });
+    const erro = erros.length > 4 ? Math.sqrt(erros.reduce((s, e) => s + e * e, 0) / erros.length) : null;
+    // deformar a barba: para cada píxel do recorte, onde cai no mapa, e que cor tem lá a barba
+    const b = mapa.barba, out = cg.createImageData(W, H), o = out.data, src = barbaImg.data, BW = barbaImg.width, BH = barbaImg.height;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const w = Hi[2][0] * x + Hi[2][1] * y + Hi[2][2]; if (w <= 0) continue;
+      const mx = (Hi[0][0] * x + Hi[0][1] * y + Hi[0][2]) / w, my = (Hi[1][0] * x + Hi[1][1] * y + Hi[1][2]) / w;
+      const bx = Math.floor((mx - b.x0) * BARBA_PX_CM), by = Math.floor((my - b.y0) * BARBA_PX_CM);
+      if (bx < 0 || by < 0 || bx >= BW || by >= BH) continue;
+      const s = (by * BW + bx) * 4, d = (y * W + x) * 4; if (!src[s + 3]) continue;
+      o[d] = src[s]; o[d + 1] = src[s + 1]; o[d + 2] = src[s + 2]; o[d + 3] = src[s + 3];
+    }
+    guardarHistoria();
+    const t = tela(W, H); t.getContext("2d").putImageData(out, 0, 0); cg.drawImage(t, 0, 0);
+    ctl.H = Hm; barbaAplicada = true; alterado = true; importadoOriginal = null;
+    alvo.controloMapa = { quando: Date.now(), pontos: mapa.pontos.map((p, i) => ({ n: p.n, mapa: [p.x, p.y], recorte: ctl.toques[i] && ctl.toques[i].map(v => +v.toFixed(1)) })),
+                          H: Hm.map(l => l.map(v => +v.toPrecision(8))), erroCm: erro === null ? null : +erro.toFixed(1) };
+    $("d-ctl-msg").innerHTML = "✓ Barba colocada com " + pares.length + " pontos" + (erro === null ? " (com 4 pontos não se mede o erro; com 5 ou mais, sim)." : " · erro médio " + erro.toFixed(1).replace(".", ",") + " cm" + (erro > 3 ? " — alto: revê os toques" : "")) +
+      ". Os círculos amarelos mostram onde ficam todos os pontos do mapa. Se estiver bem, «Guardar desenho».";
+    pintar();
   }
 
   // ---- ligar os botões (uma vez) ----
@@ -227,6 +346,12 @@ const Editor = (() => {
     $("d-baixar-recorte").onclick = () => descarregar(alvo.jpg, nomeBase() + "-recorte-" + W + "x" + H + ".jpg");
     $("d-baixar-png").onclick = async () => descarregar(importadoOriginal || await pngDaCamada(), nomeBase() + "-desenho.png");
     $("d-guardar").onclick = guardar;
+    $("d-ctl-iniciar").onclick = controloIniciar;
+    $("d-ctl-saltar").onclick = () => { if (ctl && ctl.i < mapa.pontos.length) { ctl.i++; controloMostrar(); } };
+    $("d-ctl-desfazer").onclick = () => { if (!ctl) return; while (ctl.i > 0) { ctl.i--; if (ctl.toques[ctl.i]) { ctl.toques[ctl.i] = null; break; } } ctl.H = null; controloMostrar(); };
+    $("d-ctl-marcar").onclick = () => { if (ctl) mudarFerramenta("controlo"); };
+    $("d-ctl-aplicar").onclick = controloAplicar;
+    $("d-ctl-fechar").onclick = controloFechar;
     $("d-fechar").onclick = () => { if (alterado && !confirm("O desenho tem alterações por guardar. Fechar na mesma?")) return; fechar(); };
     mudarFerramenta("pincel");
   }

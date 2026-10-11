@@ -37,6 +37,19 @@ O nível entra nos resultados (coluna «Estabilização») e na faixa de «Fotog
 
 Porque é que a lacuna treme mais: o motor segue os pormenores da parte conservada (a cara, as linhas); a lacuna é argamassa lisa, longe desses pormenores, e um erro pequeno na estimativa da inclinação do alvo cresce com a distância. Um recorte que inclua pormenores **dos dois lados** da lacuna (cercadura, círculo do medalhão) deve ajudar.
 
+## Barba do mapa, pelos pontos de controlo (acrescentado a 11 out.)
+
+Primeiro teste do «cenário A»: a reconstituição vem do **mapa vetorial do mosaico** (vetorizado pelo Mário a 11 out., à escala, 1 unidade = 1 cm) e não de um desenho feito sobre o recorte.
+
+- `mapa/barba.svg`: a barba do Oceano reconstituída tessela a tessela pelo Mário (2670 tesselas; por agora todas em ciano, que se vê bem sobre o mosaico; as cores finais ficam para depois). É uma hipótese de reconstituição.
+- `mapa/controlo.json`: os **8 pontos de controlo** do mapa, todos onde uma linha negra entra na lacuna central (1–4 em cima, junto ao rosto; 5–8 em baixo, na linha de corte do painel de baixo; o 5 fica no canto do Euro).
+
+No editor, **«Colocar a barba do mapa»**: um esquema mostra os pontos; a página pede um de cada vez («toca no ponto 3»); os que não aparecem na fotografia saltam-se. Com **4 ou mais** (não todos em linha), a página calcula a perspetiva do mapa para a fotografia (homografia, por mínimos quadrados) e deforma a barba para cima do recorte. Com 5 ou mais, mostra o **erro médio em cm** (cada toque comparado com o mapa) e desenha a amarelo onde ficam todos os pontos do mapa, para se ver se encaixam. Depois «Guardar desenho» e testar na RA como antes. Os toques, a perspetiva e o erro ficam guardados com o alvo e seguem no envio para o GitHub.
+
+**Verificado no PC** com uma fotografia artificial de perspetiva conhecida: toques exatos → a barba cai exatamente no sítio (sobreposição 1,0, erro 0 cm); toques com ±3 px de erro de dedo → erro médio de 1,7 cm.
+
+**Cuidado:** se o recorte só mostrar os pontos 1–4 (por exemplo, um recorte só do medalhão a partir do P3), os pontos ficam quase em linha e a perspetiva sai mal (a página avisa). O alvo tem de apanhar também um pouco da linha de corte de baixo (pontos 5–8).
+
 ## O que observar na sala
 
 - **P7** (melhor caso: 100 % nos dois motores) e **lacuna do Euro** (só MindAR).

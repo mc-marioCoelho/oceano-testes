@@ -92,6 +92,18 @@
       <div class="d-barra" id="d-zoom"><span>Zoom</span>
         <button type="button" data-z="1">1×</button><button type="button" data-z="2">2×</button><button type="button" data-z="4">4×</button>
       </div>
+      <p><button type="button" class="botao claro" id="d-ctl-iniciar">Colocar a barba do mapa (pontos de controlo)</button></p>
+      <div class="d-ctl" id="d-ctl" hidden>
+        <canvas id="d-ctl-esquema" width="300" height="220" aria-label="Esquema do mapa com os pontos de controlo"></canvas>
+        <p class="sub" id="d-ctl-msg"></p>
+        <div class="d-barra">
+          <button type="button" id="d-ctl-saltar">Saltar este ponto</button>
+          <button type="button" id="d-ctl-desfazer">Desfazer último</button>
+          <button type="button" id="d-ctl-marcar">Voltar a marcar</button>
+          <button type="button" id="d-ctl-aplicar" disabled>Colocar a barba</button>
+          <button type="button" id="d-ctl-fechar">Fechar</button>
+        </div>
+      </div>
       <div class="d-caixa" id="d-caixa"><canvas id="d-tela"></canvas></div>
       <p class="motores">
         <button class="botao" id="d-guardar">Guardar desenho</button>
@@ -749,7 +761,7 @@
         const fich = [
           [sessao + "/resultados.txt", new Blob([texto()], { type: "text/plain" })],
           [sessao + "/resultados.json", new Blob([JSON.stringify({ enviado: agora.toISOString(), aparelho: aparelho(), resultados: lerResultados(),
-            alvos: lista.map(a => ({ id: a.id, nome: a.nome, local: a.local, largura: a.largura, altura: a.altura, tMind: a.tMind, tZpt: a.tZpt, fotoId: a.fotoId, recorte: a.recorte, forma: a.forma || null, pontos: a.pontos || [], desenho: a.desenhoInfo || null, erros: a.erros })) }, null, 1)], { type: "application/json" })],
+            alvos: lista.map(a => ({ id: a.id, nome: a.nome, local: a.local, largura: a.largura, altura: a.altura, tMind: a.tMind, tZpt: a.tZpt, fotoId: a.fotoId, recorte: a.recorte, forma: a.forma || null, pontos: a.pontos || [], desenho: a.desenhoInfo || null, controloMapa: a.controloMapa || null, erros: a.erros })) }, null, 1)], { type: "application/json" })],
         ];
         if (document.getElementById("gh-pagina").checked) {
           ghEstado.textContent = "A fazer a imagem da página…";
