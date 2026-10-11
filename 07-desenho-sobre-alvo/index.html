@@ -92,15 +92,15 @@
       <div class="d-barra" id="d-zoom"><span>Zoom</span>
         <button type="button" data-z="1">1×</button><button type="button" data-z="2">2×</button><button type="button" data-z="4">4×</button>
       </div>
-      <p><button type="button" class="botao claro" id="d-ctl-iniciar">Colocar a barba do mapa (pontos de controlo)</button></p>
+      <p><button type="button" class="botao claro" id="d-ctl-iniciar">Colocar a barba e os ventos do mapa (pontos de controlo)</button></p>
       <div class="d-ctl" id="d-ctl" hidden>
-        <canvas id="d-ctl-esquema" width="300" height="220" aria-label="Esquema do mapa com os pontos de controlo"></canvas>
+        <canvas id="d-ctl-esquema" width="330" height="240" aria-label="Esquema do mapa com os pontos de controlo"></canvas>
         <p class="sub" id="d-ctl-msg"></p>
         <div class="d-barra">
           <button type="button" id="d-ctl-saltar">Saltar este ponto</button>
           <button type="button" id="d-ctl-desfazer">Desfazer último</button>
           <button type="button" id="d-ctl-marcar">Voltar a marcar</button>
-          <button type="button" id="d-ctl-aplicar" disabled>Colocar a barba</button>
+          <button type="button" id="d-ctl-aplicar" disabled>Colocar a barba e os ventos</button>
           <button type="button" id="d-ctl-fechar">Fechar</button>
         </div>
       </div>
@@ -579,7 +579,7 @@
     // resultados
     const COLS = [["quando", "Quando"], ["motor", "Motor"], ["alvo", "Alvo"], ["fotografado", "Fotografado em"], ["local", "Testado em"], ["aparelho", "Aparelho"],
                   ["primeiro", "1.º rec. (s)"], ["perdas", "Perdas"], ["pctReconhecido", "% rec."], ["duracao", "Duração (s)"],
-                  ["tremor5s", "Tremor 5 s (px)"], ["tremor2s", "Tremor 2 s (px)"], ["desenho", "Desenho na RA"], ["estab", "Estabilização"], ["nota", "Nota"]];
+                  ["tremor5s", "Tremor 5 s (px)"], ["tremor2s", "Tremor 2 s (px)"], ["tremor5cm", "Tremor 5 s (cm)"], ["desenho", "Desenho na RA"], ["estab", "Estabilização"], ["alinhamento", "Alinhamento"], ["nota", "Nota"]];
     function desenhar() {
       const lr = lerResultados();
       const t = document.getElementById("tabela");

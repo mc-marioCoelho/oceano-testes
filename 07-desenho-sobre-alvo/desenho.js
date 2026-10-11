@@ -209,29 +209,31 @@ const Editor = (() => {
   async function guardar() {
     const vazio = !cg.getImageData(0, 0, W, H).data.some((v, i) => i % 4 === 3 && v);
     alvo.desenho = vazio ? null : (importadoOriginal || await pngDaCamada());
-    alvo.desenhoInfo = vazio ? null : { atualizado: Date.now(), origem: importadoOriginal ? "PNG carregado" : barbaAplicada ? "barba do mapa (pontos de controlo)" : "desenhado no telemóvel" };
+    alvo.desenhoInfo = vazio ? null : { atualizado: Date.now(), origem: importadoOriginal ? "PNG carregado" : barbaAplicada ? "mapa (pontos de controlo): " + ((alvo.controloMapa && alvo.controloMapa.pecas) || []).join(", ") : "desenhado no telemóvel" };
     await Alvos.gravar(alvo);
     alterado = false;
     confirmar($("d-guardar"), vazio ? "Desenho apagado" : "Guardado");
     if (aoGuardar) aoGuardar(alvo);
   }
 
-  // ---- barba do mapa, pelos pontos de controlo ----
-  // O mapa do mosaico (vetorizado pelo Mário, em cm) tem 8 pontos de controlo à volta da lacuna central.
+  // ---- reconstituições do mapa, pelos pontos de controlo ----
+  // O mapa do mosaico (vetorizado pelo Mário, em cm) tem pontos de controlo à volta da lacuna central.
   // Toca-se em cada um na fotografia do alvo; com 4 ou mais, calcula-se a perspetiva (homografia) do mapa
-  // para o recorte, e a barba reconstituída (mapa/barba.svg) é deformada para cima do recorte, como desenho.
-  let mapa = null, ctl = null, barbaImg = null, barbaAplicada = false;
-  const BARBA_PX_CM = 12; // resolução da barba rasterizada antes de a deformar
+  // para o recorte, e as peças do mapa (a barba; as silhuetas provisórias do Euro e do Noto) são deformadas
+  // para cima do recorte, como desenho. Só aparecem as peças que caem dentro da fotografia.
+  let mapa = null, ctl = null, barbaAplicada = false;
+  const PECA_PX_CM = 12; // resolução de cada peça rasterizada antes de a deformar
   async function carregarMapa() {
     if (mapa) return mapa;
-    mapa = await (await fetch("mapa/controlo.json")).json();
-    // a barba: recorta-se o SVG à sua caixa e rasteriza-se a 12 px/cm
-    const b = mapa.barba, txt = await (await fetch(b.svg)).text();
-    const w = b.x1 - b.x0, h = b.y1 - b.y0;
-    const svg = txt.replace(/<svg[^>]*>/, '<svg xmlns="http://www.w3.org/2000/svg" width="' + Math.round(w * BARBA_PX_CM) + '" height="' + Math.round(h * BARBA_PX_CM) + '" viewBox="' + b.x0 + ' ' + b.y0 + ' ' + w + ' ' + h + '">');
-    const img = new Image(); img.src = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" })); await img.decode();
-    const c = tela(img.width, img.height); c.getContext("2d").drawImage(img, 0, 0);
-    barbaImg = c.getContext("2d").getImageData(0, 0, c.width, c.height);
+    const m = await (await fetch("mapa/controlo.json")).json();
+    for (const p of m.pecas) { // cada peça: recorta-se o SVG à sua caixa e rasteriza-se a 12 px/cm
+      const txt = await (await fetch(p.svg)).text(), w = p.x1 - p.x0, h = p.y1 - p.y0;
+      const svg = txt.replace(/<svg[^>]*>/, '<svg xmlns="http://www.w3.org/2000/svg" width="' + Math.round(w * PECA_PX_CM) + '" height="' + Math.round(h * PECA_PX_CM) + '" viewBox="' + p.x0 + ' ' + p.y0 + ' ' + w + ' ' + h + '">');
+      const img = new Image(); img.src = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" })); await img.decode();
+      const c = tela(img.width, img.height); c.getContext("2d").drawImage(img, 0, 0);
+      p.img = c.getContext("2d").getImageData(0, 0, c.width, c.height);
+    }
+    mapa = m;
     return mapa;
   }
   async function controloIniciar() {
@@ -248,19 +250,20 @@ const Editor = (() => {
     const p = mapa.pontos[ctl.i];
     $("d-ctl-msg").innerHTML = ctl.i < mapa.pontos.length
       ? "Toca no <strong>ponto " + p.n + "</strong>: " + p.onde + ". Se não aparece na fotografia, «Saltar». (" + n + " marcado" + (n === 1 ? "" : "s") + "; são precisos 4 ou mais)"
-      : n + " pontos marcados. Carrega em «Colocar a barba».";
+      : n + " pontos marcados. Carrega em «Colocar a barba e os ventos».";
     $("d-ctl-aplicar").disabled = n < 4;
     controloEsquema(); pintar();
   }
   // esquema do mapa (sem fotografia): os círculos do medalhão, a lacuna e os pontos numerados
   function controloEsquema() {
     const c = $("d-ctl-esquema"), g = c.getContext("2d"), E = mapa.esquema;
-    const X0 = 40, Y0 = 340, S = c.width / 300; // mostra x 40–340 cm, y 340–560 cm
+    const X0 = 20, Y0 = 360, S = c.width / 330; // mostra x 20–350 cm, y 360–600 cm
     const q = (x, y) => [(x - X0) * S, (y - Y0) * S];
     g.fillStyle = "#fffaf2"; g.fillRect(0, 0, c.width, c.height);
     g.fillStyle = "rgba(0,80,255,.15)"; g.beginPath(); E.lacuna.forEach(([x, y], i) => { const [a, b] = q(x, y); i ? g.lineTo(a, b) : g.moveTo(a, b); }); g.closePath(); g.fill();
     g.strokeStyle = "#2b2622"; g.lineWidth = 1.5;
     for (const r of E.raios) { const [a, b] = q(E.centro[0], E.centro[1]); g.beginPath(); g.arc(a, b, r * S, 0, 2 * Math.PI); g.stroke(); }
+    g.fillStyle = "rgba(255,45,149,.35)"; for (const p of mapa.pecas) { const [a, b] = q(p.x0, p.y0); g.fillRect(a, b, (p.x1 - p.x0) * S, (p.y1 - p.y0) * S); }
     mapa.pontos.forEach((p, i) => { const [a, b] = q(p.x, p.y);
       g.beginPath(); g.arc(a, b, i === ctl.i ? 9 : 6, 0, 2 * Math.PI);
       g.fillStyle = ctl.toques[i] ? "#1f8a4c" : i === ctl.i ? "#ff1744" : "#999"; g.fill();
@@ -301,22 +304,28 @@ const Editor = (() => {
     // erro: cada toque levado de volta ao mapa, comparado com o ponto do mapa (cm)
     const erros = pares.map(([m, t]) => { const v = aplica(Hi, t); return Math.hypot(v[0] - m[0], v[1] - m[1]); });
     const erro = erros.length > 4 ? Math.sqrt(erros.reduce((s, e) => s + e * e, 0) / erros.length) : null;
-    // deformar a barba: para cada píxel do recorte, onde cai no mapa, e que cor tem lá a barba
-    const b = mapa.barba, out = cg.createImageData(W, H), o = out.data, src = barbaImg.data, BW = barbaImg.width, BH = barbaImg.height;
+    // deformar as peças: para cada píxel do recorte, onde cai no mapa, e se alguma peça tem cor lá
+    const out = cg.createImageData(W, H), o = out.data, usadas = new Set();
     for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
       const w = Hi[2][0] * x + Hi[2][1] * y + Hi[2][2]; if (w <= 0) continue;
       const mx = (Hi[0][0] * x + Hi[0][1] * y + Hi[0][2]) / w, my = (Hi[1][0] * x + Hi[1][1] * y + Hi[1][2]) / w;
-      const bx = Math.floor((mx - b.x0) * BARBA_PX_CM), by = Math.floor((my - b.y0) * BARBA_PX_CM);
-      if (bx < 0 || by < 0 || bx >= BW || by >= BH) continue;
-      const s = (by * BW + bx) * 4, d = (y * W + x) * 4; if (!src[s + 3]) continue;
-      o[d] = src[s]; o[d + 1] = src[s + 1]; o[d + 2] = src[s + 2]; o[d + 3] = src[s + 3];
+      for (const p of mapa.pecas) {
+        if (mx < p.x0 || mx >= p.x1 || my < p.y0 || my >= p.y1) continue;
+        const bx = Math.floor((mx - p.x0) * PECA_PX_CM), by = Math.floor((my - p.y0) * PECA_PX_CM), BW = p.img.width;
+        if (bx >= BW || by >= p.img.height) continue;
+        const s = (by * BW + bx) * 4, src = p.img.data; if (!src[s + 3]) continue;
+        const d = (y * W + x) * 4; o[d] = src[s]; o[d + 1] = src[s + 1]; o[d + 2] = src[s + 2]; o[d + 3] = src[s + 3]; usadas.add(p.nome); break;
+      }
     }
+    // escala: quantos cm do mosaico mede um píxel do recorte, ao centro (para converter o tremor em cm)
+    const c0 = aplica(Hi, [W / 2, H / 2]), c1 = aplica(Hi, [W / 2 + 10, H / 2]), c2 = aplica(Hi, [W / 2, H / 2 + 10]);
+    const cmPorPx = (Math.hypot(c1[0] - c0[0], c1[1] - c0[1]) + Math.hypot(c2[0] - c0[0], c2[1] - c0[1])) / 20;
     guardarHistoria();
     const t = tela(W, H); t.getContext("2d").putImageData(out, 0, 0); cg.drawImage(t, 0, 0);
     ctl.H = Hm; barbaAplicada = true; alterado = true; importadoOriginal = null;
     alvo.controloMapa = { quando: Date.now(), pontos: mapa.pontos.map((p, i) => ({ n: p.n, mapa: [p.x, p.y], recorte: ctl.toques[i] && ctl.toques[i].map(v => +v.toFixed(1)) })),
-                          H: Hm.map(l => l.map(v => +v.toPrecision(8))), erroCm: erro === null ? null : +erro.toFixed(1) };
-    $("d-ctl-msg").innerHTML = "✓ Barba colocada com " + pares.length + " pontos" + (erro === null ? " (com 4 pontos não se mede o erro; com 5 ou mais, sim)." : " · erro médio " + erro.toFixed(1).replace(".", ",") + " cm" + (erro > 3 ? " — alto: revê os toques" : "")) +
+                          H: Hm.map(l => l.map(v => +v.toPrecision(8))), erroCm: erro === null ? null : +erro.toFixed(1), cmPorPx: +cmPorPx.toFixed(3), pecas: [...usadas] };
+    $("d-ctl-msg").innerHTML = "✓ Colocado" + (usadas.size ? " (" + [...usadas].join(", ") + ")" : ": nenhuma peça cai dentro desta fotografia") + " com " + pares.length + " pontos" + (erro === null ? " (com 4 pontos não se mede o erro; com 5 ou mais, sim)." : " · erro médio " + erro.toFixed(1).replace(".", ",") + " cm" + (erro > 3 ? " — alto: revê os toques" : "")) +
       ". Os círculos amarelos mostram onde ficam todos os pontos do mapa. Se estiver bem, «Guardar desenho».";
     pintar();
   }

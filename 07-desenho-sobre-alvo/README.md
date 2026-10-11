@@ -50,6 +50,17 @@ No editor, **«Colocar a barba do mapa»**: um esquema mostra os pontos; a pági
 
 **Cuidado:** se o recorte só mostrar os pontos 1–4 (por exemplo, um recorte só do medalhão a partir do P3), os pontos ficam quase em linha e a perspetiva sai mal (a página avisa). O alvo tem de apanhar também um pouco da linha de corte de baixo (pontos 5–8).
 
+## Ventos, mais pontos e recolha de dados (acrescentado a 11 out., à noite)
+
+- **Silhuetas provisórias do Euro e do Noto** (`mapa/vento-euro.svg`, `mapa/vento-noto.svg`, do mapa do Mário): colocadas pela mesma perspetiva que a barba. O botão passa a ser «Colocar a barba e os ventos do mapa»; só aparecem as peças que caem dentro da fotografia do alvo.
+- **15 pontos de controlo** (eram 8): mais 3 à volta do canto do Euro (9–11) e 4 à volta do canto do Noto (12–15), todos calculados a partir da malha do Mário, para que um alvo só do Euro ou só do Noto tenha pontos suficientes.
+- **Na RA, os pontos de controlo aparecem como anéis amarelos numerados** (botão «Pontos»). Devem cair exatamente no fim das linhas negras reais, onde entram na lacuna: é a maneira mais rápida de ver se o desenho está no sítio.
+- **«Gravar 10 s»**: regista, em cada imagem, a posição e a rotação do alvo em relação à câmara e onde caem no ecrã os pontos de controlo. Fazer 5 s parado e 5 s a mexer devagar para os lados. A gravação segue com o resultado seguinte e vai no envio para o GitHub; o Claude mede a dança (em cm e em graus) e o escorregamento quando nos afastamos do ponto da fotografia.
+- **«Guardar resultado»** pede primeiro o **alinhamento** (1 certo · 2 ligeiro, até 2 cm · 3 visível, 2–5 cm · 4 mau, mais de 5 cm) e depois a nota.
+- **Tremor em cm do mosaico** (coluna «Tremor 5 s (cm)»): com os pontos de controlo, sabe-se quantos cm mede cada píxel do recorte.
+
+**Verificado no PC** (fotografia artificial de perspetiva conhecida): os 15 pontos, a barba e os dois ventos no sítio exato (erro 0 cm); os anéis dos pontos e os botões novos na página do MindAR; a gravação a registar imagens. Por verificar na sala: reconhecimento, alinhamento real e os números da gravação (no PC não há câmara).
+
 ## O que observar na sala
 
 - **P7** (melhor caso: 100 % nos dois motores) e **lacuna do Euro** (só MindAR).

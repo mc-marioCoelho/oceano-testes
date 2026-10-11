@@ -106,6 +106,20 @@ function htmlAssetsDesenho(a) {
   return a.desenho ? '<a-assets><img id="img-desenho" src="' + urlDe(a.desenho, "image/png") + '"></a-assets>' : "";
 }
 
+// Pontos de controlo do mapa, projetados no alvo (anel amarelo + número). Na RA devem cair exatamente
+// no fim das linhas negras reais (onde entram na lacuna): se caírem ao lado, o desenho também está ao lado.
+function htmlPontosControlo(a, W, H) {
+  const c = a.controloMapa; if (!c || !c.H) return "";
+  const Hm = c.H, ap = (x, y) => { const w = Hm[2][0] * x + Hm[2][1] * y + Hm[2][2]; return [(Hm[0][0] * x + Hm[0][1] * y + Hm[0][2]) / w, (Hm[1][0] * x + Hm[1][1] * y + Hm[1][2]) / w]; };
+  const r = 0.012 * Math.max(W, H), z = n3(0.004 * Math.max(W, H));
+  return '<a-entity id="pontos-controlo">' + c.pontos.map(p => {
+    const [u, v] = ap(p.mapa[0], p.mapa[1]); if (u < 0 || v < 0 || u > a.largura || v > a.altura) return "";
+    const x = n3((u / a.largura - 0.5) * W), y = n3((0.5 - v / a.altura) * H);
+    return '<a-ring class="ponto-controlo" data-n="' + p.n + '" position="' + x + ' ' + y + ' ' + z + '" radius-inner="' + n3(r * 0.6) + '" radius-outer="' + n3(r) + '" material="color:#ffd000; shader:flat; side:double"></a-ring>' +
+      '<a-text value="' + p.n + '" align="center" color="#ffd000" width="' + n3(r * 25) + '" position="' + x + ' ' + n3(y + r * 2.2) + ' ' + z + '"></a-text>';
+  }).join("") + '</a-entity>';
+}
+
 // Botões «Desenho» (opacidade 100 → 60 → 30 % → escondido) e «Moldura» (mostrar/esconder).
 // O estado fica em Medicao.estadoDesenho, para entrar nos resultados e na faixa das fotografias da RA.
 function ligarBotoesDesenho(a) {
@@ -128,6 +142,12 @@ function ligarBotoesDesenho(a) {
   bm.onclick = () => { moldura = !moldura; aplicar(); };
   document.querySelector("a-scene").addEventListener("loaded", aplicar);
   aplicar();
+  // «Pontos»: mostrar/esconder as marcas dos pontos de controlo
+  const bp = document.getElementById("b-pontos");
+  if (bp) { let ver = true;
+    if (!a.controloMapa) bp.hidden = true;
+    bp.onclick = () => { ver = !ver; const e = document.getElementById("pontos-controlo"); if (e) e.object3D.visible = ver; bp.textContent = ver ? "Pontos ✓" : "Pontos ✗"; };
+    bp.textContent = "Pontos ✓"; }
 }
 
 // Legenda dos pontos no painel de medição (cor, número e nome)

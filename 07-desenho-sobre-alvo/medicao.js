@@ -69,6 +69,7 @@ const Medicao = {
   motor: "", alvo: null,
   t0: 0, primeiro: null, perdas: 0, visivel: false, tVisivel: 0, desde: 0,
   passos: [], ultimoPx: null, tremor5: null, aMedir: false, fimMedir: 0, amostras: [],
+  serie: null, aGravar: false, fimGravar: 0, cmPorPxEcra: null, // teste 07: «Gravar 10 s» e tremor em cm
 
   // alvo: o registo guardado em alvos.js (nome, local onde foi fotografado…)
   iniciar(motor, alvo) {
@@ -81,6 +82,8 @@ const Medicao = {
     document.getElementById("b-recomecar").onclick = () => this.recomecar();
     document.getElementById("b-tremor").onclick = () => this.medirTremor();
     document.getElementById("b-guardar").onclick = () => this.guardar();
+    const bg = document.getElementById("b-gravar");
+    if (bg) bg.onclick = () => this.gravar(bg);
     const bf = document.getElementById("b-foto");
     if (bf) bf.onclick = () => fotografarRA(bf);
     this.recomecar();
@@ -131,6 +134,28 @@ const Medicao = {
 
   media(a) { return a.reduce((s, v) => s + v, 0) / a.length; },
 
+  // Teste 07 · «Gravar 10 s»: em cada imagem guarda a posição e a rotação do alvo em relação à câmara
+  // e onde caem no ecrã os pontos de controlo. Segue com o resultado seguinte («Guardar resultado»),
+  // para o Claude medir a dança (em cm e em graus) e o atraso. Durante a gravação: 5 s parado, depois mexer devagar.
+  gravar(b) {
+    this.serie = { inicio: new Date().toLocaleString("pt-PT"), ecra: [window.innerWidth, window.innerHeight],
+      colunas: "ms, reconhecido, x, y, z, qx, qy, qz, qw, escala, [n.º do ponto, x no ecrã, y no ecrã]…", quadros: [] };
+    this.aGravar = true; this.fimGravar = performance.now() + 10000;
+    b.textContent = "A gravar… (5 s parado, 5 s a mexer)";
+    setTimeout(() => { this.aGravar = false; b.textContent = "Gravado ✓ (" + this.serie.quadros.length + " imagens)"; }, 10000);
+  },
+  quadro(el) {
+    if (!this.aGravar || !this.serie) return;
+    const cam = el.sceneEl.camera, T = AFRAME.THREE;
+    const m = new T.Matrix4().copy(cam.matrixWorldInverse).multiply(el.object3D.matrixWorld);
+    const p = new T.Vector3(), q = new T.Quaternion(), s = new T.Vector3(); m.decompose(p, q, s);
+    const pts = [];
+    for (const r of document.querySelectorAll(".ponto-controlo")) { const v = new T.Vector3(); r.object3D.getWorldPosition(v); v.project(cam);
+      pts.push(+r.dataset.n, Math.round((v.x + 1) / 2 * window.innerWidth), Math.round((1 - v.y) / 2 * window.innerHeight)); }
+    const r4 = v => +v.toFixed(4);
+    this.serie.quadros.push([Math.round(performance.now() - (this.fimGravar - 10000)), this.visivel ? 1 : 0, r4(p.x), r4(p.y), r4(p.z), r4(q.x), r4(q.y), r4(q.z), r4(q.w), r4(s.x)].concat(pts));
+  },
+
   resumo() {
     const agora = performance.now(), total = (agora - this.t0) / 1000;
     const vis = (this.tVisivel + (this.visivel ? agora - this.desde : 0)) / 1000;
@@ -145,6 +170,8 @@ const Medicao = {
       duracao: Math.round(total),
       tremor2s: this.passos.length ? +this.media(this.passos.map(p => p[1])).toFixed(1) : null,
       tremor5s: this.tremor5 === null ? null : +this.tremor5.toFixed(1),
+      // tremor em cm do mosaico (só com pontos de controlo: sabe-se quantos cm mede um píxel do recorte)
+      tremor5cm: this.tremor5 !== null && this.cmPorPxEcra ? +(this.tremor5 * this.cmPorPxEcra).toFixed(2) : null,
       desenho: this.estadoDesenho ? this.estadoDesenho() : null, // teste 07: como estava o desenho (ex.: «60 %»)
       estab: this.estab || (this.motor === "MindAR" ? "normal" : "—"), // teste 07: nível de estabilização do MindAR (o Zappar não tem este ajuste)
     };
@@ -162,9 +189,13 @@ const Medicao = {
 
   guardar() {
     const r = this.resumo();
-    const nota = prompt("Nota (o desenho ficou em cima da lacuna? quanto fugiu e para que lado? ficou parado? lê-se bem?):", "");
-    if (nota === null) return; // «Cancelar» não guarda
+    const al = prompt("Alinhamento do desenho com o mosaico real (olha para os pontos amarelos e para o bordo da lacuna):\n1 = certo · 2 = ligeiro (até 2 cm) · 3 = visível (2–5 cm) · 4 = mau (mais de 5 cm)\nVazio = não avaliado", "");
+    if (al === null) return; // «Cancelar» não guarda
+    r.alinhamento = ({ "1": "1 certo", "2": "2 ligeiro (até 2 cm)", "3": "3 visível (2–5 cm)", "4": "4 mau (mais de 5 cm)" })[al.trim()] || "";
+    const nota = prompt("Nota (para que lado fugiu? fica parado ou dança? o que acontece quando te mexes para os lados? lê-se bem?):", "");
+    if (nota === null) return;
     r.nota = nota;
+    if (this.serie) { r.serie = this.serie; this.serie = null; const bg = document.getElementById("b-gravar"); if (bg) bg.textContent = "Gravar 10 s"; }
     const lista = lerResultados(); lista.push(r); gravarResultados(lista);
     // recomeça logo, para que a medição seguinte não repita esta
     this.recomecar();
@@ -248,6 +279,15 @@ function registarMedidor() {
       this.el.object3D.getWorldPosition(this.v);
       this.v.project(cam);
       Medicao.frame((this.v.x + 1) / 2 * window.innerWidth, (1 - this.v.y) / 2 * window.innerHeight);
+      Medicao.quadro(this.el);
+      // escala do tremor em cm: largura do alvo no ecrã (px) -> píxeis do recorte -> cm do mosaico
+      const a = Medicao.alvo, c = a && a.controloMapa;
+      if (c && c.cmPorPx && this.el.dataset.largura) {
+        const L = +this.el.dataset.largura, e = new AFRAME.THREE.Vector3(L / 2, 0, 0), d = new AFRAME.THREE.Vector3(-L / 2, 0, 0);
+        this.el.object3D.localToWorld(e); this.el.object3D.localToWorld(d); e.project(cam); d.project(cam);
+        const pxEcra = Math.hypot((e.x - d.x) / 2 * window.innerWidth, (e.y - d.y) / 2 * window.innerHeight);
+        if (pxEcra > 1) Medicao.cmPorPxEcra = c.cmPorPx * a.largura / pxEcra;
+      }
     },
   });
 }
