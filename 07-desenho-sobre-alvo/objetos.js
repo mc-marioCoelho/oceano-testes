@@ -12,6 +12,7 @@ const nomeForma = a => a.forma ? NOMES_FORMAS[a.forma.tipo] || a.forma.tipo : "r
 
 function registarObjetos() {
   const THREE = AFRAME.THREE;
+  registarGeometria();
 
   // «chão» invisível que só mostra a sombra (o mosaico real vê-se através dele)
   AFRAME.registerComponent("so-sombra", {
@@ -106,6 +107,38 @@ function htmlAssetsDesenho(a) {
   return a.desenho ? '<a-assets><img id="img-desenho" src="' + urlDe(a.desenho, "image/png") + '"></a-assets>' : "";
 }
 
+// Geometria do mapa (malha, denteado, peltas e fusos, contornos das lacunas) desenhada por cima do mosaico,
+// em linhas finas verde-néon, também FORA do recorte do alvo: o plano do alvo prolonga-se e a homografia
+// dos pontos de controlo leva cada vértice do mapa (cm) para o plano. Serve para ver se a RA «agarra» à
+// estrutura do mosaico: se as linhas desenhadas se afastam das reais, vê-se onde e quanto.
+function registarGeometria() {
+  AFRAME.registerComponent("geometria-mapa", {
+    schema: { largura: { type: "number" }, altura: { type: "number" }, w: { type: "number" }, h: { type: "number" }, H: { type: "string" } },
+    async init() {
+      const d = this.data, Hm = JSON.parse(d.H), T = AFRAME.THREE;
+      const m = await (await fetch("mapa/malha.json")).json();
+      const lim = 6 * Math.max(d.w, d.h), pos = [];
+      const ap = (x, y) => { const k = Hm[2][0] * x + Hm[2][1] * y + Hm[2][2]; if (k <= 0) return null;
+        const u = (Hm[0][0] * x + Hm[0][1] * y + Hm[0][2]) / k, v = (Hm[1][0] * x + Hm[1][1] * y + Hm[1][2]) / k;
+        const X = (u / d.largura - 0.5) * d.w, Y = (0.5 - v / d.altura) * d.h;
+        return Math.abs(X) > lim || Math.abs(Y) > lim ? null : [X, Y]; };
+      for (const g of ["malha", "denteado", "peltas", "lacunas"]) for (const linha of m[g] || []) {
+        let ant = null;
+        for (const [x, y] of linha) { const p = ap(x, y); if (p && ant) pos.push(ant[0], ant[1], 0, p[0], p[1], 0); ant = p; }
+      }
+      const geo = new T.BufferGeometry(); geo.setAttribute("position", new T.Float32BufferAttribute(pos, 3));
+      const mat = new T.LineBasicMaterial({ color: 0x39ff14, transparent: true, opacity: 0.95, depthTest: false });
+      const linhas = new T.LineSegments(geo, mat); linhas.renderOrder = 10; linhas.position.z = 0.003 * Math.max(d.w, d.h);
+      this.el.setObject3D("mesh", linhas);
+    },
+    remove() { this.el.removeObject3D("mesh"); },
+  });
+}
+function htmlGeometria(a, W, H) {
+  const c = a.controloMapa; if (!c || !c.H) return "";
+  return '<a-entity id="geometria" geometria-mapa="largura: ' + a.largura + '; altura: ' + a.altura + '; w: ' + n3(W) + '; h: ' + n3(H) + "; H: " + JSON.stringify(c.H) + '"></a-entity>';
+}
+
 // Pontos de controlo do mapa, projetados no alvo (anel amarelo + número). Na RA devem cair exatamente
 // no fim das linhas negras reais (onde entram na lacuna): se caírem ao lado, o desenho também está ao lado.
 function htmlPontosControlo(a, W, H) {
@@ -142,6 +175,12 @@ function ligarBotoesDesenho(a) {
   bm.onclick = () => { moldura = !moldura; aplicar(); };
   document.querySelector("a-scene").addEventListener("loaded", aplicar);
   aplicar();
+  // «Geometria»: mostrar/esconder as linhas do mapa por cima do mosaico
+  const bge = document.getElementById("b-geometria");
+  if (bge) { let ver = true;
+    if (!a.controloMapa) bge.hidden = true;
+    bge.onclick = () => { ver = !ver; const e = document.getElementById("geometria"); if (e) e.object3D.visible = ver; bge.textContent = ver ? "Geometria ✓" : "Geometria ✗"; };
+    bge.textContent = "Geometria ✓"; }
   // «Pontos»: mostrar/esconder as marcas dos pontos de controlo
   const bp = document.getElementById("b-pontos");
   if (bp) { let ver = true;

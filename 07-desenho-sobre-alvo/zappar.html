@@ -34,6 +34,7 @@
     <button id="b-foto">Fotografar a RA</button>
     <button id="b-desenho">Desenho</button>
     <button id="b-moldura">Moldura</button>
+    <button id="b-geometria">Geometria</button>
     <button id="b-pontos">Pontos</button>
     <button id="b-gravar">Gravar 10 s</button>
     <a href="./">Voltar</a>
@@ -54,7 +55,7 @@
         htmlAssetsDesenho(a) + '<a-entity zappar-permissions-ui></a-entity><a-entity zappar-compatibility-ui></a-entity>' +
         '<a-entity camera zappar-camera></a-entity>' +
         '<a-entity id="ancora" zappar-image="target: ' + urlDe(a.zpt) + '" medidor data-largura="' + w + '"><a-entity id="conteudo" visible="false">' +
-          htmlMoldura(a, w, h) + htmlDesenho(a, w, h) + htmlPontosControlo(a, w, h) + htmlObjetos(a, w, h) +
+          htmlMoldura(a, w, h) + htmlDesenho(a, w, h) + htmlPontosControlo(a, w, h) + htmlGeometria(a, w, h) + htmlObjetos(a, w, h) +
         '</a-entity></a-entity></a-scene>';
       mostrarLegenda(a);
       ligarBotoesDesenho(a);

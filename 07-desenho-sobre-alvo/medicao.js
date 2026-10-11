@@ -6,22 +6,15 @@
 
 // Pontos de visão (ilustração do Mário, 7 out. 2026). Entrada em baixo;
 // lado esquerdo = parede turquesa, lado direito = parede amarela.
+// Teste 07 (11 out., pedido do Mário): só os pontos deste teste. Os outros saíram (P1, P4, P6, P8, paredes, outro).
 const LOCAIS = {
-  "P1-esq":  { nome: "P1 · entrada, mais à esquerda" },
-  "P1":      { nome: "P1 · entrada, ao centro" },
-  "P1-dir":  { nome: "P1 · entrada, mais à direita" },
   "P2":  { nome: "P2 · passadiço direito (amarelo), na diagonal → Oceano" },
   "P3":  { nome: "P3 · passadiço direito, de frente → Oceano" },
-  "P4":  { nome: "P4 · passadiço direito → Bóreas" },
-  "P5":  { nome: "P5 · passadiço direito, junto ao fundo → lacuna do tapete" },
-  "P6":  { nome: "P6 · passadiço do fundo, ao centro" },
-  "P7":  { nome: "P7 · passadiço esquerdo, junto ao fundo → lacuna do tapete" },
-  "P8":  { nome: "P8 · passadiço esquerdo (turquesa) → Zéfiro" },
   "P9":  { nome: "P9 · passadiço esquerdo, de frente → Oceano" },
   "P10": { nome: "P10 · passadiço esquerdo, na diagonal → Oceano" },
-  "parede-medalhao":  { nome: "Parede amarela · reprodução do medalhão" },
-  "parede-inscricao": { nome: "Parede amarela · reprodução da inscrição" },
-  "outro":            { nome: "Outro (escrever na nota)" },
+  "inscricao": { nome: "Entrada → lacuna do centro da inscrição" },
+  "P5":  { nome: "P5 · junto ao fundo → lacuna do tapete (em espera: só reconhecimento)" },
+  "P7":  { nome: "P7 · junto ao fundo → lacuna do tapete (em espera: só reconhecimento)" },
 };
 const nomeLocal = id => LOCAIS[id] ? LOCAIS[id].nome : "";
 const CHAVE = "oceano-teste07-resultados";

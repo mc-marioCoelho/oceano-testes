@@ -92,17 +92,20 @@
       <div class="d-barra" id="d-zoom"><span>Zoom</span>
         <button type="button" data-z="1">1×</button><button type="button" data-z="2">2×</button><button type="button" data-z="4">4×</button>
       </div>
-      <p><button type="button" class="botao claro" id="d-ctl-iniciar">Colocar a barba e os ventos do mapa (pontos de controlo)</button></p>
+      <p><button type="button" class="botao claro" id="d-ctl-iniciar">Colocar o desenho do mapa (pontos de controlo)</button></p>
       <div class="d-ctl" id="d-ctl" hidden>
-        <canvas id="d-ctl-esquema" width="330" height="240" aria-label="Esquema do mapa com os pontos de controlo"></canvas>
         <p class="sub" id="d-ctl-msg"></p>
+        <div class="d-barra" id="d-ctl-zonas" hidden></div>
+        <div id="d-ctl-passos" hidden>
+        <canvas id="d-ctl-esquema" width="330" height="240" aria-label="Esquema do mapa com os pontos de controlo"></canvas>
         <div class="d-barra">
           <button type="button" id="d-ctl-saltar">Saltar este ponto</button>
           <button type="button" id="d-ctl-desfazer">Desfazer último</button>
           <button type="button" id="d-ctl-marcar">Voltar a marcar</button>
-          <button type="button" id="d-ctl-aplicar" disabled>Colocar a barba e os ventos</button>
-          <button type="button" id="d-ctl-fechar">Fechar</button>
+          <button type="button" id="d-ctl-aplicar" disabled>Colocar o desenho do mapa</button>
         </div>
+        </div>
+        <p><button type="button" class="botao claro" id="d-ctl-fechar">Fechar</button></p>
       </div>
       <div class="d-caixa" id="d-caixa"><canvas id="d-tela"></canvas></div>
       <p class="motores">

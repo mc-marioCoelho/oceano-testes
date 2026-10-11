@@ -61,6 +61,17 @@ No editor, **«Colocar a barba do mapa»**: um esquema mostra os pontos; a pági
 
 **Verificado no PC** (fotografia artificial de perspetiva conhecida): os 15 pontos, a barba e os dois ventos no sítio exato (erro 0 cm); os anéis dos pontos e os botões novos na página do MindAR; a gravação a registar imagens. Por verificar na sala: reconhecimento, alinhamento real e os números da gravação (no PC não há câmara).
 
+## Zonas, geometria por cima do mosaico e locais (11 out., à noite, pedido do Mário)
+
+- **Locais deste teste:** P2, P3, P9, P10 (Oceano), **Entrada → lacuna do centro da inscrição** (novo) e P5/P7 **em espera** (só reconhecimento; a geometria em falta do tapete do fundo será desenhada pelo Mário e depois prolongada na RA pelo mesmo método). Saíram P1, P4, P6, P8, as paredes e «outro».
+- **Zonas no editor:** «Colocar o desenho do mapa» pergunta primeiro que zona a fotografia mostra:
+  - **Oceano e ventos** (15 pontos; barba, Euro, Noto);
+  - **Inscrição** (9 pontos E1–E9: cantos da moldura do texto, pontas dos triângulos, cruzamentos por cima; desenha o **contorno das lacunas da inscrição** em ciano).
+- **«Geometria» na RA:** toda a malha do mapa (linhas, denteado, peltas e fusos, contornos das lacunas) desenhada em **linhas finas verde-néon**, também **fora do recorte do alvo** (o plano prolonga-se). Serve para ver se a RA «agarra» à estrutura: ao andar ao largo do mosaico, se as linhas verdes se afastarem das negras reais, vê-se onde e quanto. Funciona no MindAR e no Zappar (o alvo tem de ter a versão Zappar).
+- **O que esperar:** perto do recorte, as linhas devem coincidir; longe dele e afastados do ponto da fotografia, vão afastar-se aos poucos, porque o motor trata a fotografia como se fosse o chão. Medir com «Gravar 10 s» em 3 sítios (no ponto, a um passo, a dois passos).
+
+**Verificado no PC** (fotografias artificiais de perspetiva conhecida): as duas zonas (Oceano: 15 pontos, barba e ventos; inscrição: 9 pontos e contorno), erro 0 cm; a geometria constrói-se nas duas páginas (5451 segmentos), com os pontos e o desenho; sem erros na consola.
+
 ## O que observar na sala
 
 - **P7** (melhor caso: 100 % nos dois motores) e **lacuna do Euro** (só MindAR).
