@@ -4,7 +4,7 @@
 // Páginas do teste: rede primeiro (para receber correções), cópia guardada se não houver rede.
 // Bibliotecas externas (endereços com versão fixa): cópia guardada primeiro.
 
-const CACHE = "oceano-teste07-v5";
+const CACHE = "oceano-teste07-v6";
 const PROPRIOS = ["./", "index.html", "pontos-de-visao.svg", "mindar.html", "zappar.html", "estilo.css", "alvos.js", "medicao.js", "objetos.js", "desenho.js", "mapa/controlo.json", "mapa/barba.svg", "mapa/vento-euro.svg", "mapa/vento-noto.svg", "mapa/contorno-inscricao.svg", "mapa/malha.json"];
 const ZT = "https://cdn.jsdelivr.net/npm/@zappar/imagetraining@4.3.2/umd/";
 const EXTERNOS = [
@@ -16,6 +16,8 @@ const EXTERNOS = [
   ZT + "zappar-imagetraining.js", ZT + "c98e74d5b0eadc72a3c6.wasm",
   "https://cdn.jsdelivr.net/npm/buffer@6.0.3/+esm",
   "https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js",
+  // tipo de letra dos números dos pontos de controlo na RA (a-text do A-Frame)
+  "https://cdn.aframe.io/fonts/Roboto-msdf.json", "https://cdn.aframe.io/fonts/Roboto-msdf.png",
   "https://cdn.jsdelivr.net/npm/base64-js@1.5.1/+esm", "https://cdn.jsdelivr.net/npm/ieee754@1.2.1/+esm",
 ];
 
