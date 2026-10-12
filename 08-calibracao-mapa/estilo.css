@@ -112,3 +112,9 @@ button:disabled { opacity: .5; }
 .so-calibrar #d-ferramentas, .so-calibrar .d-controlos, .so-calibrar .d-barra:has(#d-cor), .so-calibrar details,
 .so-calibrar #d-guardar, .so-calibrar #d-desfazer, .so-calibrar #d-limpar, .so-calibrar #d-ctl-iniciar { display: none !important; }
 #marcacao { display: none !important; }
+
+/* Teste 08: mapa para escolher os pontos */
+.d-ctl-mapa-caixa { position: relative; }
+#d-ctl-mapa { display: block; width: 100%; height: 300px; border-radius: 8px; touch-action: none; background: #fffaf2; }
+.d-ctl-mapa-zoom { position: absolute; right: 6px; top: 6px; display: flex; flex-direction: column; gap: 4px; }
+.d-ctl-mapa-zoom button { width: 40px; height: 40px; border-radius: 50%; border: 0; font-size: 1.4rem; font-weight: 700; background: rgba(43,38,34,.85); color: #fff; }

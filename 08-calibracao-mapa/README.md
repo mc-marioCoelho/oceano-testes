@@ -9,3 +9,11 @@ Pedido do Mário na sala, 12 out. 2026: a página do teste 07 tinha botões a ma
 Tudo o resto é igual ao teste 07 (ver o [README do teste 07](../07-desenho-sobre-alvo/)): zonas Oceano e ventos (15 pontos) e Inscrição (9 pontos), barba e ventos em perspetiva, geometria do mapa em linhas verdes, anéis amarelos dos pontos, «Gravar 10 s», alinhamento 1–4, «Estabilizar» no MindAR.
 
 Verificado no PC (largura de telemóvel, fotografia artificial de perspetiva conhecida): importação do teste 07, calibração com gravação automática, erro 0 cm; sem erros na consola.
+
+## Acrescentado a 12 out. (na sala, pedido do Mário)
+
+- **Só o P2** na lista de locais (os outros pontos ficam para uma versão seguinte).
+- **Toque ≠ arrasto:** nos pontos de controlo, arrastar o dedo desliza a fotografia ampliada; só um **toque curto e parado** marca um ponto, e tocar outra vez corrige. Na lista guiada, cada ponto só avança com **«Confirmar ponto»**.
+- **«Pontos à escolha no mapa» (recomendado):** um mapa do mosaico (arrastar para deslizar, «+»/«−» para ampliar) mostra os ~160 cruzamentos e entradas nas lacunas; toca-se num no mapa, no mesmo sítio na fotografia, «Confirmar par». Bastam 4 pares bem espalhados, de qualquer parte do mosaico (com 5 ou mais vê-se o erro). Resolve as fotografias que não apanham os pontos da lista.
+
+Verificado no PC (largura de telemóvel, fotografia artificial): arrastar não marca nem escolhe; 5 pares escolhidos no mapa → barba e ventos colocados, erro 0 cm, gravado.

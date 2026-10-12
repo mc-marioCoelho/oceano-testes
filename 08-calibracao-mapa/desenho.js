@@ -73,6 +73,15 @@ const Editor = (() => {
     if (!ctl) return;
     const r = Math.max(6, W / 120);
     vg.font = "bold " + Math.round(r * 2) + "px system-ui"; vg.lineWidth = Math.max(2, r / 3);
+    const provisorio = ctl.livre ? ctl.toque : ctl.atual; // marca ainda por confirmar (laranja, com cruz)
+    if (provisorio) { const [x, y] = provisorio; vg.strokeStyle = "#ff8f00"; vg.lineWidth = Math.max(2, r / 3);
+      vg.beginPath(); vg.arc(x, y, r * 1.4, 0, 2 * Math.PI); vg.moveTo(x - r * 2.4, y); vg.lineTo(x + r * 2.4, y); vg.moveTo(x, y - r * 2.4); vg.lineTo(x, y + r * 2.4); vg.stroke(); }
+    if (ctl.livre) {
+      ctl.pares.forEach((p, i) => { const [x, y] = p.foto; vg.beginPath(); vg.arc(x, y, r, 0, 2 * Math.PI); vg.fillStyle = "#1f8a4c"; vg.fill(); vg.strokeStyle = "#fff"; vg.stroke();
+        vg.fillStyle = "#fff"; vg.strokeStyle = "#000"; vg.strokeText(String(i + 1), x + r, y - r); vg.fillText(String(i + 1), x + r, y - r); });
+      if (ctl.H) ctl.pares.forEach(p => { const [x, y] = aplica(ctl.H, p.mapa); vg.beginPath(); vg.arc(x, y, r * 1.6, 0, 2 * Math.PI); vg.strokeStyle = "#ffd000"; vg.stroke(); });
+      return;
+    }
     ctl.toques.forEach((t, i) => { if (!t) return;
       vg.beginPath(); vg.arc(t[0], t[1], r, 0, 2 * Math.PI); vg.fillStyle = "#1f8a4c"; vg.fill(); vg.strokeStyle = "#fff"; vg.stroke();
       vg.fillStyle = "#fff"; vg.strokeStyle = "#000"; vg.strokeText(ctl.z.pontos[i].n, t[0] + r, t[1] - r); vg.fillText(ctl.z.pontos[i].n, t[0] + r, t[1] - r); });
@@ -92,7 +101,8 @@ const Editor = (() => {
   function mudarFerramenta(f) {
     ferramenta = f;
     document.querySelectorAll("#d-ferramentas button").forEach(b => b.classList.toggle("ativo", b.dataset.f === f));
-    vista.style.touchAction = f === "mover" ? "pan-x pan-y pinch-zoom" : "none";
+    // teste 08: nos pontos de controlo, arrastar o dedo desliza a fotografia ampliada; só um toque curto e parado marca
+    vista.style.touchAction = f === "mover" ? "pan-x pan-y pinch-zoom" : f === "controlo" ? "pan-x pan-y" : "none";
     vista.style.cursor = f === "mover" ? "grab" : "crosshair";
   }
 
@@ -140,13 +150,14 @@ const Editor = (() => {
     return true;
   }
 
+  let toqueIni = null; // teste 08: início de um toque nos pontos de controlo (para o distinguir de um arrasto)
   function inicio(ev) {
     dedos.add(ev.pointerId);
     if (ferramenta === "mover") return;
+    if (ferramenta === "controlo") { toqueIni = dedos.size === 1 ? { id: ev.pointerId, x: ev.clientX, y: ev.clientY, t: performance.now() } : null; return; }
     if (dedos.size > 1) { cancelar(); return; } // dois dedos: não é um traço (evita riscos ao fazer zoom)
     vista.setPointerCapture(ev.pointerId);
     const p = ponto(ev);
-    if (ferramenta === "controlo") { controloToque(p); return; }
     if (ferramenta === "contagotas") { // cor do mosaico naquele ponto
       const t = tela(1, 1), g = t.getContext("2d"); g.drawImage(fundo, p[0], p[1], 1, 1, 0, 0, 1, 1);
       const d = g.getImageData(0, 0, 1, 1).data;
@@ -170,6 +181,11 @@ const Editor = (() => {
     pintar();
   }
   function fim(ev) {
+    if (ferramenta === "controlo") { // conta como toque só se o dedo quase não se mexeu e foi rápido
+      const t = toqueIni; toqueIni = null; dedos.delete(ev.pointerId);
+      if (t && t.id === ev.pointerId && Math.hypot(ev.clientX - t.x, ev.clientY - t.y) < 10 && performance.now() - t.t < 800) controloToque(ponto(ev));
+      return;
+    }
     dedos.delete(ev.pointerId);
     if (!aDesenhar) return;
     aDesenhar = false;
@@ -243,23 +259,27 @@ const Editor = (() => {
     // primeiro escolhe-se a zona do mosaico que a fotografia do alvo mostra
     $("d-ctl-msg").textContent = "Que zona mostra esta fotografia?";
     $("d-ctl-zonas").hidden = false; $("d-ctl-passos").hidden = true;
-    $("d-ctl-zonas").innerHTML = mapa.zonas.map(z => '<button type="button" data-zona="' + z.id + '">' + z.nome + '</button>').join("");
+    $("d-ctl-livre").hidden = true;
+    $("d-ctl-zonas").innerHTML = '<button type="button" data-zona="livre">Pontos à escolha no mapa (recomendado)</button>' +
+      mapa.zonas.map(z => '<button type="button" data-zona="' + z.id + '">Lista guiada · ' + z.nome + '</button>').join("");
   }
   function controloZona(id) {
+    if (id === "livre") { livreIniciar(); return; }
     const z = mapa.zonas.find(z => z.id === id); if (!z) return;
     ctl = { z, i: 0, toques: z.pontos.map(() => null), H: null };
     $("d-ctl-zonas").hidden = true; $("d-ctl-passos").hidden = false;
     ferramentaAntes = ferramenta; mudarFerramenta("controlo");
     controloMostrar();
   }
-  function controloFechar() { ctl = null; $("d-ctl").hidden = true; $("d-ctl-zonas").hidden = true; mudarFerramenta(ferramentaAntes && ferramentaAntes !== "controlo" ? ferramentaAntes : "pincel"); pintar(); }
+  function controloFechar() { ctl = null; $("d-ctl").hidden = true; $("d-ctl-zonas").hidden = true; $("d-ctl-livre").hidden = true; mudarFerramenta(ferramentaAntes && ferramentaAntes !== "controlo" ? ferramentaAntes : "pincel"); pintar(); }
   function controloMostrar() {
     const n = ctl.toques.filter(Boolean).length;
     const p = ctl.z.pontos[ctl.i];
     $("d-ctl-msg").innerHTML = ctl.i < ctl.z.pontos.length
-      ? "Toca no <strong>ponto " + p.n + "</strong>: " + p.onde + ". Se não aparece na fotografia, «Saltar». (" + n + " marcado" + (n === 1 ? "" : "s") + "; são precisos 4 ou mais)"
+      ? "Toca no <strong>ponto " + p.n + "</strong>: " + p.onde + (ctl.atual ? ". <strong>Está certo? «Confirmar ponto»</strong> (tocar outra vez corrige)." : ". Se não aparece na fotografia, «Saltar».") + " (" + n + " confirmado" + (n === 1 ? "" : "s") + "; são precisos 4 ou mais)"
       : n + " pontos marcados. Carrega em «Colocar o desenho do mapa».";
     $("d-ctl-aplicar").disabled = n < 4;
+    $("d-ctl-confirmar").disabled = !ctl.atual;
     controloEsquema(); pintar();
   }
   // esquema do mapa (sem fotografia): os círculos do medalhão, a lacuna e os pontos numerados
@@ -279,8 +299,69 @@ const Editor = (() => {
       g.fillStyle = "#2b2622"; g.font = "bold 13px system-ui"; g.fillText(p.n, a + 8, b - 6); });
   }
   function controloToque(p) {
-    if (!ctl || ctl.i >= ctl.z.pontos.length) return;
-    ctl.toques[ctl.i] = p; ctl.i++; ctl.H = null; controloMostrar();
+    if (!ctl) return;
+    if (ctl.livre) { ctl.toque = p; livreMostrar(); return; }
+    if (ctl.i >= ctl.z.pontos.length) return;
+    ctl.atual = p; ctl.H = null; controloMostrar(); // marca provisória: tocar outra vez corrige; «Confirmar ponto» avança
+  }
+  function controloConfirmar() {
+    if (!ctl || ctl.livre || !ctl.atual || ctl.i >= ctl.z.pontos.length) return;
+    ctl.toques[ctl.i] = ctl.atual; ctl.atual = null; ctl.i++; controloMostrar();
+  }
+
+  // ---- pontos à escolha: escolher um ponto no mapa, tocar no mesmo sítio na fotografia, confirmar o par ----
+  let malhaMapa = null, candidatos = null;
+  const vm = { s: 2, ox: 0, oy: 0 }; // vista do mapa: píxeis por cm e canto superior esquerdo (cm)
+  async function livreIniciar() {
+    if (!malhaMapa) { malhaMapa = await (await fetch("mapa/malha.json")).json(); candidatos = await (await fetch("mapa/candidatos.json")).json(); }
+    ctl = { livre: true, z: { id: "livre", nome: "pontos à escolha", pontos: [], pecas: mapa.zonas.flatMap(z => z.pecas) }, pares: [], sel: null, toque: null, H: null, i: 0, toques: [] };
+    $("d-ctl-zonas").hidden = true; $("d-ctl-passos").hidden = true; $("d-ctl-livre").hidden = false;
+    ferramentaAntes = ferramenta; mudarFerramenta("controlo");
+    const c = $("d-ctl-mapa"), r = window.devicePixelRatio || 1;
+    c.width = Math.round(c.clientWidth * r); c.height = Math.round(c.clientHeight * r);
+    vm.s = c.clientWidth / 200; vm.ox = 185 - 100; vm.oy = 400 - c.clientHeight / vm.s / 2; // começa no medalhão
+    livreMostrar();
+  }
+  function livreMostrar() {
+    const n = ctl.pares.length;
+    $("d-ctl-msg").innerHTML = "<strong>Pares: " + n + "</strong> (bastam 4, bem espalhados; com 5 ou mais vê-se o erro). " +
+      (!ctl.sel ? "1) Toca num ponto do <strong>mapa</strong> que vês na fotografia (fica vermelho)." :
+       !ctl.toque ? "2) Toca no <strong>mesmo sítio na fotografia</strong> (fica laranja; tocar outra vez corrige)." :
+       "3) Se estiver certo, «Confirmar par».");
+    $("d-ctl-par").disabled = !(ctl.sel && ctl.toque);
+    $("d-ctl-aplicar2").disabled = n < 4;
+    pintarMapa(); pintar();
+  }
+  function pintarMapa() {
+    const c = $("d-ctl-mapa"), g = c.getContext("2d"), r = window.devicePixelRatio || 1;
+    g.setTransform(r, 0, 0, r, 0, 0);
+    const w = c.width / r, h = c.height / r, q = (x, y) => [(x - vm.ox) * vm.s, (y - vm.oy) * vm.s];
+    g.fillStyle = "#fffaf2"; g.fillRect(0, 0, w, h);
+    const linha = (lista, cor, fundo) => { for (const l of lista) { g.beginPath(); l.forEach(([x, y], i) => { const [a, b] = q(x, y); i ? g.lineTo(a, b) : g.moveTo(a, b); });
+      if (fundo) { g.fillStyle = fundo; g.fill(); } g.strokeStyle = cor; g.lineWidth = 1; g.stroke(); } };
+    linha(malhaMapa.lacunas, "#7aa0ff", "rgba(0,80,255,.12)"); linha(malhaMapa.malha, "#2b2622"); linha(malhaMapa.denteado, "#2b2622", "rgba(43,38,34,.25)"); linha(malhaMapa.peltas, "#b5651d");
+    for (const [x, y, e] of candidatos) { const [a, b] = q(x, y); if (a < -5 || b < -5 || a > w + 5 || b > h + 5) continue;
+      g.beginPath(); g.arc(a, b, 4, 0, 2 * Math.PI); g.fillStyle = e ? "rgba(255,23,68,.45)" : "rgba(0,0,0,.35)"; g.fill(); }
+    ctl.pares.forEach((p, i) => { const [a, b] = q(p.mapa[0], p.mapa[1]); g.beginPath(); g.arc(a, b, 7, 0, 2 * Math.PI); g.fillStyle = "#1f8a4c"; g.fill();
+      g.fillStyle = "#2b2622"; g.font = "bold 13px system-ui"; g.fillText(String(i + 1), a + 8, b - 6); });
+    if (ctl.sel) { const [a, b] = q(ctl.sel[0], ctl.sel[1]); g.beginPath(); g.arc(a, b, 9, 0, 2 * Math.PI); g.strokeStyle = "#ff1744"; g.lineWidth = 3; g.stroke(); }
+  }
+  // no mapa: arrastar desliza, toque curto escolhe o ponto mais próximo; «+»/«−» ampliam
+  function ligarMapa() {
+    const c = $("d-ctl-mapa"); let ini = null;
+    c.addEventListener("pointerdown", ev => { try { c.setPointerCapture(ev.pointerId); } catch (e) {} ini = { x: ev.clientX, y: ev.clientY, ox: vm.ox, oy: vm.oy, mexeu: false }; });
+    c.addEventListener("pointermove", ev => { if (!ini) return; const dx = ev.clientX - ini.x, dy = ev.clientY - ini.y;
+      if (Math.hypot(dx, dy) > 6) ini.mexeu = true; if (ini.mexeu) { vm.ox = ini.ox - dx / vm.s; vm.oy = ini.oy - dy / vm.s; pintarMapa(); } });
+    c.addEventListener("pointerup", ev => { if (!ini) return; const mexeu = ini.mexeu; ini = null; if (mexeu || !ctl || !ctl.livre) return;
+      const b = c.getBoundingClientRect(), x = vm.ox + (ev.clientX - b.left) / vm.s, y = vm.oy + (ev.clientY - b.top) / vm.s;
+      let melhor = null, dm = 22 / vm.s; for (const p of candidatos) { const d = Math.hypot(p[0] - x, p[1] - y); if (d < dm) { dm = d; melhor = p; } }
+      if (melhor) { ctl.sel = [melhor[0], melhor[1]]; livreMostrar(); } });
+    c.addEventListener("pointercancel", () => { ini = null; });
+    const zoomM = k => { const cx = vm.ox + c.clientWidth / vm.s / 2, cy = vm.oy + c.clientHeight / vm.s / 2; vm.s *= k; vm.ox = cx - c.clientWidth / vm.s / 2; vm.oy = cy - c.clientHeight / vm.s / 2; pintarMapa(); };
+    $("d-ctl-mapa-mais").onclick = () => zoomM(1.6); $("d-ctl-mapa-menos").onclick = () => zoomM(1 / 1.6);
+    $("d-ctl-par").onclick = () => { if (!ctl || !ctl.sel || !ctl.toque) return; ctl.pares.push({ mapa: ctl.sel, foto: ctl.toque }); ctl.sel = null; ctl.toque = null; ctl.H = null; livreMostrar(); };
+    $("d-ctl-par-desfazer").onclick = () => { if (!ctl || !ctl.livre) return; if (ctl.toque || ctl.sel) { ctl.toque = null; ctl.sel = null; } else ctl.pares.pop(); ctl.H = null; livreMostrar(); };
+    $("d-ctl-aplicar2").onclick = controloAplicar;
   }
   // homografia por mínimos quadrados, com coordenadas normalizadas (Hartley)
   function normalizar(P) { const n = P.length, mx = P.reduce((s, p) => s + p[0], 0) / n, my = P.reduce((s, p) => s + p[1], 0) / n;
@@ -302,7 +383,7 @@ const Editor = (() => {
     return mul(inv(T2), mul([[h[0], h[1], h[2]], [h[3], h[4], h[5]], [h[6], h[7], 1]], T1));
   }
   function controloAplicar() {
-    const pares = ctl.z.pontos.map((p, i) => ctl.toques[i] && [[p.x, p.y], ctl.toques[i]]).filter(Boolean);
+    const pares = ctl.livre ? ctl.pares.map(p => [p.mapa, p.foto]) : ctl.z.pontos.map((p, i) => ctl.toques[i] && [[p.x, p.y], ctl.toques[i]]).filter(Boolean);
     if (pares.length < 4) return;
     // pontos quase em linha: a perspetiva fica indeterminada
     const P = pares.map(q => q[0]), cx = P.reduce((s, p) => s + p[0], 0) / P.length, cy = P.reduce((s, p) => s + p[1], 0) / P.length;
@@ -332,7 +413,8 @@ const Editor = (() => {
     guardarHistoria();
     const t = tela(W, H); t.getContext("2d").putImageData(out, 0, 0); cg.drawImage(t, 0, 0);
     ctl.H = Hm; barbaAplicada = true; alterado = true; importadoOriginal = null;
-    alvo.controloMapa = { quando: Date.now(), pontos: ctl.z.pontos.map((p, i) => ({ n: p.n, mapa: [p.x, p.y], recorte: ctl.toques[i] && ctl.toques[i].map(v => +v.toFixed(1)) })),
+    alvo.controloMapa = { quando: Date.now(), pontos: ctl.livre ? ctl.pares.map((p, i) => ({ n: "L" + (i + 1), mapa: p.mapa, recorte: p.foto.map(v => +v.toFixed(1)) }))
+                            : ctl.z.pontos.map((p, i) => ({ n: p.n, mapa: [p.x, p.y], recorte: ctl.toques[i] && ctl.toques[i].map(v => +v.toFixed(1)) })),
                           H: Hm.map(l => l.map(v => +v.toPrecision(8))), erroCm: erro === null ? null : +erro.toFixed(1), cmPorPx: +cmPorPx.toFixed(3), pecas: [...usadas], zona: ctl.z.id };
     setTimeout(guardar, 50); // teste 08: grava logo (sem passo «Guardar desenho»)
     $("d-ctl-msg").innerHTML = "✓ Colocado e gravado" + (usadas.size ? " (" + [...usadas].join(", ") + ")" : ": nenhuma peça cai dentro desta fotografia") + " com " + pares.length + " pontos" + (erro === null ? " (com 4 pontos não se mede o erro; com 5 ou mais, sim)." : " · erro médio " + erro.toFixed(1).replace(".", ",") + " cm" + (erro > 3 ? " — alto: revê os toques" : "")) +
@@ -346,7 +428,7 @@ const Editor = (() => {
     vista.addEventListener("pointerdown", inicio);
     vista.addEventListener("pointermove", mover);
     vista.addEventListener("pointerup", fim);
-    vista.addEventListener("pointercancel", ev => { dedos.delete(ev.pointerId); cancelar(); });
+    vista.addEventListener("pointercancel", ev => { dedos.delete(ev.pointerId); toqueIni = null; if (ferramenta !== "controlo") cancelar(); });
     $("d-ferramentas").addEventListener("click", ev => {
       const b = ev.target.closest("button[data-f]"); if (!b) return;
       if (b.dataset.f === "contagotas") ferramentaAntes = ferramenta === "contagotas" ? ferramentaAntes : ferramenta;
@@ -369,8 +451,9 @@ const Editor = (() => {
     $("d-ctl-saltar").onclick = () => { if (ctl && ctl.i < ctl.z.pontos.length) { ctl.i++; controloMostrar(); } };
     $("d-ctl-desfazer").onclick = () => { if (!ctl) return; while (ctl.i > 0) { ctl.i--; if (ctl.toques[ctl.i]) { ctl.toques[ctl.i] = null; break; } } ctl.H = null; controloMostrar(); };
     $("d-ctl-marcar").onclick = () => { if (ctl) mudarFerramenta("controlo"); };
-    $("d-ctl-mover").onclick = () => { if (ctl) mudarFerramenta("mover"); }; // teste 08: deslizar a fotografia ampliada
     $("d-ctl-aplicar").onclick = controloAplicar;
+    $("d-ctl-confirmar").onclick = controloConfirmar;
+    ligarMapa();
     $("d-ctl-zonas").addEventListener("click", ev => { const b = ev.target.closest("button[data-zona]"); if (b) controloZona(b.dataset.zona); });
     $("d-ctl-fechar").onclick = controloFechar;
     $("d-fechar").onclick = () => { if (alterado && !confirm("O desenho tem alterações por guardar. Fechar na mesma?")) return; fechar(); };

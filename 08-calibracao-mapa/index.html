@@ -70,7 +70,7 @@
 
     <div id="desenho" class="desenho so-calibrar" hidden>
       <h2>4. Calibrar · <span id="d-titulo"></span></h2>
-      <p class="sub">Escolhe a zona e toca em cada ponto pedido, na fotografia. Usa o zoom (2×, 4×) para acertar; para deslizar a fotografia ampliada, «Mover a fotografia» e depois «Voltar a marcar». No fim grava sozinho.</p>
+      <p class="sub">Escolhe a zona e toca em cada ponto pedido, na fotografia. Usa o zoom (2×, 4×) para acertar. Arrastar o dedo desliza a fotografia; só um <strong>toque curto</strong> marca um ponto, e tocar outra vez corrige. No fim grava sozinho.</p>
       <div class="d-barra" id="d-ferramentas">
         <button type="button" data-f="pincel">✎ Pincel</button>
         <button type="button" data-f="tesela">▦ Tesselas</button>
@@ -98,12 +98,22 @@
         <div id="d-ctl-passos" hidden>
         <canvas id="d-ctl-esquema" width="330" height="240" aria-label="Esquema do mapa com os pontos de controlo"></canvas>
         <div class="d-barra">
+          <button type="button" id="d-ctl-confirmar" disabled>Confirmar ponto</button>
           <button type="button" id="d-ctl-saltar">Saltar este ponto</button>
           <button type="button" id="d-ctl-desfazer">Desfazer último</button>
-          <button type="button" id="d-ctl-mover">Mover a fotografia</button>
-          <button type="button" id="d-ctl-marcar">Voltar a marcar</button>
+          <button type="button" id="d-ctl-marcar" hidden>Voltar a marcar</button>
           <button type="button" id="d-ctl-aplicar" disabled>Colocar o desenho do mapa</button>
         </div>
+        </div>
+        <div id="d-ctl-livre" hidden>
+          <div class="d-ctl-mapa-caixa"><canvas id="d-ctl-mapa" aria-label="Mapa do mosaico com os pontos possíveis"></canvas>
+            <div class="d-ctl-mapa-zoom"><button type="button" id="d-ctl-mapa-mais">+</button><button type="button" id="d-ctl-mapa-menos">−</button></div></div>
+          <p class="sub">Mapa: arrasta para deslizar, «+»/«−» para ampliar, toca num ponto para o escolher (vermelhos: onde uma linha entra na lacuna; escuros: cruzamentos).</p>
+          <div class="d-barra">
+            <button type="button" id="d-ctl-par" disabled>Confirmar par</button>
+            <button type="button" id="d-ctl-par-desfazer">Desfazer</button>
+            <button type="button" id="d-ctl-aplicar2" disabled>Colocar o desenho do mapa</button>
+          </div>
         </div>
         <p><button type="button" class="botao claro" id="d-ctl-fechar">Fechar</button></p>
       </div>

@@ -7,14 +7,8 @@
 // Pontos de visão (ilustração do Mário, 7 out. 2026). Entrada em baixo;
 // lado esquerdo = parede turquesa, lado direito = parede amarela.
 // Teste 08 (11 out., pedido do Mário): só os pontos deste teste. Os outros saíram (P1, P4, P6, P8, paredes, outro).
-const LOCAIS = {
+const LOCAIS = { // teste 08 (12 out., pedido do Mário): só o P2; os outros pontos ficam para uma versão seguinte
   "P2":  { nome: "P2 · passadiço direito (amarelo), na diagonal → Oceano" },
-  "P3":  { nome: "P3 · passadiço direito, de frente → Oceano" },
-  "P9":  { nome: "P9 · passadiço esquerdo, de frente → Oceano" },
-  "P10": { nome: "P10 · passadiço esquerdo, na diagonal → Oceano" },
-  "inscricao": { nome: "Entrada → lacuna do centro da inscrição" },
-  "P5":  { nome: "P5 · junto ao fundo → lacuna do tapete (em espera: só reconhecimento)" },
-  "P7":  { nome: "P7 · junto ao fundo → lacuna do tapete (em espera: só reconhecimento)" },
 };
 const nomeLocal = id => LOCAIS[id] ? LOCAIS[id].nome : "";
 const CHAVE = "oceano-teste08-resultados";
