@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 560" font-family="system-ui, sans-serif">
+  <!-- Esquema dos pontos de visão (segundo a ilustração do Mário, 7 out. 2026). Entrada em baixo. -->
+  <rect width="300" height="560" fill="#f3ece0"/>
+  <!-- passadiço em U -->
+  <path d="M40 470 V40 H260 V470 H230 V70 H70 V470 Z" fill="#3a3632"/>
+  <path d="M68 470 V68 H232 V470" fill="none" stroke="#2ec4d6" stroke-width="3"/>
+  <!-- mosaico -->
+  <rect x="80" y="80" width="140" height="390" fill="#e9dcc3" stroke="#8a7a62"/>
+  <rect x="88" y="88" width="124" height="80" fill="none" stroke="#8a7a62" stroke-dasharray="3 3"/>
+  <text x="150" y="132" font-size="10" text-anchor="middle" fill="#6b6158">tapete do fundo</text>
+  <circle cx="150" cy="225" r="44" fill="none" stroke="#8a7a62"/>
+  <circle cx="150" cy="225" r="18" fill="#b5651d" opacity=".55"/>
+  <text x="150" y="228" font-size="9" text-anchor="middle" fill="#2b2622">Oceano</text>
+  <circle cx="102" cy="180" r="6" fill="#b5651d" opacity=".55"/><text x="102" y="198" font-size="8" text-anchor="middle" fill="#6b6158">Zéfiro</text>
+  <circle cx="198" cy="180" r="6" fill="#b5651d" opacity=".55"/><text x="198" y="198" font-size="8" text-anchor="middle" fill="#6b6158">Bóreas</text>
+  <rect x="92" y="300" width="116" height="110" fill="none" stroke="#8a7a62" stroke-dasharray="3 3"/>
+  <text x="150" y="358" font-size="10" text-anchor="middle" fill="#6b6158">tapete</text>
+  <rect x="92" y="425" width="116" height="26" fill="#fffaf2" stroke="#8a7a62"/>
+  <text x="150" y="442" font-size="9" text-anchor="middle" fill="#2b2622">inscrição</text>
+  <!-- pontos -->
+  <g fill="#d62020" font-size="13" font-weight="700" stroke="#fff" stroke-width="3" paint-order="stroke">
+    <circle cx="150" cy="54" r="7"/><text x="150" y="30" text-anchor="middle">P6</text>
+    <circle cx="232" cy="110" r="7"/><text x="248" y="114">P5</text>
+    <circle cx="232" cy="165" r="7"/><text x="248" y="169">P4</text>
+    <circle cx="232" cy="225" r="7"/><text x="248" y="229">P3</text>
+    <circle cx="232" cy="320" r="7"/><text x="248" y="324">P2</text>
+    <circle cx="68" cy="110" r="7"/><text x="52" y="114" text-anchor="end">P7</text>
+    <circle cx="68" cy="165" r="7"/><text x="52" y="169" text-anchor="end">P8</text>
+    <circle cx="68" cy="225" r="7"/><text x="52" y="229" text-anchor="end">P9</text>
+    <circle cx="68" cy="320" r="7"/><text x="52" y="324" text-anchor="end">P10</text>
+    <circle cx="150" cy="520" r="7"/><text x="166" y="524">P1</text>
+    <circle cx="110" cy="520" r="4" opacity=".6"/><circle cx="190" cy="520" r="4" opacity=".6"/>
+  </g>
+  <g stroke="#d62020" stroke-width="2" opacity=".7">
+    <line x1="150" y1="512" x2="150" y2="458"/>
+    <line x1="232" y1="320" x2="176" y2="252"/><line x1="68" y1="320" x2="124" y2="252"/>
+    <line x1="225" y1="225" x2="172" y2="225"/><line x1="75" y1="225" x2="128" y2="225"/>
+    <line x1="225" y1="165" x2="206" y2="178"/><line x1="75" y1="165" x2="94" y2="178"/>
+    <line x1="225" y1="110" x2="190" y2="120"/><line x1="75" y1="110" x2="110" y2="120"/>
+  </g>
+  <text x="150" y="552" font-size="10" text-anchor="middle" fill="#6b6158">entrada · parede amarela à direita</text>
+</svg>
