@@ -677,7 +677,7 @@
 
     async function gh(caminho, metodo, corpo) {
       const r = await fetch(GH_API + caminho, {
-        method: metodo || "GET",
+        method: metodo || "GET", cache: "no-store", // sem isto, o telemóvel pode reutilizar uma resposta antiga (ex.: o estado do repositório antes de ser esvaziado)
         headers: { "Authorization": "Bearer " + lerLS(GH_CHAVE, ""), "Accept": "application/vnd.github+json" },
         body: corpo ? JSON.stringify(corpo) : undefined,
       });
