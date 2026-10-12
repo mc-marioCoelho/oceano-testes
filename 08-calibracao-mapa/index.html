@@ -676,7 +676,8 @@
     };
 
     async function gh(caminho, metodo, corpo) {
-      const r = await fetch(GH_API + caminho, {
+      const fresco = !metodo || metodo === "GET" ? (caminho.includes("?") ? "&" : "?") + "t=" + Date.now() : "";
+      const r = await fetch(GH_API + caminho + fresco, {
         method: metodo || "GET", cache: "no-store", // sem isto, o telemóvel pode reutilizar uma resposta antiga (ex.: o estado do repositório antes de ser esvaziado)
         headers: { "Authorization": "Bearer " + lerLS(GH_CHAVE, ""), "Accept": "application/vnd.github+json" },
         body: corpo ? JSON.stringify(corpo) : undefined,
@@ -806,10 +807,15 @@
             await pausa(400);
           }
           emCurso = ""; ghEstado.textContent = "A gravar o lote " + (l + 1) + " de " + lotes + "…";
-          const commitBase = await tentar(() => gh("/git/commits/" + base));
-          const tree = await tentar(() => gh("/git/trees", "POST", { base_tree: commitBase.tree.sha, tree: arvore }));
-          const commit = await tentar(() => gh("/git/commits", "POST", { message: "Teste 08 · envio " + carimbo + " (" + aparelho() + ") · lote " + (l + 1) + "/" + lotes, tree: tree.sha, parents: [base] }));
-          await tentar(() => gh("/git/refs/heads/main", "PATCH", { sha: commit.sha }));
+          let commit = null;
+          for (let volta = 0; volta < 3 && !commit; volta++) {
+            if (volta) { ghEstado.textContent = "O GitHub tinha outro estado guardado; a reler e a gravar outra vez…"; base = (await tentar(() => gh("/git/ref/heads/main"))).object.sha; }
+            const commitBase = await tentar(() => gh("/git/commits/" + base));
+            const tree = await tentar(() => gh("/git/trees", "POST", { base_tree: commitBase.tree.sha, tree: arvore }));
+            const novo = await tentar(() => gh("/git/commits", "POST", { message: "Teste 08 · envio " + carimbo + " (" + aparelho() + ") · lote " + (l + 1) + "/" + lotes, tree: tree.sha, parents: [base] }));
+            try { await tentar(() => gh("/git/refs/heads/main", "PATCH", { sha: novo.sha })); commit = novo; }
+            catch (e) { if (e.status !== 422 || volta === 2) throw e; }
+          }
           base = commit.sha;
           // o lote está gravado: fica registado, para não se repetir se a rede cair mais à frente
           lote.forEach(([c]) => enviados.add(c));
