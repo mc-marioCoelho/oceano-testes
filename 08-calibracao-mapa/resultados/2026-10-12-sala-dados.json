@@ -1,0 +1,125 @@
+{
+ "enviado": "2026-10-12T09:30:07.940Z",
+ "aparelho": "Pixel 9a · Android 17",
+ "resultados": [
+  {
+   "quando": "12/10/2026, 10:27:36",
+   "motor": "MindAR",
+   "alvo": "P2 · foto 10:22",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "local": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 11,
+   "tremor2s": 3.8,
+   "tremor5s": null,
+   "tremor5cm": null,
+   "desenho": "sem desenho",
+   "estab": "média",
+   "alinhamento": "",
+   "nota": ""
+  },
+  {
+   "quando": "12/10/2026, 10:27:44",
+   "motor": "MindAR",
+   "alvo": "P2 · foto 10:22",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "local": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 6,
+   "tremor2s": 2.2,
+   "tremor5s": null,
+   "tremor5cm": null,
+   "desenho": "sem desenho",
+   "estab": "média",
+   "alinhamento": "",
+   "nota": ""
+  },
+  {
+   "quando": "12/10/2026, 10:29:07",
+   "motor": "Zappar",
+   "alvo": "P2 · foto 10:22",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "local": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "primeiro": 0.7,
+   "perdas": 0,
+   "pctReconhecido": 95,
+   "duracao": 14,
+   "tremor2s": 0.2,
+   "tremor5s": 0.3,
+   "tremor5cm": null,
+   "desenho": "sem desenho",
+   "estab": "—",
+   "alinhamento": "",
+   "nota": ""
+  },
+  {
+   "quando": "12/10/2026, 10:29:18",
+   "motor": "Zappar",
+   "alvo": "P2 · foto 10:22",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "local": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 9,
+   "tremor2s": 0.2,
+   "tremor5s": 0.1,
+   "tremor5cm": null,
+   "desenho": "sem desenho",
+   "estab": "—",
+   "alinhamento": "",
+   "nota": ""
+  }
+ ],
+ "alvos": [
+  {
+   "id": "P2-1791796947306",
+   "nome": "P2 · foto 10:22",
+   "local": "P2",
+   "largura": 1024,
+   "altura": 723,
+   "tMind": 13.5,
+   "tZpt": 14.6,
+   "fotoId": "1791796917674",
+   "recorte": [
+    0,
+    1594,
+    2948,
+    2082
+   ],
+   "forma": {
+    "tipo": "poligono",
+    "pts": [
+     [
+      0.8084,
+      1
+     ],
+     [
+      1,
+      0.2409
+     ],
+     [
+      0.4623,
+      0
+     ],
+     [
+      0,
+      0.3352
+     ]
+    ]
+   },
+   "pontos": [],
+   "desenho": null,
+   "controloMapa": null,
+   "erros": []
+  }
+ ]
+}
