@@ -1,0 +1,729 @@
+{
+ "enviado": "2026-10-15T15:36:34.498Z",
+ "aparelho": "Pixel 9a · Android 17",
+ "resultados": [
+  {
+   "quando": "12/10/2026, 16:48:08",
+   "motor": "MindAR",
+   "alvo": "P2 · foto 16:34",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "local": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "primeiro": 1.9,
+   "perdas": 0,
+   "pctReconhecido": 91,
+   "duracao": 21,
+   "tremor2s": 2.7,
+   "tremor5s": 3.5,
+   "tremor5cm": 1.87,
+   "desenho": "100 %",
+   "estab": "normal",
+   "alinhamento": "",
+   "nota": ""
+  },
+  {
+   "quando": "12/10/2026, 16:50:19",
+   "motor": "Zappar",
+   "alvo": "P2 · foto 16:34",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "local": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "primeiro": 0.4,
+   "perdas": 39,
+   "pctReconhecido": 70,
+   "duracao": 26,
+   "tremor2s": 0,
+   "tremor5s": 0.6,
+   "tremor5cm": 0.27,
+   "desenho": "100 %",
+   "estab": "—",
+   "alinhamento": "",
+   "nota": ""
+  },
+  {
+   "quando": "12/10/2026, 16:50:23",
+   "motor": "Zappar",
+   "alvo": "P2 · foto 16:34",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "local": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 2,
+   "tremor2s": 0,
+   "tremor5s": null,
+   "tremor5cm": null,
+   "desenho": "100 %",
+   "estab": "—",
+   "alinhamento": "",
+   "nota": ""
+  },
+  {
+   "quando": "15/10/2026, 16:31:07",
+   "motor": "MindAR",
+   "alvo": "P2 · foto 16:09",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "local": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "primeiro": 1,
+   "perdas": 0,
+   "pctReconhecido": 97,
+   "duracao": 37,
+   "tremor2s": 0.1,
+   "tremor5s": 0.9,
+   "tremor5cm": 0.34,
+   "desenho": "100 %",
+   "estab": "média",
+   "alinhamento": "",
+   "nota": ""
+  },
+  {
+   "quando": "15/10/2026, 16:31:25",
+   "motor": "MindAR",
+   "alvo": "P2 · foto 16:09",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "local": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 13,
+   "tremor2s": 1.5,
+   "tremor5s": null,
+   "tremor5cm": null,
+   "desenho": "100 %",
+   "estab": "média",
+   "alinhamento": "",
+   "nota": ""
+  },
+  {
+   "quando": "15/10/2026, 16:32:06",
+   "motor": "MindAR",
+   "alvo": "P2 · foto 16:09",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "local": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "primeiro": 0.5,
+   "perdas": 0,
+   "pctReconhecido": 95,
+   "duracao": 10,
+   "tremor2s": 0.1,
+   "tremor5s": null,
+   "tremor5cm": null,
+   "desenho": "100 %",
+   "estab": "forte",
+   "alinhamento": "",
+   "nota": ""
+  },
+  {
+   "quando": "15/10/2026, 16:33:14",
+   "motor": "Zappar",
+   "alvo": "P2 · foto 16:09",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "local": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "primeiro": 0.7,
+   "perdas": 0,
+   "pctReconhecido": 95,
+   "duracao": 16,
+   "tremor2s": 0.1,
+   "tremor5s": null,
+   "tremor5cm": null,
+   "desenho": "100 %",
+   "estab": "—",
+   "alinhamento": "",
+   "nota": ""
+  }
+ ],
+ "alvos": [
+  {
+   "id": "P2-1792076953648-endireitado",
+   "nome": "P2 · foto 16:09 · endireitado",
+   "local": "P2",
+   "largura": 584,
+   "altura": 1024,
+   "tMind": 14,
+   "tZpt": 12.7,
+   "fotoId": "1792076847803",
+   "recorte": null,
+   "forma": null,
+   "pontos": [],
+   "desenho": {
+    "atualizado": 1792077632649,
+    "origem": "mapa (alvo endireitado): barba, vento-euro, vento-noto"
+   },
+   "controloMapa": {
+    "quando": 1792077632422,
+    "H": [
+     [
+      1.5809397869646604,
+      0,
+      0
+     ],
+     [
+      0,
+      1.5809397869646604,
+      0
+     ],
+     [
+      0,
+      0,
+      1
+     ]
+    ],
+    "pontos": [
+     {
+      "n": "L1",
+      "mapa": [
+       66.8,
+       389.5
+      ],
+      "recorte": null
+     },
+     {
+      "n": "L2",
+      "mapa": [
+       108.5,
+       386.3
+      ],
+      "recorte": null
+     },
+     {
+      "n": "L3",
+      "mapa": [
+       258.8,
+       394.4
+      ],
+      "recorte": null
+     },
+     {
+      "n": "L4",
+      "mapa": [
+       299.6,
+       397.9
+      ],
+      "recorte": null
+     },
+     {
+      "n": "L5",
+      "mapa": [
+       338.4,
+       399.9
+      ],
+      "recorte": null
+     },
+     {
+      "n": "L6",
+      "mapa": [
+       309.7,
+       532.6
+      ],
+      "recorte": null
+     },
+     {
+      "n": "L7",
+      "mapa": [
+       259.2,
+       534.7
+      ],
+      "recorte": null
+     },
+     {
+      "n": "L8",
+      "mapa": [
+       164.2,
+       539.4
+      ],
+      "recorte": null
+     },
+     {
+      "n": "L9",
+      "mapa": [
+       110.6,
+       530.1
+      ],
+      "recorte": null
+     },
+     {
+      "n": "L10",
+      "mapa": [
+       73.8,
+       532.2
+      ],
+      "recorte": null
+     },
+     {
+      "n": "L11",
+      "mapa": [
+       31.2,
+       533.7
+      ],
+      "recorte": null
+     },
+     {
+      "n": "L12",
+      "mapa": [
+       211.2,
+       530.8
+      ],
+      "recorte": null
+     }
+    ],
+    "erroCm": 2.6,
+    "cmPorPx": 0.633,
+    "pecas": [
+     "barba",
+     "vento-euro",
+     "vento-noto"
+    ],
+    "zona": "livre",
+    "endireitado": true
+   },
+   "erros": []
+  },
+  {
+   "id": "P2-1792076953648",
+   "nome": "P2 · foto 16:09",
+   "local": "P2",
+   "largura": 1024,
+   "altura": 727,
+   "tMind": 14,
+   "tZpt": 15,
+   "fotoId": "1792076847803",
+   "recorte": [
+    0,
+    1771,
+    2382,
+    1690
+   ],
+   "forma": {
+    "tipo": "trapezio",
+    "pts": [
+     [
+      0.4821,
+      0
+     ],
+     [
+      1,
+      0.101
+     ],
+     [
+      0.8742,
+      1
+     ],
+     [
+      0,
+      0.327
+     ]
+    ]
+   },
+   "pontos": [],
+   "desenho": {
+    "atualizado": 1792077577158,
+    "origem": "mapa (pontos de controlo): barba, vento-noto, vento-euro"
+   },
+   "controloMapa": {
+    "quando": 1792077577076,
+    "pontos": [
+     {
+      "n": "L1",
+      "mapa": [
+       66.8,
+       389.5
+      ],
+      "recorte": [
+       441.8,
+       108.7
+      ]
+     },
+     {
+      "n": "L2",
+      "mapa": [
+       108.5,
+       386.3
+      ],
+      "recorte": [
+       489.1,
+       118
+      ]
+     },
+     {
+      "n": "L3",
+      "mapa": [
+       258.8,
+       394.4
+      ],
+      "recorte": [
+       724.5,
+       194.7
+      ]
+     },
+     {
+      "n": "L4",
+      "mapa": [
+       299.6,
+       397.9
+      ],
+      "recorte": [
+       820.4,
+       215.3
+      ]
+     },
+     {
+      "n": "L5",
+      "mapa": [
+       338.4,
+       399.9
+      ],
+      "recorte": [
+       905.3,
+       244.6
+      ]
+     },
+     {
+      "n": "L6",
+      "mapa": [
+       309.7,
+       532.6
+      ],
+      "recorte": [
+       704.8,
+       488.8
+      ]
+     },
+     {
+      "n": "L7",
+      "mapa": [
+       259.2,
+       534.7
+      ],
+      "recorte": [
+       550,
+       410.6
+      ]
+     },
+     {
+      "n": "L8",
+      "mapa": [
+       164.2,
+       539.4
+      ],
+      "recorte": [
+       329.9,
+       317.4
+      ]
+     },
+     {
+      "n": "L9",
+      "mapa": [
+       110.6,
+       530.1
+      ],
+      "recorte": [
+       263.8,
+       259.4
+      ]
+     },
+     {
+      "n": "L10",
+      "mapa": [
+       73.8,
+       532.2
+      ],
+      "recorte": [
+       205.2,
+       237.2
+      ]
+     },
+     {
+      "n": "L11",
+      "mapa": [
+       31.2,
+       533.7
+      ],
+      "recorte": [
+       153.4,
+       207.3
+      ]
+     },
+     {
+      "n": "L12",
+      "mapa": [
+       211.2,
+       530.8
+      ],
+      "recorte": [
+       443.3,
+       346.5
+      ]
+     }
+    ],
+    "H": [
+     [
+      0.98357629,
+      -2.981537,
+      1727.6851
+     ],
+     [
+      0.27113338,
+      0.58578359,
+      -90.504445
+     ],
+     [
+      -0.0016857789,
+      -0.0028401815,
+      2.6629961
+     ]
+    ],
+    "erroCm": 2.6,
+    "cmPorPx": 0.374,
+    "pecas": [
+     "barba",
+     "vento-noto",
+     "vento-euro"
+    ],
+    "zona": "livre"
+   },
+   "erros": []
+  },
+  {
+   "id": "P2-1791819286364",
+   "nome": "P2 · foto 16:34",
+   "local": "P2",
+   "largura": 1024,
+   "altura": 793,
+   "tMind": 12.4,
+   "tZpt": 16,
+   "fotoId": "1791819225478",
+   "recorte": [
+    0,
+    1581,
+    2907,
+    2251
+   ],
+   "forma": {
+    "tipo": "poligono",
+    "pts": [
+     [
+      0.4832,
+      0
+     ],
+     [
+      1,
+      0.2099
+     ],
+     [
+      0.7302,
+      1
+     ],
+     [
+      0,
+      0.2374
+     ]
+    ]
+   },
+   "pontos": [],
+   "desenho": {
+    "atualizado": 1791820014712,
+    "origem": "mapa (pontos de controlo): barba, vento-noto, vento-euro"
+   },
+   "controloMapa": {
+    "quando": 1791820014623,
+    "pontos": [
+     {
+      "n": 1,
+      "mapa": [
+       66.8,
+       389.5
+      ],
+      "recorte": [
+       358.3,
+       107.9
+      ]
+     },
+     {
+      "n": 2,
+      "mapa": [
+       108.5,
+       386.3
+      ],
+      "recorte": [
+       407.3,
+       125.7
+      ]
+     },
+     {
+      "n": 3,
+      "mapa": [
+       258.8,
+       394.4
+      ],
+      "recorte": [
+       663.3,
+       252.1
+      ]
+     },
+     {
+      "n": 4,
+      "mapa": [
+       299.6,
+       397.9
+      ],
+      "recorte": [
+       751.2,
+       301.5
+      ]
+     },
+     {
+      "n": 5,
+      "mapa": [
+       309.7,
+       532.6
+      ],
+      "recorte": [
+       556.6,
+       623.6
+      ]
+     },
+     {
+      "n": 6,
+      "mapa": [
+       259.2,
+       534.7
+      ],
+      "recorte": [
+       403.7,
+       502
+      ]
+     },
+     {
+      "n": 7,
+      "mapa": [
+       181.1,
+       535.3
+      ],
+      "recorte": [
+       212.9,
+       343.5
+      ]
+     },
+     {
+      "n": 8,
+      "mapa": [
+       73.8,
+       532.2
+      ],
+      "recorte": [
+       90.1,
+       237.4
+      ]
+     },
+     {
+      "n": 9,
+      "mapa": [
+       308.6,
+       398.7
+      ],
+      "recorte": [
+       775.5,
+       312
+      ]
+     },
+     {
+      "n": 10,
+      "mapa": [
+       338.4,
+       399.9
+      ],
+      "recorte": [
+       854.3,
+       355
+      ]
+     },
+     {
+      "n": 11,
+      "mapa": [
+       277.8,
+       546.1
+      ],
+      "recorte": [
+       441.8,
+       524.6
+      ]
+     },
+     {
+      "n": 12,
+      "mapa": [
+       60.4,
+       389.6
+      ],
+      "recorte": [
+       344.7,
+       103.3
+      ]
+     },
+     {
+      "n": 13,
+      "mapa": [
+       30.9,
+       385.5
+      ],
+      "recorte": [
+       319.5,
+       92.6
+      ]
+     },
+     {
+      "n": 14,
+      "mapa": [
+       60.3,
+       532.6
+      ],
+      "recorte": [
+       83.8,
+       221
+      ]
+     },
+     {
+      "n": 15,
+      "mapa": [
+       93.6,
+       540.9
+      ],
+      "recorte": [
+       146.3,
+       268.2
+      ]
+     }
+    ],
+    "H": [
+     [
+      0.94322122,
+      -2.6626351,
+      1459.2015
+     ],
+     [
+      0.4988784,
+      0.62867518,
+      -127.94327
+     ],
+     [
+      -0.0019110732,
+      -0.0021546868,
+      2.3381069
+     ]
+    ],
+    "erroCm": 7.4,
+    "cmPorPx": 0.357,
+    "pecas": [
+     "barba",
+     "vento-noto",
+     "vento-euro"
+    ],
+    "zona": "oceano"
+   },
+   "erros": []
+  }
+ ]
+}

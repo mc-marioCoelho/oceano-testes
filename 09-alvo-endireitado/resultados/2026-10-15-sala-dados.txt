@@ -1,0 +1,13 @@
+Quando	Motor	Alvo	Fotografado em	Testado em	Aparelho	1.º rec. (s)	Perdas	% rec.	Duração (s)	Tremor 5 s (px)	Tremor 2 s (px)	Tremor 5 s (cm)	Desenho na RA	Estabilização	Alinhamento	Nota
+12/10/2026, 16:48:08	MindAR	P2 · foto 16:34	P2 · passadiço direito (amarelo), na diagonal → Oceano	P2 · passadiço direito (amarelo), na diagonal → Oceano	Pixel 9a · Android 17	1.9	0	91	21	3.5	2.7	1.87	100 %	normal		
+12/10/2026, 16:50:19	Zappar	P2 · foto 16:34	P2 · passadiço direito (amarelo), na diagonal → Oceano	P2 · passadiço direito (amarelo), na diagonal → Oceano	Pixel 9a · Android 17	0.4	39	70	26	0.6	0	0.27	100 %	—		
+12/10/2026, 16:50:23	Zappar	P2 · foto 16:34	P2 · passadiço direito (amarelo), na diagonal → Oceano	P2 · passadiço direito (amarelo), na diagonal → Oceano	Pixel 9a · Android 17		0	100	2		0		100 %	—		
+15/10/2026, 16:31:07	MindAR	P2 · foto 16:09	P2 · passadiço direito (amarelo), na diagonal → Oceano	P2 · passadiço direito (amarelo), na diagonal → Oceano	Pixel 9a · Android 17	1	0	97	37	0.9	0.1	0.34	100 %	média		
+15/10/2026, 16:31:25	MindAR	P2 · foto 16:09	P2 · passadiço direito (amarelo), na diagonal → Oceano	P2 · passadiço direito (amarelo), na diagonal → Oceano	Pixel 9a · Android 17		0	100	13		1.5		100 %	média		
+15/10/2026, 16:32:06	MindAR	P2 · foto 16:09	P2 · passadiço direito (amarelo), na diagonal → Oceano	P2 · passadiço direito (amarelo), na diagonal → Oceano	Pixel 9a · Android 17	0.5	0	95	10		0.1		100 %	forte		
+15/10/2026, 16:33:14	Zappar	P2 · foto 16:09	P2 · passadiço direito (amarelo), na diagonal → Oceano	P2 · passadiço direito (amarelo), na diagonal → Oceano	Pixel 9a · Android 17	0.7	0	95	16		0.1		100 %	—		
+
+Alvo	Fotografado em	Largura × altura (px)	Criação MindAR (s)	Criação Zappar (s)	Fotografia original	Recorte na original (x, y, largura, altura)	Forma do recorte	Pontos marcados	Desenho	Erros
+P2 · foto 16:09 · endireitado	P2 · passadiço direito (amarelo), na diagonal → Oceano	584 × 1024	14	12.7	foto-1792076847803.jpg	inteira	—		mapa (alvo endireitado): barba, vento-euro, vento-noto	
+P2 · foto 16:09	P2 · passadiço direito (amarelo), na diagonal → Oceano	1024 × 727	14	15	foto-1792076847803.jpg	0, 1771, 2382, 1690	trapézio		mapa (pontos de controlo): barba, vento-noto, vento-euro	
+P2 · foto 16:34	P2 · passadiço direito (amarelo), na diagonal → Oceano	1024 × 793	12.4	16	foto-1791819225478.jpg	0, 1581, 2907, 2251	polígono		mapa (pontos de controlo): barba, vento-noto, vento-euro	
