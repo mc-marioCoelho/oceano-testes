@@ -6,6 +6,13 @@ Quando	Motor	Alvo	Fotografado em	Testado em	Aparelho	1.º rec. (s)	Perdas	% rec.
 15/10/2026, 16:31:25	MindAR	P2 · foto 16:09	P2 · passadiço direito (amarelo), na diagonal → Oceano	P2 · passadiço direito (amarelo), na diagonal → Oceano	Pixel 9a · Android 17		0	100	13		1.5		100 %	média		
 15/10/2026, 16:32:06	MindAR	P2 · foto 16:09	P2 · passadiço direito (amarelo), na diagonal → Oceano	P2 · passadiço direito (amarelo), na diagonal → Oceano	Pixel 9a · Android 17	0.5	0	95	10		0.1		100 %	forte		
 15/10/2026, 16:33:14	Zappar	P2 · foto 16:09	P2 · passadiço direito (amarelo), na diagonal → Oceano	P2 · passadiço direito (amarelo), na diagonal → Oceano	Pixel 9a · Android 17	0.7	0	95	16		0.1		100 %	—		
+15/10/2026, 16:48:23	MindAR	P2 · foto 16:09 · endireitado	P2 · passadiço direito (amarelo), na diagonal → Oceano	P2 · passadiço direito (amarelo), na diagonal → Oceano	Pixel 9a · Android 17		0	0	6				100 %	forte		
+15/10/2026, 16:48:47	MindAR	P2 · foto 16:09 · endireitado	P2 · passadiço direito (amarelo), na diagonal → Oceano	P2 · passadiço direito (amarelo), na diagonal → Oceano	Pixel 9a · Android 17		0	0	14				100 %	forte		
+15/10/2026, 16:49:27	MindAR	P2 · foto 16:09 · endireitado	P2 · passadiço direito (amarelo), na diagonal → Oceano	P2 · passadiço direito (amarelo), na diagonal → Oceano	Pixel 9a · Android 17		0	0	7				100 %	normal		
+15/10/2026, 16:52:38	Zappar	P2 · foto 16:09 · endireitado	P2 · passadiço direito (amarelo), na diagonal → Oceano	P2 · passadiço direito (amarelo), na diagonal → Oceano	Pixel 9a · Android 17		0	0	6				100 %	—		
+15/10/2026, 16:53:30	Zappar	P2 · foto 16:09 · endireitado	P2 · passadiço direito (amarelo), na diagonal → Oceano	P2 · passadiço direito (amarelo), na diagonal → Oceano	Pixel 9a · Android 17		0	0	25				100 %	—		
+15/10/2026, 16:54:18	MindAR	P2 · foto 16:09 · endireitado	P2 · passadiço direito (amarelo), na diagonal → Oceano	P2 · passadiço direito (amarelo), na diagonal → Oceano	Pixel 9a · Android 17		0	0	18				100 %	média		
+15/10/2026, 16:54:40	MindAR	P2 · foto 16:09 · endireitado	P2 · passadiço direito (amarelo), na diagonal → Oceano	P2 · passadiço direito (amarelo), na diagonal → Oceano	Pixel 9a · Android 17		0	0	13				100 %	média		
 
 Alvo	Fotografado em	Largura × altura (px)	Criação MindAR (s)	Criação Zappar (s)	Fotografia original	Recorte na original (x, y, largura, altura)	Forma do recorte	Pontos marcados	Desenho	Erros
 P2 · foto 16:09 · endireitado	P2 · passadiço direito (amarelo), na diagonal → Oceano	584 × 1024	14	12.7	foto-1792076847803.jpg	inteira	—		mapa (alvo endireitado): barba, vento-euro, vento-noto	
