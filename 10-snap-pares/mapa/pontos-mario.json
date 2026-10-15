@@ -1,0 +1,13 @@
+{
+ "descricao": "Pontos de controlo marcados pelo Mário no Illustrator (camada «Pontos P2» de malha-geometrica-mosaico.ai, 12 out. 2026), convertidos para cm do mapa (docs/calibracao/pontos-p2.mjs no oceano-trabalho). Lista curta por ponto de visão.",
+ "P2": [
+  { "n": 1, "x": 108.5, "y": 386.3, "onde": "círculo interior do medalhão, à esquerda, onde entra na lacuna" },
+  { "n": 2, "x": 258.8, "y": 394.4, "onde": "círculo interior do medalhão, à direita, onde entra na lacuna" },
+  { "n": 3, "x": 309.26, "y": 493.41, "onde": "canto de cima, à direita, do painel de baixo (linha de cima × linha direita)" },
+  { "n": 4, "x": 309.68, "y": 560.97, "onde": "linha direita do painel de baixo, onde chega a diagonal (logo abaixo da lacuna)" },
+  { "n": 5, "x": 59.18, "y": 244.81, "onde": "linha esquerda, canto de baixo do painel de cima" },
+  { "n": 6, "x": 59.82, "y": 17.37, "onde": "linha esquerda, ponta de cima do mosaico" },
+  { "n": 7, "x": 246.27, "y": 558.91, "onde": "cruzamento no painel de baixo, à direita, logo abaixo da lacuna" },
+  { "n": 8, "x": 155.49, "y": 494.16, "onde": "linha de cima do painel de baixo, onde começa a diagonal (centro-esquerda)" }
+ ]
+}
