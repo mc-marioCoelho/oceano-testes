@@ -5,7 +5,7 @@
 // Bibliotecas externas (endereços com versão fixa): cópia guardada primeiro.
 
 const CACHE = "oceano-teste10-v1";
-const PROPRIOS = ["./", "index.html", "pontos-de-visao.svg", "mindar.html", "zappar.html", "estilo.css", "alvos.js", "medicao.js", "objetos.js", "encaixe.js", "desenho.js", "mapa/controlo.json", "mapa/pontos-mario.json", "mapa/barba.svg", "mapa/vento-euro.svg", "mapa/vento-noto.svg", "mapa/contorno-inscricao.svg", "mapa/malha.json", "mapa/candidatos.json"];
+const PROPRIOS = ["./", "index.html", "pontos-de-visao.svg", "mindar.html", "zappar.html", "multi.html", "estilo.css", "alvos.js", "medicao.js", "objetos.js", "encaixe.js", "desenho.js", "mapa/controlo.json", "mapa/pontos-mario.json", "mapa/barba.svg", "mapa/vento-euro.svg", "mapa/vento-noto.svg", "mapa/contorno-inscricao.svg", "mapa/malha.json", "mapa/candidatos.json"];
 const ZT = "https://cdn.jsdelivr.net/npm/@zappar/imagetraining@4.3.2/umd/";
 const EXTERNOS = [
   "https://aframe.io/releases/1.5.0/aframe.min.js",

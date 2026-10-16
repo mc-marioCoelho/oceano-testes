@@ -30,6 +30,8 @@
     <p><label class="botao" for="foto">Tirar fotografia</label>
        <input type="file" id="foto" accept="image/*" capture="environment" hidden></p>
     <p class="sub" id="estado-lente"></p>
+    <p class="sub"><label>Altura do telemóvel nesta fotografia (acima do passadiço):
+      <select id="altura-foto"><option value="">por indicar</option><option>1,0 m</option><option selected>1,25 m</option><option>1,5 m</option><option>outra</option></select></label></p>
     <div id="recorte" hidden>
       <p class="sub">Recorta só a parte do mosaico que interessa (sem passadiço nem corrimão). Da mesma fotografia podes criar vários alvos: depois de criar um, recorta outra parte e carrega outra vez em «Criar alvo» (por exemplo, o mosaico inteiro e só a inscrição).</p>
       <div class="formas" id="formas">
@@ -178,6 +180,13 @@
       <a class="botao claro" id="ir-zappar" href="#">Testar com Zappar</a>
     </div>
 
+    <h2>5b. Teste de confusão (MindAR, vários alvos de alturas diferentes)</h2>
+    <p class="sub">Pergunta: se o motor tiver carregados, ao mesmo tempo, alvos da mesma zona fotografados de alturas diferentes, reconhece o certo ou confunde-se (reconhece dois, ou muda de um para o outro)? Tira a mesma zona do P2 a 1,0, 1,25 e 1,5 m (passo 2, escolhendo a altura), cria cada alvo, e depois junta-os aqui.</p>
+    <div class="alvos" id="multi-escolha"></div>
+    <p><button class="botao claro" id="multi-juntar">Juntar os escolhidos num só alvo (MindAR)</button></p>
+    <p class="estado-offline" id="multi-estado"></p>
+    <div class="alvos" id="multi-lista"></div>
+
     <h2>Como fazer o teste (P2)</h2>
     <ol>
       <li><strong>Com rede:</strong> «Preparar para usar sem rede».</li>
@@ -193,6 +202,7 @@
 
     <h2>Resultados guardados neste telemóvel</h2>
     <div class="tabela"><table id="tabela"></table></div>
+    <div class="tabela"><table id="tabela-confusao"></table></div>
     <p class="sub" id="n-capturas"></p>
     <p class="motores">
       <button class="botao" id="partilhar">Partilhar resultados</button>
@@ -472,7 +482,7 @@
           id: local + "-" + agora.getTime(), criado: agora.getTime(),
           nome: (local.startsWith("parede") ? "Parede" : local.replace("-esq", " esq.").replace("-dir", " dir.")) + " · foto " + hora,
           local, jpg, largura, altura, mind: null, zpt: null, tMind: null, tZpt: null, erros: [],
-          original: fotoOriginal, fotoId, recorte: caixa, forma: fr, pontos: [], lente: lenteAtual,
+          original: fotoOriginal, fotoId, recorte: caixa, forma: fr, pontos: [], lente: lenteAtual, alturaFoto: document.getElementById("altura-foto").value,
         };
         let t0 = performance.now();
         estadoCriar.textContent = "MindAR: a criar o alvo…";
@@ -501,9 +511,11 @@
 
     // 3. alvos guardados
     const caixa = document.getElementById("alvos");
-    let lista = [], urlsMiniaturas = [];
+    let lista = [], multis = [], urlsMiniaturas = [];
     async function mostrarAlvos(escolher) {
-      lista = await Alvos.todos();
+      const todos = await Alvos.todos();
+      lista = todos.filter(a => !a.multi); multis = todos.filter(a => a.multi);
+      mostrarMultis();
       urlsMiniaturas.forEach(u => URL.revokeObjectURL(u)); urlsMiniaturas = [];
       let atual = escolher;
       try { atual = atual || localStorage.getItem("oceano-teste10-alvo"); } catch (e) {}
@@ -515,13 +527,50 @@
           '<small>MindAR ' + (a.mind ? a.tMind + " s" : "✗") + ' · Zappar ' + (a.zpt ? a.tZpt + " s" : "—") +
           (a.forma && a.forma.tipo !== "retangulo" ? ' · ' + nomeForma(a) : '') +
           (a.pontos && a.pontos.length ? ' · ' + a.pontos.length + ' ponto(s)' : '') + (a.desenho ? ' · <b>com desenho</b>' : '') +
-          (a.lente ? ' · lente ' + lenteAviso(a.lente) : '') +
+          (a.lente ? ' · lente ' + lenteAviso(a.lente) : '') + (a.alturaFoto ? ' · foto a ' + a.alturaFoto : '') +
           (a.controloMapa && !a.controloMapa.endireitado ? ' · calibrado' + (a.controloMapa.looCm != null ? ', erro ' + String(a.controloMapa.looCm).replace(".", ",") + ' cm' : a.controloMapa.erroCm != null ? ', erro ' + String(a.controloMapa.erroCm).replace(".", ",") + ' cm' : '') + (a.controloMapa.encaixe ? ' (snap)' : '') : '') + '</small></label>';
       }).join("");
       document.getElementById("sem-alvos").hidden = lista.length > 0;
       document.getElementById("acoes-alvo").hidden = lista.length === 0;
       ligar();
     }
+    // ---- teste de confusão: vários alvos compilados num só ficheiro MindAR ----
+    function mostrarMultis() {
+      const cand = lista.filter(a => a.jpg && a.mind);
+      document.getElementById("multi-escolha").innerHTML = cand.length ? cand.map(a =>
+        '<label><input type="checkbox" name="multi-alvo" value="' + a.id + '"><img src="' + URL.createObjectURL(a.jpg) + '" alt="">' + a.nome +
+        '<small>foto a ' + (a.alturaFoto || "altura por indicar") + (a.endireitadoDe ? " · endireitado" : "") + '</small></label>').join("") : '<p class="sub">Ainda não há alvos MindAR.</p>';
+      document.getElementById("multi-lista").innerHTML = multis.length ? multis.map(m =>
+        '<div class="multi-item"><strong>' + m.nome + '</strong><small>' + m.itens.map(i => i.alturaFoto || "?").join(" · ") + '</small> ' +
+        '<a class="botao" href="multi.html?multi=' + encodeURIComponent(m.id) + '">Testar</a> ' +
+        '<button type="button" class="botao claro" data-apagar-multi="' + m.id + '">Apagar</button></div>').join("") : "";
+    }
+    document.getElementById("multi-lista").addEventListener("click", async ev => {
+      const b = ev.target.closest("button[data-apagar-multi]"); if (!b) return;
+      if (confirm("Apagar este alvo conjunto? (Os alvos originais ficam.)")) { await Alvos.apagar(b.dataset.apagarMulti); mostrarAlvos(); }
+    });
+    document.getElementById("multi-juntar").onclick = async () => {
+      const est = document.getElementById("multi-estado"), b = document.getElementById("multi-juntar");
+      const ids = [...document.querySelectorAll('input[name="multi-alvo"]:checked')].map(i => i.value);
+      const itens = ids.map(id => lista.find(a => a.id === id)).filter(Boolean);
+      if (itens.length < 2) { est.textContent = "Escolhe pelo menos dois alvos."; return; }
+      if (itens.length > 4) { est.textContent = "Escolhe no máximo quatro alvos."; return; }
+      b.disabled = true; est.textContent = "A juntar…";
+      let ecra = null; try { ecra = await navigator.wakeLock.request("screen"); } catch (e) {}
+      try {
+        const m = await import(MINDAR_COMPILADOR), imgs = [];
+        for (const a of itens) { const img = new Image(); img.src = URL.createObjectURL(a.jpg); await img.decode(); imgs.push(img); }
+        const t0 = performance.now(), c = new m.Compiler();
+        await c.compileImageTargets(imgs, p => { est.textContent = "A juntar os alvos… " + Math.round(p) + " %"; });
+        const mind = await c.exportData();
+        const agora = new Date(), id = "multi-" + agora.getTime();
+        await Alvos.gravar({ id, multi: true, criado: agora.getTime(), nome: "Conjunto de " + itens.length + " alvos · " + agora.toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" }),
+          mind, itens: itens.map(a => ({ id: a.id, nome: a.nome, alturaFoto: a.alturaFoto || "", largura: a.largura, altura: a.altura, endireitado: !!a.endireitadoDe })), tMind: segundos(t0) });
+        est.textContent = "✓ Conjunto criado em " + segundos(t0) + " s. Carrega em «Testar».";
+        await mostrarAlvos();
+      } catch (e) { est.textContent = "Não foi possível juntar: " + e.message; }
+      finally { b.disabled = false; try { if (ecra) await ecra.release(); } catch (e) {} }
+    };
     function alvoEscolhido() {
       const i = document.querySelector('input[name="alvo"]:checked');
       return i ? lista.find(a => a.id === i.value) : null;
@@ -649,7 +698,7 @@
         est.textContent = "A endireitar a fotografia…";
         const r = await Editor.endireitar(a);
         const novo = { id: a.id + "-endireitado", criado: Date.now(), nome: a.nome + " · endireitado", local: a.local, jpg: r.jpg, largura: r.largura, altura: r.altura,
-          mind: null, zpt: null, tMind: null, tZpt: null, erros: [], pontos: [], forma: null, endireitadoDe: a.id, regiao: r.regiao, recorte: null, fotoId: a.fotoId, lente: a.lente || null };
+          mind: null, zpt: null, tMind: null, tZpt: null, erros: [], pontos: [], forma: null, endireitadoDe: a.id, regiao: r.regiao, recorte: null, fotoId: a.fotoId, lente: a.lente || null, alturaFoto: a.alturaFoto || "" };
         let t0 = performance.now(); est.textContent = "MindAR: a criar o alvo endireitado…";
         try { novo.mind = await criarMindAR(r.jpg); novo.tMind = segundos(t0); } catch (e) { novo.erros.push("MindAR: " + e.message); }
         if (document.getElementById("com-zappar").checked) {
@@ -703,7 +752,14 @@
       t.innerHTML = "<tr>" + COLS.map(c => "<th>" + c[1] + "</th>").join("") + "</tr>" +
         lr.map(r => "<tr>" + COLS.map(c => "<td>" + (r[c[0]] === null || r[c[0]] === undefined ? "—" : String(r[c[0]]).replace(/</g, "&lt;")) + "</td>").join("") + "</tr>").join("");
     }
-    desenhar();
+    function desenharConfusao() {
+      const l = lerConfusao(), t = document.getElementById("tabela-confusao");
+      if (!l.length) { t.innerHTML = ""; return; }
+      t.innerHTML = "<tr><th>Confusão: quando</th><th>Altura</th><th>Passo</th><th>Alvos (foto a: % do tempo · 1.º s · perdas)</th><th>2+ juntos</th><th>Trocas</th><th>Nota</th></tr>" +
+        l.map(r => "<tr><td>" + r.quando + "</td><td>" + r.altura + "</td><td>" + r.passo + "</td><td>" + r.alvos.map(a => a.fotoA + ": " + a.pct + " % · " + (a.primeiro ?? "—") + " · " + a.perdas).join("<br>") +
+          "</td><td>" + r.simultPct + " %</td><td>" + r.trocas + "</td><td>" + String(r.nota || "").replace(/</g, "&lt;") + "</td></tr>").join("");
+    }
+    desenhar(); desenharConfusao();
     Capturas.todas().then(l => {
       document.getElementById("n-capturas").textContent = l.length
         ? l.length + " fotografia(s) da RA guardada(s) neste telemóvel (botão «Fotografar a RA»); seguem com «Partilhar resultados e fotografias» e com «Enviar tudo para o GitHub»." : "";
@@ -718,7 +774,9 @@
         .concat(lista.map(a => [a.nome, nomeLocal(a.local), a.largura + " × " + a.altura, a.tMind ?? "falhou", a.tZpt ?? "—", a.lente ? lenteTexto(a.lente) : "—", cal(a),
           a.fotoId ? "foto-" + a.fotoId + ".jpg" : "", a.recorte ? a.recorte.join(", ") : "inteira", a.recorte ? nomeForma(a) : "—",
           (a.pontos || []).map((p, i) => (i + 1) + " " + p.nome).join(" | "), a.desenho ? (a.desenhoInfo ? a.desenhoInfo.origem : "sim") : "—", (a.erros || []).join(" · ")].join("\t")));
-      return res.concat(alv).join("\n");
+      const conf = lerConfusao().length ? ["", ["Confusão: quando", "Altura", "Passo", "Alvos (foto a: % · 1.º s · perdas)", "2+ juntos %", "Trocas", "Sem nenhum %", "Nota"].join("\t")]
+        .concat(lerConfusao().map(r => [r.quando, r.altura, r.passo, r.alvos.map(a => a.fotoA + ": " + a.pct + " % · " + (a.primeiro ?? "—") + " · " + a.perdas).join(" | "), r.simultPct, r.trocas, r.nenhumPct, r.nota || ""].join("\t"))) : [];
+      return res.concat(alv, conf).join("\n");
     }
 
     // as fotografias para treinar alvos no PC: cada original uma vez (várias recortes podem vir da mesma) e cada recorte
@@ -880,7 +938,7 @@
         // ficheiros a enviar: [caminho, Blob]
         const fich = [
           [sessao + "/resultados.txt", new Blob([texto()], { type: "text/plain" })],
-          [sessao + "/resultados.json", new Blob([JSON.stringify({ enviado: agora.toISOString(), aparelho: aparelho(), resultados: lerResultados(),
+          [sessao + "/resultados.json", new Blob([JSON.stringify({ enviado: agora.toISOString(), aparelho: aparelho(), resultados: lerResultados(), confusao: lerConfusao(),
             alvos: lista.map(a => ({ id: a.id, nome: a.nome, local: a.local, largura: a.largura, altura: a.altura, tMind: a.tMind, tZpt: a.tZpt, fotoId: a.fotoId, recorte: a.recorte, forma: a.forma || null, lente: a.lente || null, pontos: a.pontos || [], desenho: a.desenhoInfo || null, controloMapa: a.controloMapa || null, erros: a.erros })) }, null, 1)], { type: "application/json" })],
         ];
         if (document.getElementById("gh-pagina").checked) {

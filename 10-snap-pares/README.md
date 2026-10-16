@@ -16,6 +16,8 @@ Cópia do [teste 09](../09-alvo-endireitado/) (que fica igual), para **reduzir o
 5. **Teste da altura:** na RA, o botão «Posição» guarda a altura do telemóvel (1,0 / 1,25 / 1,5 m) e o passo (no ponto, 1 ou 2 passos para cada lado). Segue com cada resultado e aparece na faixa de cada «Fotografar a RA».
 6. **Lente a 1×:** a página lê a distância focal da fotografia (EXIF) e avisa se não estiver a 1× (no Pixel 9a: 4,53 mm = 1×; 1,8 mm = 0,5×). «Criar alvo endireitado» continua igual e pede confirmação se a fotografia não for a 1×.
 
+7. **Teste de confusão (MindAR, `multi.html`):** cada alvo guarda a altura a que foi fotografado. Juntam-se 2 a 4 alvos da mesma zona (por exemplo, fotografados a 1,0, 1,25 e 1,5 m) **num só ficheiro MindAR** e testa-se com o telemóvel numa altura e num passo («Posição»). A página mostra, a cores, qual dos alvos o motor reconhece e conta: o tempo de cada alvo, **os episódios em que reconhece dois ao mesmo tempo** e **as trocas** de um alvo para outro. Os resultados seguem com «Partilhar» e com o envio para o GitHub. Só MindAR (o Zappar precisaria de um ficheiro por alvo).
+
 **Verificado no PC (16 out.):**
 - **Fotografias artificiais de perspetiva conhecida.** São feitas a partir da fotografia vertical de Pavone, sobre a qual o mapa foi desenhado, com a perspetiva do P2 de 15 out. Os toques têm erro de dedo simulado, com 20 tentativas por linha. Erro **verdadeiro** perto do rosto, antes → depois do snap:
 
@@ -27,6 +29,7 @@ Cópia do [teste 09](../09-alvo-endireitado/) (que fica igual), para **reduzir o
 
 - **Fotografia real de 15 out.** (12 pares a dedo; foto a 0,5×): validação cruzada 4,1 → **1,7 cm**, com 21 cruzamentos juntados pelo snap e 6 s no PC. Na fotografia endireitada, a malha do mapa passa a assentar nos traços escuros do painel de baixo.
 - **No navegador:** abrir a calibração anterior, mover um par com a mira e as setas, marcar M1–M8 (M6 saltado, por estar fora da fotografia), snap, aceitar e gravar, e o botão «Posição» no MindAR. A página cabe a 375 px de largura.
+- **Teste de confusão:** juntar 3 alvos (14 s no PC), abrir a página e os contadores com reconhecimentos simulados (dois ao mesmo tempo, trocas), guardar e ler o resultado. **Não testado com a câmara** (o painel do navegador não a permite).
 - **Por confirmar no telemóvel:** o tempo do snap (no PC são 6 s; no Pixel deve andar pelos 10 a 30 s) e a mira com o dedo a sério.
 
 **Observação da sala:** dentro da lacuna central, as linhas dos círculos e do painel estão pintadas na argamassa pelo restauro. Por isso, os pontos «onde a linha entra na lacuna» não são cruzamentos: o snap só os acerta de lado.

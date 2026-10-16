@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teste 10 · Confusão entre alturas</title>
+  <link rel="stylesheet" href="estilo.css">
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+  <script src="alvos.js"></script>
+  <script src="medicao.js"></script>
+</head>
+<body>
+  <!-- Teste de confusão: vários alvos da mesma zona, fotografados de alturas diferentes, num só ficheiro MindAR.
+       Cada alvo mostra uma moldura de cor própria com a altura da sua fotografia. Com o telemóvel numa altura e
+       num passo (botão «Posição»), vê-se qual o motor reconhece, se reconhece dois ao mesmo tempo, e se salta de um
+       para outro. Os contadores seguem com «Guardar resultado». Sem desenho: só se mede o reconhecimento. -->
+  <div class="hud">
+    <div class="topo"><span id="h-motor">MindAR · conjunto</span><span class="aparelho" id="h-aparelho"></span></div>
+    <div class="local" id="h-local"></div>
+    <div class="estado" id="h-estado">à procura…</div>
+    <table class="conf" id="h-tabela"></table>
+    <dl>
+      <dt>Dois ou mais ao mesmo tempo</dt><dd id="h-simult">0 %</dd>
+      <dt>Trocas de alvo</dt><dd id="h-trocas">0</dd>
+      <dt>Duração</dt><dd id="h-dur">0 s</dd>
+    </dl>
+    <p class="alerta" id="h-alerta"></p>
+  </div>
+  <div class="barra">
+    <button id="b-recomecar">Recomeçar</button>
+    <button id="b-posicao">Posição</button>
+    <button id="b-guardar">Guardar resultado</button>
+    <a href="./">Voltar</a>
+  </div>
+  <div id="cena"></div>
+  <script>
+    const CORES = ["#ff5252", "#40c4ff", "#ffd740", "#69f0ae"];
+    let multi = null, N = 0;
+    // contadores
+    let t0 = 0, ultimoT = 0, visiveis = new Set(), seq = []; // seq: sequência de conjuntos visíveis (para contar trocas)
+    let por = [], simultMs = 0, trocas = 0, ultimoUnico = -1, nenhumMs = 0;
+    function recomecar() {
+      t0 = ultimoT = performance.now(); simultMs = 0; trocas = 0; ultimoUnico = visiveis.size === 1 ? [...visiveis][0] : -1; nenhumMs = 0;
+      por = multi.itens.map((_, i) => ({ ms: 0, primeiro: null, perdas: 0, desde: visiveis.has(i) ? t0 : 0 }));
+      mostrar();
+    }
+    // chamado de 100 em 100 ms e a cada evento: acumula tempo com o conjunto atual de alvos visíveis
+    function avancar() {
+      const t = performance.now(), dt = t - ultimoT; ultimoT = t;
+      visiveis.forEach(i => { por[i].ms += dt; });
+      if (visiveis.size > 1) simultMs += dt;
+      if (visiveis.size === 0) nenhumMs += dt;
+    }
+    function encontrado(i) {
+      avancar(); const t = performance.now();
+      if (por[i].primeiro === null) por[i].primeiro = (t - t0) / 1000;
+      visiveis.add(i);
+      if (visiveis.size === 1) { if (ultimoUnico >= 0 && ultimoUnico !== i) trocas++; ultimoUnico = i; }
+      mostrar();
+    }
+    function perdido(i) {
+      avancar(); if (visiveis.has(i)) por[i].perdas++;
+      visiveis.delete(i);
+      if (visiveis.size === 1) { const u = [...visiveis][0]; if (ultimoUnico >= 0 && ultimoUnico !== u) trocas++; ultimoUnico = u; }
+      mostrar();
+    }
+    function pct(ms) { const d = performance.now() - t0; return d > 0 ? Math.round(100 * ms / d) : 0; }
+    function mostrar() {
+      const d = (performance.now() - t0) / 1000;
+      document.getElementById("h-estado").textContent = visiveis.size === 0 ? "à procura…" : visiveis.size === 1 ? "RECONHECIDO: " + (multi.itens[[...visiveis][0]].alturaFoto || "alvo " + ([...visiveis][0] + 1)) : "⚠ " + visiveis.size + " ALVOS AO MESMO TEMPO";
+      document.getElementById("h-tabela").innerHTML = "<tr><th>Foto a</th><th>1.º (s)</th><th>% do tempo</th><th>Perdas</th></tr>" +
+        multi.itens.map((it, i) => '<tr class="' + (visiveis.has(i) ? "visivel" : "") + '"><td style="color:' + CORES[i % 4] + '">■ ' + (it.alturaFoto || "alvo " + (i + 1)) + (it.endireitado ? " (endir.)" : "") + "</td><td>" +
+          (por[i].primeiro === null ? "—" : por[i].primeiro.toFixed(1).replace(".", ",")) + "</td><td>" + pct(por[i].ms) + " %</td><td>" + por[i].perdas + "</td></tr>").join("");
+      document.getElementById("h-simult").textContent = pct(simultMs) + " %";
+      document.getElementById("h-trocas").textContent = trocas;
+      document.getElementById("h-dur").textContent = Math.round(d) + " s";
+      document.getElementById("h-alerta").textContent = simultMs > 500 || trocas > 0 ? "Confusão: " + (simultMs > 500 ? "dois alvos reconhecidos ao mesmo tempo. " : "") + (trocas ? trocas + " troca(s) de alvo." : "") : "";
+    }
+    function guardar() {
+      avancar();
+      const pos = lerPosicao(), r = {
+        quando: new Date().toLocaleString("pt-PT"), aparelho: aparelho(), altura: pos.altura, passo: pos.passo,
+        duracao: Math.round((performance.now() - t0) / 1000), simultPct: pct(simultMs), trocas, nenhumPct: pct(nenhumMs),
+        alvos: multi.itens.map((it, i) => ({ fotoA: it.alturaFoto || "?", endireitado: it.endireitado, pct: pct(por[i].ms), primeiro: por[i].primeiro === null ? null : +por[i].primeiro.toFixed(1), perdas: por[i].perdas })),
+      };
+      const al = prompt("Nota (o desenho/alvo certo era o de que altura? o que viste?):", ""); if (al === null) return;
+      r.nota = al;
+      const l = lerConfusao(); l.push(r); gravarConfusao(l);
+      recomecar(); confirmar(document.getElementById("b-guardar"), "Guardado · recomeçado");
+    }
+    (async () => {
+      const id = new URLSearchParams(location.search).get("multi");
+      multi = id && await Alvos.ler(id);
+      if (!multi || !multi.mind) { alert("Este conjunto não existe neste telemóvel. Volta e junta os alvos."); location.href = "./"; return; }
+      N = multi.itens.length;
+      document.getElementById("h-aparelho").textContent = aparelho();
+      descobrirAparelho().then(s => { document.getElementById("h-aparelho").textContent = s; });
+      const loc = document.getElementById("h-local"); loc.textContent = "Estás em: " + (nomeLocal(lerLocal()) || "⚠ local por escolher (volta à página inicial)");
+      ligarPosicao();
+      const molduras = multi.itens.map((it, i) => {
+        const h = it.altura / it.largura;
+        return '<a-entity mindar-image-target="targetIndex: ' + i + '" id="alvo' + i + '">' +
+          '<a-plane width="1" height="' + h.toFixed(4) + '" position="0 0 0" material="color:' + CORES[i % 4] + '; opacity:.28; side:double; transparent:true"></a-plane>' +
+          '<a-text value="' + (it.alturaFoto || "alvo " + (i + 1)) + '" align="center" color="' + CORES[i % 4] + '" width="1.6" position="0 0 0.01"></a-text></a-entity>';
+      }).join("");
+      document.getElementById("cena").innerHTML =
+        '<a-scene mindar-image="imageTargetSrc: ' + urlDe(multi.mind) + '; maxTrack: ' + N + '; uiScanning: no; uiLoading: yes; uiError: yes" color-space="sRGB" renderer="colorManagement: true" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">' +
+        '<a-camera position="0 0 0" look-controls="enabled: false"></a-camera>' + molduras + '</a-scene>';
+      recomecar();
+      multi.itens.forEach((_, i) => { const e = document.getElementById("alvo" + i); e.addEventListener("targetFound", () => encontrado(i)); e.addEventListener("targetLost", () => perdido(i)); });
+      document.querySelector("a-scene").addEventListener("arReady", recomecar);
+      document.getElementById("b-recomecar").onclick = recomecar;
+      document.getElementById("b-guardar").onclick = guardar;
+      setInterval(() => { avancar(); mostrar(); }, 250);
+    })();
+  </script>
+</body>
+</html>

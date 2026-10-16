@@ -38,6 +38,11 @@ function ligarPosicao() {
   mostrar();
 }
 
+// Teste 10 · teste de confusão (multi.html): resultados à parte, uma linha por medição
+const CHAVE_CONFUSAO = "oceano-teste10-confusao";
+function lerConfusao() { try { return JSON.parse(localStorage.getItem(CHAVE_CONFUSAO)) || []; } catch (e) { return []; } }
+function gravarConfusao(l) { try { localStorage.setItem(CHAVE_CONFUSAO, JSON.stringify(l)); } catch (e) {} }
+
 function lerLocal() { try { return localStorage.getItem(CHAVE_LOCAL) || ""; } catch (e) { return ""; } }
 
 function lerResultados() {
