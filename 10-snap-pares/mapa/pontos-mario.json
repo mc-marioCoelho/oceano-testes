@@ -1,13 +1,13 @@
 {
- "descricao": "Pontos de controlo marcados pelo Mário no Illustrator (camada «Pontos P2» de malha-geometrica-mosaico.ai, 12 out. 2026), convertidos para cm do mapa (docs/calibracao/pontos-p2.mjs no oceano-trabalho). Lista curta por ponto de visão.",
+ "descricao": "Pontos de controlo marcados pelo Mário no Illustrator (camada «Pontos P2» de malha-geometrica-mosaico.ai, 12 out. 2026), convertidos para cm do mapa (docs/calibracao/pontos-p2.mjs no oceano-trabalho). Lista curta por ponto de visão. Ordem (pedido do Mário, 16 out.): do topo do mapa (o mais longe do P2) para perto; em cada fila, da esquerda para a direita (do mais longe para o mais perto, vistos do P2). «antigo»: o número na camada do .ai e na imagem da entrada 57 do DDB.",
  "P2": [
-  { "n": 1, "x": 108.5, "y": 386.3, "onde": "círculo interior do medalhão, à esquerda, onde entra na lacuna" },
-  { "n": 2, "x": 258.8, "y": 394.4, "onde": "círculo interior do medalhão, à direita, onde entra na lacuna" },
-  { "n": 3, "x": 309.26, "y": 493.41, "onde": "canto de cima, à direita, do painel de baixo (linha de cima × linha direita)" },
-  { "n": 4, "x": 309.68, "y": 560.97, "onde": "linha direita do painel de baixo, onde chega a diagonal (logo abaixo da lacuna)" },
-  { "n": 5, "x": 59.18, "y": 244.81, "onde": "linha esquerda, canto de baixo do painel de cima" },
-  { "n": 6, "x": 59.82, "y": 17.37, "onde": "linha esquerda, ponta de cima do mosaico" },
-  { "n": 7, "x": 246.27, "y": 558.91, "onde": "cruzamento no painel de baixo, à direita, logo abaixo da lacuna" },
-  { "n": 8, "x": 155.49, "y": 494.16, "onde": "linha de cima do painel de baixo, onde começa a diagonal (centro-esquerda)" }
+  { "n": 1, "antigo": 6, "x": 59.82, "y": 17.37, "onde": "linha esquerda, ponta de cima do mosaico" },
+  { "n": 2, "antigo": 5, "x": 59.18, "y": 244.81, "onde": "linha esquerda, canto de baixo do painel de cima" },
+  { "n": 3, "antigo": 1, "x": 108.5, "y": 386.3, "onde": "círculo interior do medalhão, à esquerda, onde entra na lacuna" },
+  { "n": 4, "antigo": 2, "x": 258.8, "y": 394.4, "onde": "círculo interior do medalhão, à direita, onde entra na lacuna" },
+  { "n": 5, "antigo": 8, "x": 155.49, "y": 494.16, "onde": "linha de cima do painel de baixo, onde começa a diagonal (centro-esquerda)" },
+  { "n": 6, "antigo": 3, "x": 309.26, "y": 493.41, "onde": "canto de cima, à direita, do painel de baixo (linha de cima × linha direita)" },
+  { "n": 7, "antigo": 7, "x": 246.27, "y": 558.91, "onde": "cruzamento no painel de baixo, à direita, logo abaixo da lacuna" },
+  { "n": 8, "antigo": 4, "x": 309.68, "y": 560.97, "onde": "linha direita do painel de baixo, onde chega a diagonal (logo abaixo da lacuna)" }
  ]
 }
