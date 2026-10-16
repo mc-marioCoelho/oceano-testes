@@ -373,7 +373,7 @@ const Editor = (() => {
     if (curta.length) { const xs = curta.map(p => p.x), ys = curta.map(p => p.y), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
       vm.s = Math.min(c.clientWidth / (x1 - x0 + 60), c.clientHeight / (y1 - y0 + 60)); vm.ox = (x0 + x1) / 2 - c.clientWidth / vm.s / 2; vm.oy = (y0 + y1) / 2 - c.clientHeight / vm.s / 2; }
     else { vm.s = c.clientWidth / 200; vm.ox = 185 - 100; vm.oy = 400 - c.clientHeight / vm.s / 2; }
-    if (!ctl.pares.length) proximoDaLista();
+    proximoDaLista(); // propõe sempre o próximo ponto M sem par (também num alvo com pares antigos)
     prepararLupa(alvo);
     livreMostrar(ctl.pares.length ? "Calibração anterior carregada: " + ctl.pares.length + " pares. Para corrigir um, toca nele na lista «Pares»." : "");
   }
@@ -395,6 +395,7 @@ const Editor = (() => {
     $("d-ctl-msg").innerHTML = "<strong>Pares: " + n + "</strong> (bastam 4, bem espalhados; com 5 ou mais vê-se o erro). " + passo + (extra ? "<br>" + extra : "");
     $("d-ctl-par").disabled = !(ctl.sel && ctl.toque);
     $("d-ctl-saltar").hidden = !q || ctl.escolhido !== null;
+    $("d-ctl-recomecar").hidden = !ctl.curta.length || !ctl.pares.some(p => !pontoDaLista(p.mapa));
     $("d-ctl-aplicar2").disabled = paresUsados().length < 4;
     $("d-ctl-snap").disabled = n < 4;
     // lista dos pares
@@ -465,6 +466,10 @@ const Editor = (() => {
       livreMostrar(); };
     $("d-ctl-aplicar2").onclick = () => controloAplicar();
     // um ponto da lista curta que não aparece na fotografia: passa ao seguinte
+    // pares antigos (ex.: L1–L12 do teste 09): apagá-los todos e marcar só os pontos M
+    $("d-ctl-recomecar").onclick = () => { if (!ctl || !ctl.pares.length) return;
+      if (!confirm("Apagar os " + ctl.pares.length + " pares desta calibração e recomeçar só com os pontos M?")) return;
+      ctl.pares = []; ctl.escolhido = null; ctl.toque = null; ctl.saltados.clear(); invalidarEncaixe(); proximoDaLista(); livreMostrar("Pares apagados. Marca os pontos M, um de cada vez."); };
     $("d-ctl-saltar").onclick = () => { if (!ctl || !ctl.sel) return; const q = pontoDaLista(ctl.sel); if (q) ctl.saltados.add(q.n); ctl.toque = null; proximoDaLista(); livreMostrar(q ? "M" + q.n + " saltado." : ""); };
     $("d-ctl-lista").addEventListener("click", ev => { const b = ev.target.closest("button[data-par]"); if (!b || !ctl) return;
       const i = +b.dataset.par; ctl.escolhido = ctl.escolhido === i ? null : i; ctl.toque = null; ctl.sel = null; livreMostrar(); });

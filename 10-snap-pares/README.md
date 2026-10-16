@@ -4,7 +4,7 @@ Cópia do [teste 09](../09-alvo-endireitado/) (que fica igual), para **reduzir o
 
 **O que muda em relação ao 09:**
 
-1. **Pontos do Mário (lista curta):** o mapa mostra os pontos marcados no Illustrator (camada «Pontos P2», `mapa/pontos-mario.json`) como M1, M2…, e escolhe-os um de cada vez; «Não se vê: saltar» passa ao seguinte. Os ~160 candidatos continuam disponíveis («Mostrar também os outros candidatos»).
+1. **Pontos do Mário (lista curta):** o mapa mostra os pontos marcados no Illustrator (camada «Pontos P2», `mapa/pontos-mario.json`) como M1, M2…, e escolhe-os um de cada vez; «Não se vê: saltar» passa ao seguinte. Num alvo trazido do teste 09 (com os pares antigos L1–L12), os pontos M são propostos na mesma, e «Recomeçar só com os pontos M» apaga os pares antigos. Os ~160 candidatos continuam disponíveis («Mostrar também os outros candidatos»).
 2. **Mira e lupa:** pousa-se o dedo por baixo do ponto e arrasta-se. A mira fica 70 px acima do dedo e aparece uma lupa (5×, feita da fotografia original). **Setas de 1 píxel** com uma lupa fixa.
 3. **Corrigir um par:** toca-se no par na lista «Pares» para o mover (mira ou setas), apagar ou largar. A calibração fica guardada com os pares e volta a abrir-se para corrigir, sem marcar tudo de novo.
 4. **«Encaixar nos traços» (snap, `encaixe.js`):** à volta de cada toque, a fotografia é endireitada (vista de cima, à escala do mapa) e posta por baixo de um decalque das linhas do mapa. Desliza-se o decalque até assentar nos traços escuros:
