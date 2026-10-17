@@ -1,0 +1,19 @@
+---
+---
+@import "{{ site.theme }}";
+
+/* Tema escuro do índice dos testes (17 out. 2026): as cores das páginas dos testes, em vez do fundo branco. */
+:root { color-scheme: dark; }
+body { background: #1c1917; color: #efe6d8; }
+.markdown-body, .markdown-body * { color: inherit; }
+.markdown-body { background: transparent; color: #efe6d8; }
+.markdown-body h1, .markdown-body h2, .markdown-body h3 { color: #f6eee2; border-bottom-color: #3a342f; }
+.markdown-body a { color: #e0a96d; }
+.markdown-body a:hover { color: #f2c48f; }
+.markdown-body hr { background: #3a342f; border-color: #3a342f; }
+.markdown-body table th, .markdown-body table td { border-color: #3a342f; color: #efe6d8; }
+.markdown-body table tr { background: #1c1917; border-top-color: #3a342f; }
+.markdown-body table tr:nth-child(2n) { background: #24201d; }
+.markdown-body table th { background: #2c2723; }
+.markdown-body code, .markdown-body pre { background: #2c2723; color: #efe6d8; }
+.markdown-body blockquote { color: #cfc4b4; border-left-color: #3a342f; }
