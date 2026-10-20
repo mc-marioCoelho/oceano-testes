@@ -84,7 +84,7 @@
         duracao: Math.round((performance.now() - t0) / 1000), simultPct: pct(simultMs), trocas, nenhumPct: pct(nenhumMs),
         alvos: multi.itens.map((it, i) => ({ fotoA: it.alturaFoto || "?", endireitado: it.endireitado, pct: pct(por[i].ms), primeiro: por[i].primeiro === null ? null : +por[i].primeiro.toFixed(1), perdas: por[i].perdas })),
       };
-      const al = prompt("Nota (o desenho/alvo certo era o de que altura? o que viste?):", ""); if (al === null) return;
+      const al = prompt("Vai ficar guardado como: " + textoPosicao() + ".\n(Se não for esta a tua posição, carrega em Cancelar e muda-a em «Posição».)\n\nNota (o desenho/alvo certo era o de que altura? o que viste?):", ""); if (al === null) return;
       r.nota = al;
       const l = lerConfusao(); l.push(r); gravarConfusao(l);
       recomecar(); confirmar(document.getElementById("b-guardar"), "Guardado · recomeçado");
@@ -98,15 +98,20 @@
       descobrirAparelho().then(s => { document.getElementById("h-aparelho").textContent = s; });
       const loc = document.getElementById("h-local"); loc.textContent = "Estás em: " + (nomeLocal(lerLocal()) || "⚠ local por escolher (volta à página inicial)");
       ligarPosicao();
+      // cada alvo mostra a sua barba e os seus ventos (se estiver calibrado) e uma moldura da sua cor; sem calibração, só a moldura
+      const assets = multi.itens.map((it, i) => it.desenho ? '<img id="img-d' + i + '" src="' + urlDe(it.desenho, "image/png") + '">' : "").join("");
       const molduras = multi.itens.map((it, i) => {
-        const h = it.altura / it.largura;
+        const h = it.altura / it.largura, cor = CORES[i % 4];
+        const t = 0.012, tira = (x, y, c, rot) => '<a-plane position="' + x + ' ' + y + ' 0.001" width="' + c + '" height="' + t + '"' + (rot ? ' rotation="0 0 ' + rot + '"' : '') + ' material="color:' + cor + '; shader:flat"></a-plane>';
         return '<a-entity mindar-image-target="targetIndex: ' + i + '" id="alvo' + i + '">' +
-          '<a-plane width="1" height="' + h.toFixed(4) + '" position="0 0 0" material="color:' + CORES[i % 4] + '; opacity:.28; side:double; transparent:true"></a-plane>' +
-          '<a-text value="' + (it.alturaFoto || "alvo " + (i + 1)) + '" align="center" color="' + CORES[i % 4] + '" width="1.6" position="0 0 0.01"></a-text></a-entity>';
+          '<a-plane width="1" height="' + h.toFixed(4) + '" material="color:' + cor + '; opacity:' + (it.desenho ? 0.12 : 0.3) + '; side:double; transparent:true; shader:flat"></a-plane>' +
+          tira(0, h / 2, 1) + tira(0, -h / 2, 1) + tira(-0.5, 0, h, 90) + tira(0.5, 0, h, 90) +
+          (it.desenho ? '<a-plane width="1" height="' + h.toFixed(4) + '" position="0 0 0.002" material="src: #img-d' + i + '; transparent: true; alphaTest: 0.01; shader: flat; side: double"></a-plane>' : "") +
+          '<a-text value="' + (it.alturaFoto || "alvo " + (i + 1)) + (it.desenho ? "" : " · sem calibração") + '" align="center" color="' + cor + '" width="1.4" position="0 ' + (h / 2 + 0.05).toFixed(3) + ' 0.01"></a-text></a-entity>';
       }).join("");
       document.getElementById("cena").innerHTML =
         '<a-scene mindar-image="imageTargetSrc: ' + urlDe(multi.mind) + '; maxTrack: ' + N + '; uiScanning: no; uiLoading: yes; uiError: yes" color-space="sRGB" renderer="colorManagement: true" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">' +
-        '<a-camera position="0 0 0" look-controls="enabled: false"></a-camera>' + molduras + '</a-scene>';
+        '<a-assets>' + assets + '</a-assets><a-camera position="0 0 0" look-controls="enabled: false"></a-camera>' + molduras + '</a-scene>';
       recomecar();
       multi.itens.forEach((_, i) => { const e = document.getElementById("alvo" + i); e.addEventListener("targetFound", () => encontrado(i)); e.addEventListener("targetLost", () => perdido(i)); });
       document.querySelector("a-scene").addEventListener("arReady", recomecar);

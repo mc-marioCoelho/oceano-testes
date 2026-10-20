@@ -26,9 +26,12 @@ function ligarPosicao() {
   const b = document.getElementById("b-posicao"); if (!b) return;
   const painel = document.createElement("div"); painel.className = "posicao"; painel.hidden = true;
   const linha = (titulo, lista, campo) => '<p>' + titulo + '</p><div>' + lista.map(v => '<button type="button" data-campo="' + campo + '" data-v="' + v + '">' + v + '</button>').join("") + '</div>';
-  painel.innerHTML = linha("Altura do telemóvel (acima do passadiço)", ALTURAS, "altura") + linha("Passo (ao longo do corrimão, a partir do ponto da fotografia)", PASSOS, "passo") + '<p><button type="button" data-fechar>✓ Pronto</button></p>';
+  painel.innerHTML = '<p><strong>Este botão não te mexe.</strong> Primeiro põe-te na posição (a altura do telemóvel e o passo); depois diz aqui onde estás. Fica registado com cada «Guardar resultado» e cada «Fotografar a RA».</p>' +
+    linha("Altura do telemóvel (acima do passadiço)", ALTURAS, "altura") +
+    linha("Passo: quantos passos deste ao longo do corrimão, a partir do ponto onde tiraste a fotografia (← esquerda e → direita de quem olha para o mosaico)", PASSOS, "passo") +
+    '<p><button type="button" data-fechar>✓ Pronto</button></p>';
   document.body.appendChild(painel);
-  const mostrar = () => { const p = lerPosicao(); b.textContent = "Posição: " + p.altura + " · " + p.passo;
+  const mostrar = () => { const p = lerPosicao(); b.textContent = "Posição: " + p.altura + " · " + p.passo + " (mudar)";
     painel.querySelectorAll("button[data-campo]").forEach(x => x.classList.toggle("ativo", p[x.dataset.campo] === x.dataset.v));
     const el = document.getElementById("h-local"); if (el) el.dataset.posicao = textoPosicao(); };
   b.onclick = () => { painel.hidden = !painel.hidden; mostrar(); };
@@ -207,7 +210,7 @@ const Medicao = {
 
   guardar() {
     const r = this.resumo();
-    const al = prompt("Alinhamento do desenho com o mosaico real (olha para os pontos amarelos e para o bordo da lacuna):\n1 = certo · 2 = ligeiro (até 2 cm) · 3 = visível (2–5 cm) · 4 = mau (mais de 5 cm)\nVazio = não avaliado", "");
+    const al = prompt("Vai ficar guardado como: " + textoPosicao() + ".\n(Se não for esta a tua posição, carrega em Cancelar e muda-a em «Posição».)\n\nAlinhamento do desenho com o mosaico real (olha para os pontos amarelos e para o bordo da lacuna):\n1 = certo · 2 = ligeiro (até 2 cm) · 3 = visível (2–5 cm) · 4 = mau (mais de 5 cm)\nVazio = não avaliado", "");
     if (al === null) return; // «Cancelar» não guarda
     r.alinhamento = ({ "1": "1 certo", "2": "2 ligeiro (até 2 cm)", "3": "3 visível (2–5 cm)", "4": "4 mau (mais de 5 cm)" })[al.trim()] || "";
     const nota = prompt("Nota (para que lado fugiu? fica parado ou dança? o que acontece quando te mexes para os lados? lê-se bem?):", "");

@@ -72,9 +72,7 @@ function htmlObjetos(a, W, H) {
   const mat = cor => 'material="color:' + cor + '; opacity:0.65; transparent:true; roughness:0.6" shadow="cast:true; receive:false"';
   let obj;
   if (!a.pontos || !a.pontos.length) {
-    if (a.desenho) return ""; // com desenho, não há cubo (tapava o desenho)
-    const s = 0.3 * m;
-    obj = '<a-box width="' + n3(s) + '" height="' + n3(s) + '" depth="' + n3(s) + '" position="0 0 ' + n3(s / 2) + '" ' + mat("#ffb000") + '></a-box>';
+    return ""; // teste 10: sem cubo. Com calibração mostra-se a barba e os ventos (htmlDesenho); sem ela, só a moldura.
   } else {
     const s = 0.2 * m;
     obj = a.pontos.map((p, i) => {
@@ -161,6 +159,8 @@ function ligarBotoesDesenho(a) {
   let i = 0;
   const estado = () => !a.desenho ? "sem desenho" : NIVEIS[i] ? Math.round(NIVEIS[i] * 100) + " %" : "escondido";
   Medicao.estadoDesenho = estado;
+  const aviso = document.getElementById("h-aviso");
+  if (aviso) aviso.textContent = a.desenho ? "" : "Este alvo ainda não está calibrado: só se vê a moldura amarela. Calibra-o na página inicial (passo 4) para veres a barba e os ventos.";
   if (!a.desenho) { bd.hidden = true; }
   else bd.onclick = () => {
     i = (i + 1) % NIVEIS.length;

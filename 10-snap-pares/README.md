@@ -33,3 +33,11 @@ Cópia do [teste 09](../09-alvo-endireitado/) (que fica igual), para **reduzir o
 - **Por confirmar no telemóvel:** o tempo do snap (no PC são 6 s; no Pixel deve andar pelos 10 a 30 s) e a mira com o dedo a sério.
 
 **Observação da sala:** dentro da lacuna central, as linhas dos círculos e do painel estão pintadas na argamassa pelo restauro. Por isso, os pontos «onde a linha entra na lacuna» não são cruzamentos: o snap só os acerta de lado.
+
+## Ajustes de 20 out. (feedback do Mário depois da 1.ª utilização)
+
+- **RA sem cubo:** um alvo sem calibração mostra só a moldura amarela e o aviso «ainda não está calibrado»; um alvo calibrado mostra a barba e os ventos (como no teste 09). No teste de confusão, cada alvo mostra o seu desenho (ou «sem calibração») e uma moldura da sua cor.
+- **«Confirmar par» à vista:** o botão verde (que pulsa quando há um ponto por confirmar) está logo por cima da fotografia, com um aviso do passo seguinte («3) Falta carregar em ✓ Confirmar par»). Opção «Confirmar sozinho quando levanto o dedo».
+- **Fotografia a 1×:** com 4 pares, a página prevê que pontos M caem fora da fotografia e salta-os (ficam a cinzento no mapa); «Sugerir pontos que caem dentro da fotografia» mostra a verde, no mapa, os cruzamentos que se veem.
+- **«Posição»:** explica que não te mexe (primeiro pões-te na posição, depois dizes onde estás); o botão mostra a posição atual; o «Guardar resultado» repete-a e deixa cancelar se estiver errada.
+- **Recorte:** o texto da página diz que o polígono só serve para tirar o que não interessa e não corrige a perspetiva. Ao calibrar, há uma explicação em 3 passos.

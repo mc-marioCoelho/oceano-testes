@@ -356,7 +356,7 @@ const Editor = (() => {
     const curta = (pontosMario && pontosMario[alvo.local]) || [];
     ctl = { livre: true, z: { id: "livre", nome: "pontos à escolha", pontos: [], pecas: mapa.zonas.flatMap(z => z.pecas) },
       pares: [], sel: null, toque: null, mira: null, escolhido: null, H: null, previa: null, automaticos: [], encaixe: null,
-      curta, todos: !curta.length, verMalha: false, saltados: new Set() };
+      curta, todos: !curta.length, verMalha: false, saltados: new Set(), sugerir: false, foraAuto: new Set() };
     // calibração já feita neste alvo: os pares voltam, para se corrigir só o que estiver mal
     const cm = alvo.controloMapa;
     if (cm && cm.zona === "livre" && !cm.endireitado && cm.pontos) {
@@ -364,7 +364,7 @@ const Editor = (() => {
       ctl.automaticos = (cm.automaticos || []).map(p => ({ mapa: p.mapa, foto: p.recorte }));
       ctl.encaixe = cm.encaixe || null;
     }
-    $("d-ctl-todos").checked = ctl.todos; $("d-ctl-malha").checked = false;
+    $("d-ctl-todos").checked = ctl.todos; $("d-ctl-malha").checked = false; $("d-ctl-sugerir").checked = false;
     $("d-ctl-livre").hidden = false; $("d-ctl-baixo").hidden = false; $("d-snap").hidden = true;
     ferramentaAntes = ferramenta; mudarFerramenta("mira");
     const c = $("d-ctl-mapa"), r = window.devicePixelRatio || 1;
@@ -378,8 +378,23 @@ const Editor = (() => {
     livreMostrar(ctl.pares.length ? "Calibração anterior carregada: " + ctl.pares.length + " pares. Para corrigir um, toca nele na lista «Pares»." : "");
   }
   // escolhe sozinho o ponto seguinte da lista curta que ainda não tem par
+  // Com 4 ou mais pares, a perspetiva provisória diz onde cada ponto do mapa deve cair na fotografia.
+  // A 1× nem todos os pontos M se veem (os de cima e os de baixo ficam fora): saltam-se sozinhos e sugerem-se outros.
+  function hPrevisao() { const p = paresUsados(); return p.length >= 4 ? Encaixe.homografia(p.map(q => q.mapa), p.map(q => q.foto)) : null; }
+  function dentroDaFoto(m, Hp) {
+    if (!Hp) return null;
+    const w = Hp[2][0] * m[0] + Hp[2][1] * m[1] + Hp[2][2]; if (w <= 0) return false;
+    const [x, y] = Encaixe.aplica(Hp, m);
+    return x > 0.03 * W && x < 0.97 * W && y > 0.03 * H && y < 0.97 * H;
+  }
   function proximoDaLista() {
-    const livre = ctl.curta.find(q => !ctl.saltados.has(q.n) && !ctl.pares.some(p => Math.hypot(p.mapa[0] - q.x, p.mapa[1] - q.y) < 0.5));
+    const Hp = hPrevisao(); ctl.foraAuto = new Set();
+    let livre = null;
+    for (const q of ctl.curta) {
+      if (ctl.saltados.has(q.n) || ctl.pares.some(p => Math.hypot(p.mapa[0] - q.x, p.mapa[1] - q.y) < 0.5)) continue;
+      if (Hp && dentroDaFoto([q.x, q.y], Hp) === false) { ctl.foraAuto.add(q.n); continue; }
+      if (!livre) livre = q;
+    }
     ctl.sel = livre ? [livre.x, livre.y] : null;
   }
   const pontoDaLista = m => ctl.curta.find(q => Math.hypot(m[0] - q.x, m[1] - q.y) < 0.5);
@@ -392,6 +407,13 @@ const Editor = (() => {
     else if (!ctl.sel) passo = n >= 4 ? "Podes «Encaixar nos traços» ou juntar mais pares (toca num ponto do mapa)." : "1) Toca num ponto do <strong>mapa</strong> que vês na fotografia.";
     else if (!ctl.toque) passo = "2) Na <strong>fotografia</strong>, pousa o dedo por baixo do " + (q ? "<strong>ponto M" + q.n + "</strong> (" + q.onde + ")" : "ponto escolhido") + " e arrasta até a mira vermelha ficar no sítio; levanta o dedo. (Se não o vês na fotografia, toca noutro ponto do mapa.)";
     else passo = "3) Afina com as setas, se for preciso, e «Confirmar par».";
+    const fora = ctl.foraAuto && ctl.foraAuto.size ? [...ctl.foraAuto].map(k => "M" + k).join(", ") + " provavelmente fora da fotografia (saltados sozinhos; se os vês, toca neles no mapa). " : "";
+    let banner;
+    if (ctl.escolhido !== null) banner = "A corrigir o par " + rotulo(ctl.pares[ctl.escolhido], ctl.escolhido) + ": arrasta a mira na fotografia ou usa as setas. Depois «Largar».";
+    else if (!ctl.sel) banner = n >= 4 ? "Tens " + n + " pares. " + fora + "Podes juntar mais (toca num ponto do mapa, em cima; ativa «Sugerir pontos dentro da fotografia») ou carregar em «Encaixar nos traços»." : "1) Toca num ponto do mapa (em cima). Marca primeiro os que vês bem na fotografia.";
+    else if (!ctl.toque) banner = "2) Na fotografia, pousa o dedo por baixo do " + (q ? "ponto M" + q.n + " (" + q.onde + ")" : "ponto escolhido") + " e arrasta a mira até ao sítio; levanta o dedo. " + fora;
+    else banner = "3) Falta carregar em ✓ CONFIRMAR PAR (botão verde, aqui em cima). Sem isso, o ponto não fica guardado.";
+    $("d-passo").textContent = banner;
     $("d-ctl-msg").innerHTML = "<strong>Pares: " + n + "</strong> (bastam 4, bem espalhados; com 5 ou mais vê-se o erro). " + passo + (extra ? "<br>" + extra : "");
     $("d-ctl-par").disabled = !(ctl.sel && ctl.toque);
     $("d-ctl-saltar").hidden = !q || ctl.escolhido !== null;
@@ -415,12 +437,16 @@ const Editor = (() => {
     const linha = (lista, cor, fundo) => { for (const l of lista) { g.beginPath(); l.forEach(([x, y], i) => { const [a, b] = q(x, y); i ? g.lineTo(a, b) : g.moveTo(a, b); });
       if (fundo) { g.fillStyle = fundo; g.fill(); } g.strokeStyle = cor; g.lineWidth = 1; g.stroke(); } };
     linha(malhaMapa.lacunas, "#7aa0ff", "rgba(0,80,255,.12)"); linha(malhaMapa.malha, "#2b2622"); linha(malhaMapa.denteado, "#2b2622", "rgba(43,38,34,.25)"); linha(malhaMapa.peltas, "#b5651d");
+    const Hp = (ctl.sugerir || (ctl.foraAuto && ctl.foraAuto.size)) ? hPrevisao() : null;
+    if (ctl.sugerir && Hp) for (const [x, y, e] of candidatos) { if (e || !dentroDaFoto([x, y], Hp)) continue; const [a, b] = q(x, y); if (a < -5 || b < -5 || a > w + 5 || b > h + 5) continue;
+      g.beginPath(); g.arc(a, b, 7, 0, 2 * Math.PI); g.strokeStyle = "#1f8a4c"; g.lineWidth = 2.5; g.stroke(); g.beginPath(); g.arc(a, b, 2.5, 0, 2 * Math.PI); g.fillStyle = "#1f8a4c"; g.fill(); }
     if (ctl.todos) for (const [x, y, e] of candidatos) { const [a, b] = q(x, y); if (a < -5 || b < -5 || a > w + 5 || b > h + 5) continue;
       g.beginPath(); g.arc(a, b, 4, 0, 2 * Math.PI); g.fillStyle = e ? "rgba(255,23,68,.45)" : "rgba(0,0,0,.35)"; g.fill(); }
     // lista curta (pontos do Mário): grandes e numerados
     for (const p of ctl.curta) { const [a, b] = q(p.x, p.y), usado = ctl.pares.some(z => Math.hypot(z.mapa[0] - p.x, z.mapa[1] - p.y) < 0.5);
-      g.beginPath(); g.arc(a, b, 8, 0, 2 * Math.PI); g.fillStyle = usado ? "#1f8a4c" : "#ff8f00"; g.fill(); g.strokeStyle = "#fff"; g.lineWidth = 2; g.stroke();
-      g.fillStyle = "#2b2622"; g.font = "bold 13px system-ui"; g.fillText("M" + p.n, a + 10, b - 6); }
+      const fora = ctl.foraAuto && ctl.foraAuto.has(p.n);
+      g.beginPath(); g.arc(a, b, 8, 0, 2 * Math.PI); g.fillStyle = usado ? "#1f8a4c" : fora ? "#bbb" : "#ff8f00"; g.fill(); g.strokeStyle = "#fff"; g.lineWidth = 2; g.stroke();
+      g.fillStyle = "#2b2622"; g.font = "bold 13px system-ui"; g.fillText("M" + p.n + (fora ? " (fora?)" : ""), a + 10, b - 6); }
     ctl.pares.forEach((p, i) => { if (pontoDaLista(p.mapa)) return; const [a, b] = q(p.mapa[0], p.mapa[1]); g.beginPath(); g.arc(a, b, 7, 0, 2 * Math.PI); g.fillStyle = "#1f8a4c"; g.fill();
       g.fillStyle = "#2b2622"; g.font = "bold 13px system-ui"; g.fillText(rotulo(p, i), a + 8, b - 6); });
     for (const p of ctl.automaticos || []) { const [a, b] = q(p.mapa[0], p.mapa[1]); g.beginPath(); g.arc(a, b, 3, 0, 2 * Math.PI); g.fillStyle = "#00acc1"; g.fill(); }
@@ -432,7 +458,7 @@ const Editor = (() => {
     if (!ctl || !ctl.livre) return;
     if (ctl.previa) { ctl.previa = null; $("d-snap").hidden = true; }
     if (ctl.escolhido !== null) { const par = ctl.pares[ctl.escolhido]; par.foto = p; par.info = null; par.usar = true; invalidarEncaixe(); }
-    else ctl.toque = p;
+    else { ctl.toque = p; if ($("d-ctl-auto").checked && ctl.sel) { $("d-ctl-par").onclick(); return; } }
     livreMostrar();
   }
   function ajustar(dx, dy) {
@@ -449,7 +475,8 @@ const Editor = (() => {
       if (Math.hypot(dx, dy) > 6) ini.mexeu = true; if (ini.mexeu) { vm.ox = ini.ox - dx / vm.s; vm.oy = ini.oy - dy / vm.s; pintarMapa(); } });
     c.addEventListener("pointerup", ev => { if (!ini) return; const mexeu = ini.mexeu; ini = null; if (mexeu || !ctl || !ctl.livre) return;
       const b = c.getBoundingClientRect(), x = vm.ox + (ev.clientX - b.left) / vm.s, y = vm.oy + (ev.clientY - b.top) / vm.s;
-      const lista = ctl.curta.map(p => [p.x, p.y]).concat(ctl.todos ? candidatos : []);
+      const Hp = ctl.sugerir ? hPrevisao() : null;
+      const lista = ctl.curta.map(p => [p.x, p.y]).concat(ctl.todos ? candidatos : (Hp ? candidatos.filter(c => !c[2] && dentroDaFoto(c, Hp)) : []));
       let melhor = null, dm = 24 / vm.s; for (const p of lista) { const d = Math.hypot(p[0] - x, p[1] - y); if (d < dm) { dm = d; melhor = p; } }
       if (melhor) { ctl.escolhido = null; ctl.sel = [melhor[0], melhor[1]]; livreMostrar(); } });
     c.addEventListener("pointercancel", () => { ini = null; });
@@ -477,6 +504,11 @@ const Editor = (() => {
     $("d-ctl-largar").onclick = () => { if (!ctl) return; ctl.escolhido = null; if (!ctl.sel) proximoDaLista(); livreMostrar(); };
     $("d-ctl-incluir").onclick = () => { if (!ctl || ctl.escolhido === null) return; ctl.pares[ctl.escolhido].usar = true; ctl.H = null; livreMostrar(); };
     $("d-ctl-todos").onchange = ev => { if (ctl) { ctl.todos = ev.target.checked; pintarMapa(); } };
+    $("d-ctl-sugerir").onchange = ev => { if (!ctl) return;
+      if (ev.target.checked && !hPrevisao()) { ev.target.checked = false; livreMostrar("Para sugerir pontos precisas de pelo menos 4 pares confirmados."); return; }
+      ctl.sugerir = ev.target.checked; livreMostrar(); };
+    try { $("d-ctl-auto").checked = localStorage.getItem("oceano-teste10-auto") === "1"; } catch (e) {}
+    $("d-ctl-auto").onchange = ev => { try { localStorage.setItem("oceano-teste10-auto", ev.target.checked ? "1" : "0"); } catch (e) {} };
     $("d-ctl-malha").onchange = ev => { if (ctl) { ctl.verMalha = ev.target.checked; pintar(); } };
     $("d-ctl-modo").addEventListener("click", ev => { const b = ev.target.closest("button[data-modo]"); if (b && ctl) mudarFerramenta(b.dataset.modo === "mira" ? "mira" : "controlo"); });
     for (const [id, dx, dy] of [["d-seta-cima", 0, -1], ["d-seta-baixo", 0, 1], ["d-seta-esq", -1, 0], ["d-seta-dir", 1, 0]]) $(id).onclick = () => ajustar(dx, dy);

@@ -33,6 +33,7 @@
     <p class="sub"><label>Altura do telemóvel nesta fotografia (acima do passadiço):
       <select id="altura-foto"><option value="">por indicar</option><option>1,0 m</option><option selected>1,25 m</option><option>1,5 m</option><option>outra</option></select></label></p>
     <div id="recorte" hidden>
+      <p class="nota"><strong>Para que serve o recorte:</strong> só para <em>tirar o que não interessa</em> (passadiço, corrimão, paredes). <strong>Não corrige a perspetiva</strong> e não é preciso desenhar um quadrado «endireitado»: contorna o mosaico tal como o vês na fotografia (em perspetiva, por isso um trapézio ou um polígono). O que fica fora é pintado com a cor média. A perspetiva é calculada depois, no passo 4, a partir dos pares de pontos.</p>
       <p class="sub">Recorta só a parte do mosaico que interessa (sem passadiço nem corrimão). Da mesma fotografia podes criar vários alvos: depois de criar um, recorta outra parte e carrega outra vez em «Criar alvo» (por exemplo, o mosaico inteiro e só a inscrição).</p>
       <div class="formas" id="formas">
         <label><input type="radio" name="forma" value="retangulo" checked>Retângulo</label>
@@ -76,6 +77,7 @@
 
     <div id="desenho" class="desenho so-calibrar" hidden>
       <h2>4. Calibrar · <span id="d-titulo"></span></h2>
+      <p class="nota"><strong>Como se calibra:</strong> dizes à página que ponto do <em>mapa</em> (em cima) é que ponto da <em>fotografia</em> (em baixo). São <strong>pares</strong>: bastam 4, bem espalhados, e quantos mais bons melhor. Para cada par: (1) o mapa propõe um ponto; (2) na fotografia, pousa o dedo por baixo do mesmo sítio e arrasta a mira; (3) <strong>✓ Confirmar par</strong>. No fim, «Encaixar nos traços» e «Colocar o desenho».</p>
       <p class="sub">Primeiro escolhe um ponto no mapa (os teus pontos M1, M2… vêm já escolhidos, um de cada vez), depois marca o mesmo sítio na fotografia com a mira e «Confirmar par». A calibração grava sozinha ao colocar o desenho.</p>
       <div class="d-barra" id="d-ferramentas">
         <button type="button" data-f="pincel">✎ Pincel</button>
@@ -105,10 +107,18 @@
             <div class="d-ctl-mapa-zoom"><button type="button" id="d-ctl-mapa-mais">+</button><button type="button" id="d-ctl-mapa-menos">−</button></div></div>
           <p class="sub">Mapa: arrasta para deslizar, «+»/«−» para ampliar, toca num ponto para o escolher. Laranja: os teus pontos (M1, M2…) ainda sem par; verde: já com par.</p>
           <p class="sub"><label><input type="checkbox" id="d-ctl-todos"> Mostrar também os outros candidatos (~160)</label></p>
+          <p class="sub"><label><input type="checkbox" id="d-ctl-sugerir"> Sugerir pontos que caem <strong>dentro da fotografia</strong> (aparecem a verde no mapa; precisa de 4 pares). Com a foto a 1× nem todos os pontos M se veem: marca primeiro os que vês e escolhe depois os verdes.</label></p>
         </div>
       </div>
       <div class="d-caixa" id="d-caixa"><canvas id="d-tela"></canvas></div>
       <div class="d-ctl" id="d-ctl-baixo" hidden>
+        <p class="passo-banner" id="d-passo"></p>
+        <div class="d-barra d-confirmar">
+          <button type="button" id="d-ctl-par" disabled>✓ Confirmar par</button>
+          <button type="button" id="d-ctl-saltar" hidden>Não se vê: saltar</button>
+          <button type="button" id="d-ctl-par-desfazer">Desfazer</button>
+        </div>
+        <p class="sub"><label><input type="checkbox" id="d-ctl-auto"> Confirmar sozinho quando levanto o dedo (depois corrijo com as setas, tocando no par na lista)</label></p>
         <div class="d-barra" id="d-ctl-modo">
           <button type="button" data-modo="mira" class="ativo">⌖ Marcar com mira</button>
           <button type="button" data-modo="deslizar">✥ Deslizar a fotografia</button>
@@ -123,11 +133,6 @@
             <button type="button" id="d-seta-baixo" aria-label="1 píxel para baixo">↓</button>
           </div>
           <p class="sub">Setas: 1 píxel de cada vez (o ponto por confirmar ou o par escolhido).</p>
-        </div>
-        <div class="d-barra">
-          <button type="button" id="d-ctl-par" disabled>Confirmar par</button>
-          <button type="button" id="d-ctl-saltar" hidden>Não se vê: saltar</button>
-          <button type="button" id="d-ctl-par-desfazer">Desfazer</button>
         </div>
         <p><button type="button" class="botao claro" id="d-ctl-recomecar" hidden>Recomeçar só com os pontos M</button></p>
         <p class="sub">Pares (toca num para o corrigir; ✓ cruzamento, ↔ linha, ? duvidoso, ✗ fora do cálculo):</p>
@@ -565,7 +570,7 @@
         const mind = await c.exportData();
         const agora = new Date(), id = "multi-" + agora.getTime();
         await Alvos.gravar({ id, multi: true, criado: agora.getTime(), nome: "Conjunto de " + itens.length + " alvos · " + agora.toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" }),
-          mind, itens: itens.map(a => ({ id: a.id, nome: a.nome, alturaFoto: a.alturaFoto || "", largura: a.largura, altura: a.altura, endireitado: !!a.endireitadoDe })), tMind: segundos(t0) });
+          mind, itens: itens.map(a => ({ id: a.id, nome: a.nome, alturaFoto: a.alturaFoto || "", largura: a.largura, altura: a.altura, endireitado: !!a.endireitadoDe, desenho: a.desenho || null })), tMind: segundos(t0) });
         est.textContent = "✓ Conjunto criado em " + segundos(t0) + " s. Carrega em «Testar».";
         await mostrarAlvos();
       } catch (e) { est.textContent = "Não foi possível juntar: " + e.message; }

@@ -148,3 +148,9 @@ button:disabled { opacity: .5; }
 .hud table.conf td, .hud table.conf th { padding: 1px 6px; text-align: left; font-weight: normal; }
 .hud table.conf tr.visivel td { color: #6be09a; font-weight: 700; }
 .hud .alerta { color: #ff8a80; font-weight: 700; }
+
+/* Teste 10 (feedback do Mário, 20 out.): passo à vista, «Confirmar par» óbvio */
+.passo-banner { background: #fff3cd; color: #2b2622; border-radius: 8px; padding: 8px 10px; margin: 0 0 8px; font-size: .95rem; font-weight: 600; }
+.d-confirmar button { font-size: 1.05rem; padding: 10px 16px; }
+#d-ctl-par:not(:disabled) { background: #1f8a4c; color: #fff; border-color: #1f8a4c; animation: pulsar 1.3s ease-in-out infinite; }
+@keyframes pulsar { 0%, 100% { box-shadow: 0 0 0 0 rgba(31,138,76,.55); } 50% { box-shadow: 0 0 0 9px rgba(31,138,76,0); } }
