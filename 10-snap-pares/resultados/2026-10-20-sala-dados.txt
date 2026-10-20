@@ -1,0 +1,8 @@
+Quando	Motor	Alvo	Fotografado em	Testado em	Altura	Passo	Aparelho	1.º rec. (s)	Perdas	% rec.	Duração (s)	Tremor 5 s (px)	Tremor 2 s (px)	Tremor 5 s (cm)	Desenho na RA	Estabilização	Alinhamento	Nota
+20/10/2026, 17:29:19	MindAR	P2 · foto 17:24	P2 · passadiço direito (amarelo), na diagonal → Oceano	P2 · passadiço direito (amarelo), na diagonal → Oceano	1,25 m	no ponto	Pixel 9a · Android 17		0	100	64	1.6	0.3		sem desenho	normal		
+20/10/2026, 17:29:52	MindAR	P2 · foto 17:24	P2 · passadiço direito (amarelo), na diagonal → Oceano	P2 · passadiço direito (amarelo), na diagonal → Oceano	1,25 m	2 passos ←	Pixel 9a · Android 17		1	87	30	1.7	2.2		sem desenho	normal		
+20/10/2026, 17:31:19	Zappar	P2 · foto 17:24	P2 · passadiço direito (amarelo), na diagonal → Oceano	P2 · passadiço direito (amarelo), na diagonal → Oceano	1,25 m	2 passos ←	Pixel 9a · Android 17	0.7	1	98	55	0.2	0		sem desenho	—		
+20/10/2026, 17:39:05	MindAR	P2 · foto 17:24	P2 · passadiço direito (amarelo), na diagonal → Oceano	P2 · passadiço direito (amarelo), na diagonal → Oceano	1,0 m	2 passos →	Pixel 9a · Android 17	0.5	2	83	73	0.3	0.9		sem desenho	forte		
+
+Alvo	Fotografado em	Largura × altura (px)	Criação MindAR (s)	Criação Zappar (s)	Lente	Calibração	Fotografia original	Recorte na original (x, y, largura, altura)	Forma do recorte	Pontos marcados	Desenho	Erros
+P2 · foto 17:24	P2 · passadiço direito (amarelo), na diagonal → Oceano	1024 × 864	14.9	17.5	4,53 mm · 1×	—	foto-1792513356804.jpg	19, 1199, 2981, 2515	polígono		—	

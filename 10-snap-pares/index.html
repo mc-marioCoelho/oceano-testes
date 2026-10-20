@@ -944,7 +944,7 @@
         const fich = [
           [sessao + "/resultados.txt", new Blob([texto()], { type: "text/plain" })],
           [sessao + "/resultados.json", new Blob([JSON.stringify({ enviado: agora.toISOString(), aparelho: aparelho(), resultados: lerResultados(), confusao: lerConfusao(),
-            alvos: lista.map(a => ({ id: a.id, nome: a.nome, local: a.local, largura: a.largura, altura: a.altura, tMind: a.tMind, tZpt: a.tZpt, fotoId: a.fotoId, recorte: a.recorte, forma: a.forma || null, lente: a.lente || null, pontos: a.pontos || [], desenho: a.desenhoInfo || null, controloMapa: a.controloMapa || null, erros: a.erros })) }, null, 1)], { type: "application/json" })],
+            alvos: lista.map(a => ({ id: a.id, nome: a.nome, local: a.local, largura: a.largura, altura: a.altura, tMind: a.tMind, tZpt: a.tZpt, fotoId: a.fotoId, recorte: a.recorte, forma: a.forma || null, lente: a.lente || null, alturaFoto: a.alturaFoto || "", pontos: a.pontos || [], desenho: a.desenhoInfo || null, controloMapa: a.controloMapa || null, erros: a.erros })) }, null, 1)], { type: "application/json" })],
         ];
         if (document.getElementById("gh-pagina").checked) {
           ghEstado.textContent = "A fazer a imagem da página…";

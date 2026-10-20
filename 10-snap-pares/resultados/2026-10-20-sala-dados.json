@@ -1,0 +1,141 @@
+{
+ "enviado": "2026-10-20T17:49:58.291Z",
+ "aparelho": "Pixel 9a · Android 17",
+ "resultados": [
+  {
+   "quando": "20/10/2026, 17:29:19",
+   "motor": "MindAR",
+   "alvo": "P2 · foto 17:24",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "local": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "altura": "1,25 m",
+   "passo": "no ponto",
+   "primeiro": null,
+   "perdas": 0,
+   "pctReconhecido": 100,
+   "duracao": 64,
+   "tremor2s": 0.3,
+   "tremor5s": 1.6,
+   "tremor5cm": null,
+   "desenho": "sem desenho",
+   "estab": "normal",
+   "alinhamento": "",
+   "nota": ""
+  },
+  {
+   "quando": "20/10/2026, 17:29:52",
+   "motor": "MindAR",
+   "alvo": "P2 · foto 17:24",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "local": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "altura": "1,25 m",
+   "passo": "2 passos ←",
+   "primeiro": null,
+   "perdas": 1,
+   "pctReconhecido": 87,
+   "duracao": 30,
+   "tremor2s": 2.2,
+   "tremor5s": 1.7,
+   "tremor5cm": null,
+   "desenho": "sem desenho",
+   "estab": "normal",
+   "alinhamento": "",
+   "nota": ""
+  },
+  {
+   "quando": "20/10/2026, 17:31:19",
+   "motor": "Zappar",
+   "alvo": "P2 · foto 17:24",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "local": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "altura": "1,25 m",
+   "passo": "2 passos ←",
+   "primeiro": 0.7,
+   "perdas": 1,
+   "pctReconhecido": 98,
+   "duracao": 55,
+   "tremor2s": 0,
+   "tremor5s": 0.2,
+   "tremor5cm": null,
+   "desenho": "sem desenho",
+   "estab": "—",
+   "alinhamento": "",
+   "nota": ""
+  },
+  {
+   "quando": "20/10/2026, 17:39:05",
+   "motor": "MindAR",
+   "alvo": "P2 · foto 17:24",
+   "aparelho": "Pixel 9a · Android 17",
+   "fotografado": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "local": "P2 · passadiço direito (amarelo), na diagonal → Oceano",
+   "altura": "1,0 m",
+   "passo": "2 passos →",
+   "primeiro": 0.5,
+   "perdas": 2,
+   "pctReconhecido": 83,
+   "duracao": 73,
+   "tremor2s": 0.9,
+   "tremor5s": 0.3,
+   "tremor5cm": null,
+   "desenho": "sem desenho",
+   "estab": "forte",
+   "alinhamento": "",
+   "nota": ""
+  }
+ ],
+ "confusao": [],
+ "alvos": [
+  {
+   "id": "P2-1792513451348",
+   "nome": "P2 · foto 17:24",
+   "local": "P2",
+   "largura": 1024,
+   "altura": 864,
+   "tMind": 14.9,
+   "tZpt": 17.5,
+   "fotoId": "1792513356804",
+   "recorte": [
+    19,
+    1199,
+    2981,
+    2515
+   ],
+   "forma": {
+    "tipo": "poligono",
+    "pts": [
+     [
+      0.4995,
+      0
+     ],
+     [
+      1,
+      0.0646
+     ],
+     [
+      0.6905,
+      1
+     ],
+     [
+      0,
+      0.6313
+     ],
+     [
+      0.0409,
+      0.2656
+     ]
+    ]
+   },
+   "lente": {
+    "mm": 4.53
+   },
+   "pontos": [],
+   "desenho": null,
+   "controloMapa": null,
+   "erros": []
+  }
+ ]
+}
