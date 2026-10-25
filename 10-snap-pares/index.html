@@ -150,7 +150,7 @@
         <p class="sub"><label><input type="checkbox" id="d-ctl-malha"> Ver a malha do mapa sobre a fotografia (ciano: se assenta nos traços, a calibração está boa)</label></p>
         <div class="d-barra">
           <button type="button" id="d-ctl-snap" disabled>Encaixar nos traços («snap»)</button>
-          <button type="button" id="d-ctl-aplicar2" disabled>Colocar o desenho do mapa</button>
+          <button type="button" id="d-ctl-aplicar2" disabled>Colocar o desenho (sem snap)</button>
         </div>
         <p class="sub" id="d-ctl-feedback" role="status" hidden></p>
         <div id="d-snap" class="d-snap" hidden>
@@ -781,7 +781,7 @@
       const res = [COLS.map(c => c[1]).join("\t")].concat(lerResultados().map(r => COLS.map(c => r[c[0]] ?? "").join("\t")));
       const cal = a => { const c = a.controloMapa; if (!c || c.endireitado) return "—"; const e = c.encaixe;
         return (c.pontos || []).filter(p => p.recorte).length + " pares" + (c.automaticos && c.automaticos.length ? " + " + c.automaticos.length + " do snap" : "") +
-          " · erro " + (c.erroCm ?? "—") + " cm · val. cruzada " + (c.looCm ?? "—") + " cm" + (e ? " · snap: val. cruzada " + (e.antes.loo == null ? "—" : e.antes.loo.toFixed(1)) + " → " + (e.depois.looPares == null ? "—" : e.depois.looPares.toFixed(1)) + " cm" : ""); };
+          " · erro " + (c.erroCm ?? "—") + " cm · val. cruzada " + (c.looCm ?? "—") + " cm" + (!e ? " · sem snap" : "") + (e ? " · snap: val. cruzada " + (e.antes.loo == null ? "—" : e.antes.loo.toFixed(1)) + " → " + (e.depois.looPares == null ? "—" : e.depois.looPares.toFixed(1)) + " cm" : ""); };
       const alv = ["", "Alvo\tFotografado em\tLargura × altura (px)\tCriação MindAR (s)\tCriação Zappar (s)\tLente\tCalibração\tFotografia original\tRecorte na original (x, y, largura, altura)\tForma do recorte\tPontos marcados\tDesenho\tErros"]
         .concat(lista.map(a => [a.nome, nomeLocal(a.local), a.largura + " × " + a.altura, a.tMind ?? "falhou", a.tZpt ?? "—", a.lente ? lenteTexto(a.lente) : "—", cal(a),
           a.fotoId ? "foto-" + a.fotoId + ".jpg" : "", a.recorte ? a.recorte.join(", ") : "inteira", a.recorte ? nomeForma(a) : "—",

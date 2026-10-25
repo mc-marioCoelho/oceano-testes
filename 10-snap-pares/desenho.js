@@ -398,7 +398,7 @@ const Editor = (() => {
     ctl.sel = livre ? [livre.x, livre.y] : null;
   }
   const pontoDaLista = m => ctl.curta.find(q => Math.hypot(m[0] - q.x, m[1] - q.y) < 0.5);
-  function invalidarEncaixe() { ctl.automaticos = []; ctl.encaixe = null; ctl.H = null; ctl.previa = null; $("d-snap").hidden = true; }
+  function invalidarEncaixe() { if (ctl.encaixe || ctl.previa || (ctl.automaticos && ctl.automaticos.length)) ctl.snapAnulado = true; ctl.automaticos = []; ctl.encaixe = null; ctl.H = null; ctl.previa = null; $("d-snap").hidden = true; }
 
   function livreMostrar(extra) {
     const n = ctl.pares.length, q = ctl.sel && pontoDaLista(ctl.sel);
@@ -410,11 +410,11 @@ const Editor = (() => {
     const fora = ctl.foraAuto && ctl.foraAuto.size ? [...ctl.foraAuto].map(k => "M" + k).join(", ") + " provavelmente fora da fotografia (saltados sozinhos; se os vês, toca neles no mapa). " : "";
     let banner;
     if (ctl.escolhido !== null) banner = "A corrigir o par " + rotulo(ctl.pares[ctl.escolhido], ctl.escolhido) + ": arrasta a mira na fotografia ou usa as setas. Depois «Largar».";
-    else if (!ctl.sel) banner = n >= 4 ? "Tens " + n + " pares. " + fora + "Podes juntar mais (toca num ponto do mapa, em cima; ativa «Sugerir pontos dentro da fotografia») ou carregar em «Encaixar nos traços»." : "1) Toca num ponto do mapa (em cima). Marca primeiro os que vês bem na fotografia.";
+    else if (!ctl.sel) banner = n >= 4 ? "Tens " + n + " pares. " + fora + "PRÓXIMO PASSO: carrega em «Encaixar nos traços» e depois em «Aceitar e colocar o desenho» (não afines os pares antes: mexer num par anula o snap). Ou junta mais pares (toca num ponto do mapa; ativa «Sugerir pontos dentro da fotografia»)." : "1) Toca num ponto do mapa (em cima). Marca primeiro os que vês bem na fotografia.";
     else if (!ctl.toque) banner = "2) Na fotografia, pousa o dedo por baixo do " + (q ? "ponto M" + q.n + " (" + q.onde + ")" : "ponto escolhido") + " e arrasta a mira até ao sítio; levanta o dedo. " + fora;
     else banner = "3) Falta carregar em ✓ CONFIRMAR PAR (botão verde, aqui em cima). Sem isso, o ponto não fica guardado.";
     $("d-passo").textContent = banner;
-    $("d-ctl-msg").innerHTML = "<strong>Pares: " + n + "</strong> (bastam 4, bem espalhados; com 5 ou mais vê-se o erro). " + passo + (extra ? "<br>" + extra : "");
+    $("d-ctl-msg").innerHTML = "<strong>Pares: " + n + "</strong> (bastam 4, bem espalhados; com 5 ou mais vê-se o erro). " + passo + (ctl.snapAnulado && n >= 4 ? "<br><strong>O snap ficou anulado porque mexeste num par: carrega outra vez em «Encaixar nos traços».</strong>" : "") + (extra ? "<br>" + extra : "");
     $("d-ctl-par").disabled = !(ctl.sel && ctl.toque);
     $("d-ctl-saltar").hidden = !q || ctl.escolhido !== null;
     $("d-ctl-recomecar").hidden = !ctl.curta.length || !ctl.pares.some(p => !pontoDaLista(p.mapa));
@@ -491,7 +491,7 @@ const Editor = (() => {
     $("d-ctl-par-desfazer").onclick = () => { if (!ctl || !ctl.livre) return;
       if (ctl.toque) ctl.toque = null; else if (ctl.escolhido !== null) ctl.escolhido = null; else if (ctl.pares.length) { ctl.pares.pop(); invalidarEncaixe(); proximoDaLista(); }
       livreMostrar(); };
-    $("d-ctl-aplicar2").onclick = () => controloAplicar();
+    $("d-ctl-aplicar2").onclick = () => { if (!ctl) return; if (!ctl.encaixe && !confirm("Ainda não usaste o «snap» (Encaixar nos traços) nestes pares. Sem ele, o erro costuma ser maior.\n\nOK: gravar mesmo assim, sem snap.\nCancelar: voltar e carregar em «Encaixar nos traços».")) return; controloAplicar(); };
     // um ponto da lista curta que não aparece na fotografia: passa ao seguinte
     // pares antigos (ex.: L1–L12 do teste 09): apagá-los todos e marcar só os pontos M
     $("d-ctl-recomecar").onclick = () => { if (!ctl || !ctl.pares.length) return;
@@ -566,7 +566,7 @@ const Editor = (() => {
   }
   async function encaixar() {
     if (!ctl || ctl.pares.length < 4) return;
-    const b = $("d-ctl-snap"); b.disabled = true; ctl.escolhido = null; ctl.toque = null;
+    const b = $("d-ctl-snap"); b.disabled = true; ctl.snapAnulado = false; ctl.escolhido = null; ctl.toque = null;
     $("d-ctl-msg").innerHTML = "A encaixar nos traços… (pode demorar até 30 s; não mexas no telemóvel)";
     await new Promise(ok => setTimeout(ok, 50));
     let ecra = null; try { ecra = await navigator.wakeLock.request("screen"); } catch (e) {}
