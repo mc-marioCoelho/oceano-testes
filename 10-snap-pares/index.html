@@ -479,6 +479,9 @@
 
     async function criar(r) {
       if (!exigirLocal()) return;
+      // A altura fica gravada no alvo: confirma-se antes de criar (a 25 out. três alvos ficaram com 1,25 m por engano).
+      const altFoto = document.getElementById("altura-foto").value || "altura por indicar";
+      if (!confirm("Esta fotografia foi tirada a " + altFoto + " (acima do passadiço)?\n\nOK: sim, criar o alvo.\nCancelar: voltar e mudar a altura.")) return;
       const botoes = [document.getElementById("criar"), document.getElementById("inteira")];
       botoes.forEach(b => b.disabled = true);
       let criado = false;
