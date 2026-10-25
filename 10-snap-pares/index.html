@@ -31,7 +31,7 @@
        <input type="file" id="foto" accept="image/*" capture="environment" hidden></p>
     <p class="sub" id="estado-lente"></p>
     <p class="sub"><label>Altura do telemóvel nesta fotografia (acima do passadiço):
-      <select id="altura-foto"><option value="">por indicar</option><option>1,0 m</option><option selected>1,25 m</option><option>1,5 m</option><option>outra</option></select></label></p>
+      <select id="altura-foto"><option value="">por indicar</option><option>1,0 m</option><option>1,25 m</option><option>1,5 m</option><option>outra</option></select></label></p>
     <div id="recorte" hidden>
       <p class="nota"><strong>Para que serve o recorte:</strong> só para <em>tirar o que não interessa</em> (passadiço, corrimão, paredes). <strong>Não corrige a perspetiva</strong> e não é preciso desenhar um quadrado «endireitado»: contorna o mosaico tal como o vês na fotografia (em perspetiva, por isso um trapézio ou um polígono). O que fica fora é pintado com a cor média. A perspetiva é calculada depois, no passo 4, a partir dos pares de pontos.</p>
       <p class="sub">Recorta só a parte do mosaico que interessa (sem passadiço nem corrimão). Da mesma fotografia podes criar vários alvos: depois de criar um, recorta outra parte e carrega outra vez em «Criar alvo» (por exemplo, o mosaico inteiro e só a inscrição).</p>
@@ -480,7 +480,8 @@
     async function criar(r) {
       if (!exigirLocal()) return;
       // A altura fica gravada no alvo: confirma-se antes de criar (a 25 out. três alvos ficaram com 1,25 m por engano).
-      const altFoto = document.getElementById("altura-foto").value || "altura por indicar";
+      const altFoto = document.getElementById("altura-foto").value;
+      if (!altFoto) { alert("Indica primeiro a altura a que tiraste esta fotografia (menu «Altura do telemóvel nesta fotografia»)."); return; }
       if (!confirm("Esta fotografia foi tirada a " + altFoto + " (acima do passadiço)?\n\nOK: sim, criar o alvo.\nCancelar: voltar e mudar a altura.")) return;
       const botoes = [document.getElementById("criar"), document.getElementById("inteira")];
       botoes.forEach(b => b.disabled = true);
