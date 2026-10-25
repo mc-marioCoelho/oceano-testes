@@ -36,7 +36,7 @@ const Editor = (() => {
     camada = tela(W, H); cg = camada.getContext("2d");
     traco = tela(W, H); tg = traco.getContext("2d");
     vista = $("d-tela"); vista.width = W; vista.height = H; vg = vista.getContext("2d");
-    historia = []; importadoOriginal = null; alterado = false; barbaAplicada = false; ctl = null; $("d-ctl").hidden = true; $("d-ctl-baixo").hidden = true;
+    historia = []; importadoOriginal = null; alterado = false; barbaAplicada = false; ctl = null; $("d-ctl").hidden = true; $("d-ctl-feedback").hidden = true; $("d-ctl-baixo").hidden = true;
     if (a.desenho) {
       const img = await createImageBitmap(a.desenho);
       cg.drawImage(img, 0, 0, W, H);
@@ -639,6 +639,10 @@ const Editor = (() => {
     livreMostrar("✓ Colocado e gravado" + (usadas.size ? " (" + [...usadas].join(", ") + ")" : ": nenhuma peça cai dentro desta fotografia") + " com " + usados.length + " pontos" +
       (loo !== null && loo !== undefined ? " · erro (validação cruzada) <strong>" + virgula(loo) + " cm</strong>" + (loo > 3 ? " — alto: revê os pares com «?» ou marca mais" : "") : erro !== null ? " · erro médio " + virgula(erro) + " cm" : " (com 4 pontos não se mede o erro)") +
       ". Os círculos amarelos mostram onde a calibração põe cada ponto do mapa. Se estiver bem, testa com MindAR ou Zappar (passo 5).");
+    // A mensagem de cima fica fora do ecrã quando se carrega nos botões de baixo: repete-se aqui, junto dos botões.
+    const fb = $("d-ctl-feedback");
+    fb.hidden = false; fb.style.fontWeight = "bold";
+    fb.textContent = "✓ Colocado e gravado com " + usados.length + " pontos" + (loo !== null && loo !== undefined ? " · erro (validação cruzada) " + virgula(loo) + " cm" : erro !== null ? " · erro médio " + virgula(erro) + " cm" : "") + ". Já podes «Fechar a calibração».";
   }
 
   function pecasParaImagem(Hi, W, H, pecas) {
