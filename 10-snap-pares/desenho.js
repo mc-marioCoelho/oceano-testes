@@ -499,7 +499,18 @@ const Editor = (() => {
       ctl.pares = []; ctl.escolhido = null; ctl.toque = null; ctl.saltados.clear(); invalidarEncaixe(); proximoDaLista(); livreMostrar("Pares apagados. Marca os pontos M, um de cada vez."); };
     $("d-ctl-saltar").onclick = () => { if (!ctl || !ctl.sel) return; const q = pontoDaLista(ctl.sel); if (q) ctl.saltados.add(q.n); ctl.toque = null; proximoDaLista(); livreMostrar(q ? "M" + q.n + " saltado." : ""); };
     $("d-ctl-lista").addEventListener("click", ev => { const b = ev.target.closest("button[data-par]"); if (!b || !ctl) return;
-      const i = +b.dataset.par; ctl.escolhido = ctl.escolhido === i ? null : i; ctl.toque = null; ctl.sel = null; livreMostrar(); });
+      const i = +b.dataset.par; escolherPar(ctl.escolhido === i ? null : i); });
+    // Escolher um par para corrigir: a fotografia ampliada desliza para o centrar (as setas e a lupa trabalham sobre ele).
+    function escolherPar(i) { ctl.escolhido = i; ctl.toque = null; ctl.sel = null; livreMostrar(); if (i !== null) centrarNoPar(i); }
+    function centrarNoPar(i) {
+      const p = ctl && ctl.pares[i]; if (!p) return;
+      const caixa = $("d-caixa"), cr = caixa.getBoundingClientRect(), vr = vista.getBoundingClientRect();
+      caixa.scrollLeft += vr.left + p.foto[0] / W * vr.width - (cr.left + cr.width / 2);
+      caixa.scrollTop += vr.top + p.foto[1] / H * vr.height - (cr.top + cr.height / 2);
+    }
+    function parVizinho(d) { if (!ctl || !ctl.pares.length) return; const n = ctl.pares.length; escolherPar(ctl.escolhido === null ? (d > 0 ? 0 : n - 1) : (ctl.escolhido + d + n) % n); }
+    $("d-ctl-ant").onclick = () => parVizinho(-1);
+    $("d-ctl-seg").onclick = () => parVizinho(1);
     $("d-ctl-apagar").onclick = () => { if (!ctl || ctl.escolhido === null) return; ctl.pares.splice(ctl.escolhido, 1); ctl.escolhido = null; invalidarEncaixe(); proximoDaLista(); livreMostrar(); };
     $("d-ctl-largar").onclick = () => { if (!ctl) return; ctl.escolhido = null; if (!ctl.sel) proximoDaLista(); livreMostrar(); };
     $("d-ctl-incluir").onclick = () => { if (!ctl || ctl.escolhido === null) return; ctl.pares[ctl.escolhido].usar = true; ctl.H = null; livreMostrar(); };
